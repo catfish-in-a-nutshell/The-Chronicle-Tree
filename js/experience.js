@@ -264,13 +264,13 @@ addLayer("e", {
 
     update(diff) {
         skill_list = ["communication", "swimming", "laboring", "cooking", "trading", "fishing", "hunting"]
-        for (i = 0; i < skill_list.length; i++) {
-            data = player.e[skill_list[i]]
+        for (let i = 0; i < skill_list.length; i++) {
+            let data = player.e[skill_list[i]]
             if (data.cur_exp.gte(data.nxt_exp)) {
-                priceStart = new Decimal(100)
-                priceAdd = new Decimal(100)
-                affordLvls = Decimal.affordArithmeticSeries(data.cur_exp, priceStart, priceAdd, data.lvl)
-                sumPrice = Decimal.sumArithmeticSeries(affordLvls, priceStart, priceAdd, data.lvl)
+                let priceStart = new Decimal(100)
+                let priceAdd = new Decimal(100)
+                let affordLvls = Decimal.affordArithmeticSeries(data.cur_exp, priceStart, priceAdd, data.lvl)
+                let sumPrice = Decimal.sumArithmeticSeries(affordLvls, priceStart, priceAdd, data.lvl)
     
                 data.cur_exp = data.cur_exp.sub(sumPrice)
                 data.lvl = data.lvl.add(affordLvls)

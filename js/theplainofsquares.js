@@ -43,8 +43,8 @@ addLayer("mp", {
                 return new Decimal(1.8).pow(x).mul(20)
             },
             display() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
-                ret = "探索等级 " + format(cur_amount, 0) + "/10\n\n"
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                let ret = "探索等级 " + format(cur_amount, 0) + "/10\n\n"
                 
                 if (cur_amount.lt(10) && cur_amount.gt(0)) {
                     ret += "<p style='color: red'> 注意: 继续探索会将区域数量级x3.6, 误入深处可能会非常危险！ </p>\n"
@@ -63,7 +63,7 @@ addLayer("mp", {
             },
             purchaseLimit: new Decimal(10),
             effect() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return cur_amount.gte(2) ? new Decimal(3.6).pow(cur_amount.sub(1)) : new Decimal(1);
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
@@ -78,7 +78,7 @@ addLayer("mp", {
         11: {
             "title": "伐木",
             display() {
-                disp = "使用当前投入时间的50%以及5食物，获得木材与纤维，并增长劳务能力。\n\n单位时间收益:\n"
+                let disp = "使用当前投入时间的50%以及5食物，获得木材与纤维，并增长劳务能力。\n\n单位时间收益:\n"
                 disp += format(tmp.mp.lumberWoodIncome) + " 木材\n"
                 disp += format(tmp.mp.lumberFiberIncome) + " 纤维\n"
                 disp += format(tmp.mp.lumberExp) + " 经验"
@@ -96,8 +96,8 @@ addLayer("mp", {
                 }
             },
             onClick() {
-                data = player.mp
-                t = data.points.mul(0.5)
+                let data = player.mp
+                let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
                 player.i.food = player.i.food.sub(5) 
                 player.i.wood = player.i.wood.add(t.mul(tmp.mp.lumberWoodIncome))
@@ -134,8 +134,8 @@ addLayer("mp", {
                 }
             },
             onClick() {
-                data = player.mp
-                t = data.points.mul(0.5)
+                let data = player.mp
+                let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
                 player.i.food = player.i.food.sub(5)
                 player.i.mineral = player.i.mineral.add(t.mul(tmp.mp.mineIncome))
@@ -154,7 +154,7 @@ addLayer("mp", {
         13: {
             "title": "狩猎",
             display() {
-                disp = "使用当前投入时间的50%以及5食物，有概率发现野兽，并增长索敌能力。\n\n单位时间收益:\n"
+                let disp = "使用当前投入时间的50%以及5食物，有概率发现野兽，并增长索敌能力。\n\n单位时间收益:\n"
                 disp += format(tmp.mp.huntProbability) + " 几率发现猎物\n"
                 disp += format(tmp.mp.huntExp) + " 经验(成功发现时x1.5)"
                 return disp
@@ -171,13 +171,13 @@ addLayer("mp", {
                 }
             },
             onClick() {
-                data = player.mp
-                t = data.points.mul(0.5)
+                let data = player.mp
+                let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
                 player.i.food = player.i.food.sub(5)
 
-                r = Math.random()
-                exp = t.mul(tmp.mp.huntExp)
+                let r = Math.random()
+                let exp = t.mul(tmp.mp.huntExp)
 
                 if (huntProbability.gte(r)) {
                     // TODO: hunted
@@ -196,12 +196,12 @@ addLayer("mp", {
     },
 
     lumberWoodIncome() {
-        number_eff = player.r.number.sqrt().mul(player.i.equips.axe.number.sqrt())
+        let number_eff = player.r.number.sqrt().mul(player.i.equips.axe.number.sqrt())
         return number_eff.mul(tmp.e.laboringEffect).mul(0.1)
     },
 
     lumberFiberIncome() {
-        number_eff = player.r.number.sqrt().mul(player.i.equips.axe.number.sqrt())
+        let number_eff = player.r.number.sqrt().mul(player.i.equips.axe.number.sqrt())
         return number_eff.mul(tmp.e.laboringEffect).mul(0.04)
     },
 
@@ -210,7 +210,7 @@ addLayer("mp", {
     },
 
     mineIncome() {
-        number_eff = player.r.number.sqrt().mul(player.i.equips.pickaxe.number.sqrt())
+        let number_eff = player.r.number.sqrt().mul(player.i.equips.pickaxe.number.sqrt())
         return number_eff.mul(tmp.e.laboringEffect).mul(0.01)
     },
 
@@ -219,8 +219,8 @@ addLayer("mp", {
     },
 
     huntProbability() {
-        t = player.mp.points.mul(0.5)
-        theta = new Decimal(30).div(tmp.e.huntingEffect)
+        let t = player.mp.points.mul(0.5)
+        let theta = new Decimal(30).div(tmp.e.huntingEffect)
         return new Decimal(1) - t.div(theta).neg().exp()
     },
 

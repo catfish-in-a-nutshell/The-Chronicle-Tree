@@ -21,7 +21,7 @@ addLayer("p", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.75, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        let mult = new Decimal(1)
         if (hasUpgrade("p", 11))
             mult = mult.mul(upgradeEffect("p", 11))
         if (hasUpgrade("p", 12))
@@ -33,7 +33,7 @@ addLayer("p", {
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        exp = new Decimal(1)
+        let exp = new Decimal(1)
         return exp
     },
     tooltip: () => "皮亚诺村: " + format(player.p.points) + " 投入时间",
@@ -194,8 +194,8 @@ addLayer("p", {
                 return c
             },
             display() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
-                ret = "进度 " + format(cur_amount, 0) + "/7\n\n"
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                let ret = "进度 " + format(cur_amount, 0) + "/7\n\n"
                 if (cur_amount.gte(1) && cur_amount.lt(7)) {
                     ret += full_dialogue["p11"][format(cur_amount, 0)] + "\n\n"
                 }
@@ -212,7 +212,7 @@ addLayer("p", {
             },
             purchaseLimit: new Decimal(7),
             effect() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return cur_amount.gte(3) ? new Decimal(1.2).pow(cur_amount.sub(2).sqrt()) : new Decimal(1);
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
@@ -229,8 +229,8 @@ addLayer("p", {
                 return c
             },
             display() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
-                ret = "进度 " + format(cur_amount, 0) + "/14\n\n"
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                let ret = "进度 " + format(cur_amount, 0) + "/14\n\n"
                 if (cur_amount.gte(1) && cur_amount.lt(14)) {
                     ret += full_dialogue["p12"][format(cur_amount, 0)] + "\n\n"
                 }
@@ -255,13 +255,13 @@ addLayer("p", {
         13: {
             title: "买酒，和酒客交谈",
             cost(x) {
-                c = x.mul(1).add(2)
+                let c = x.mul(1).add(2)
                 c = c.div(tmp.e.communicationEffect).mul(buyableEffect("p", 13))
                 return c
             },
             display() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
-                ret = "进度 " + format(cur_amount, 0) + "/8\n\n"
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                let ret = "进度 " + format(cur_amount, 0) + "/8\n\n"
                 if (cur_amount.gte(1) && cur_amount.lt(8)) {
                     ret += full_dialogue["p13"][format(cur_amount, 0)] + "\n\n"
                 }
@@ -276,7 +276,7 @@ addLayer("p", {
             },
             purchaseLimit: new Decimal(8),
             effect() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return new Decimal(1).sub(cur_amount.mul(0.05))
             },
             canAfford() { return player.i.gold.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
@@ -291,8 +291,8 @@ addLayer("p", {
                 return new Decimal(2).add(new Decimal(1).mul(x)) // TODO
             },
             display() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
-                ret = "进度 " + format(cur_amount, 0) + "/8\n"
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                let ret = "进度 " + format(cur_amount, 0) + "/8\n"
                 if (cur_amount.gte(1) && cur_amount.lt(8)) {
                     ret += full_dialogue["p14"][format(cur_amount, 0)] + "\n"
                 }
@@ -306,7 +306,7 @@ addLayer("p", {
             },
             purchaseLimit: new Decimal(8),
             effect() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return new Decimal(1).sub(cur_amount.mul(0.05))
             },
             canAfford() { return player.i.food.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
@@ -321,7 +321,7 @@ addLayer("p", {
         11: {
             "title": "在酒馆帮忙",
             display() {
-                disp = "使用当前投入时间的50%，获得少量报酬，并增长交流能力。\n\n单位时间收益:\n"
+                let disp = "使用当前投入时间的50%，获得少量报酬，并增长交流能力。\n\n单位时间收益:\n"
                 disp += format(tmp.p.tavernIncome) + " 金子\n"
                 disp += format(tmp.p.tavernExp) + " 经验"
                 return disp
@@ -338,8 +338,8 @@ addLayer("p", {
                 }
             },
             onClick() {
-                data = player.p
-                t = data.points.mul(0.5)
+                let data = player.p
+                let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
                 player.i.gold = player.i.gold.add(t.mul(tmp.p.tavernIncome))
                 player.e.communication.cur_exp = player.e.communication.cur_exp.add(t.mul(tmp.p.tavernExp))
@@ -355,7 +355,7 @@ addLayer("p", {
         12: {
             "title": "在农家帮忙",
             display() {
-                disp = "使用当前投入时间的50%，获得较多报酬，并增长劳务能力。\n\n单位时间收益:\n"
+                let disp = "使用当前投入时间的50%，获得较多报酬，并增长劳务能力。\n\n单位时间收益:\n"
                 disp += format(tmp.p.farmGoldIncome) + " 金子\n"
                 disp += format(tmp.p.farmFoodIncome) + " 食物\n"
                 disp += format(tmp.p.farmExp) + " 经验"
@@ -373,8 +373,8 @@ addLayer("p", {
                 }
             },
             onClick() {
-                data = player.p
-                t = data.points.mul(0.5)
+                let data = player.p
+                let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
                 player.i.gold = player.i.gold.add(t.mul(tmp.p.farmGoldIncome))
                 player.i.food = player.i.food.add(t.mul(tmp.p.farmFoodIncome))
@@ -388,7 +388,7 @@ addLayer("p", {
         13: {
             "title": "卖鱼",
             display() {
-                disp = "卖掉当前鱼的50%，获得报酬，并增长交易能力。\n\n单位鱼收益:\n"
+                let disp = "卖掉当前鱼的50%，获得报酬，并增长交易能力。\n\n单位鱼收益:\n"
                 disp += format(tmp.p.farmGoldIncome) + " 金子\n"
                 disp += format(tmp.p.farmExp) + " 经验"
                 return disp
@@ -405,8 +405,8 @@ addLayer("p", {
                 }
             },
             onClick() {
-                data = player.i
-                f = data.fish.mul(0.5)
+                let data = player.i
+                let f = data.fish.mul(0.5)
                 data.fish = data.fish.sub(f)
                 data.gold = data.gold.add(f.mul(tmp.p.sellFishIncome))
                 player.e.trading.cur_exp = player.e.trading.cur_exp.add(f.mul(tmp.p.sellFishExp))
@@ -419,7 +419,7 @@ addLayer("p", {
         14: {
             "title": "将鱼制成食物",
             display() {
-                disp = "处理当前鱼的50%，转化为对应的食物，并增长烹饪能力。\n\n单位鱼收益:\n"
+                let disp = "处理当前鱼的50%，转化为对应的食物，并增长烹饪能力。\n\n单位鱼收益:\n"
                 disp += format(tmp.p.dealFishIncome) + " 食物\n"
                 disp += format(tmp.p.dealFishExp) + " 经验"
                 return disp
@@ -436,8 +436,8 @@ addLayer("p", {
                 }
             },
             onClick() {
-                data = player.i
-                f = data.fish.mul(0.5)
+                let data = player.i
+                let f = data.fish.mul(0.5)
                 data.fish = data.fish.sub(f)
                 data.food = data.food.add(f.mul(tmp.p.dealFishIncome))
                 player.e.cooking.cur_exp = player.e.cooking.cur_exp.add(f.mul(tmp.p.dealFishExp))
@@ -450,7 +450,7 @@ addLayer("p", {
         15: {
             "title": "购买食物",
             display() {
-                disp = "花金子购买食物，并增长交易能力。\n\n 单次效益:\n"
+                let disp = "花金子购买食物，并增长交易能力。\n\n 单次效益:\n"
                 disp += "+ 10 食物\n- " + format(tmp.p.buyFoodCost) +  " 金子\n"
                 disp += format(tmp.p.buyFoodExp) + " 经验"
                 return disp
@@ -480,13 +480,13 @@ addLayer("p", {
         lore: {
             title: "故事",
             body() {
-                disp = "你来到海边异常平和的小村庄。你对这里有着朦胧的印象，但似乎没有一个人认识你。"
+                let disp = "你来到海边异常平和的小村庄。你对这里有着朦胧的印象，但似乎没有一个人认识你。"
 
-                keys = [11, 12, 13, 14]
-                dkeys = ["p11", "p12", "p13", "p14"]
-                titles = ["和村长交谈", "和村长交谈 II - 数字学概论", "买酒，和酒客交谈", "给路边的流浪汉一点吃的"]
+                let keys = [11, 12, 13, 14]
+                let dkeys = ["p11", "p12", "p13", "p14"]
+                let titles = ["和村长交谈", "和村长交谈 II - 数字学概论", "买酒，和酒客交谈", "给路边的流浪汉一点吃的"]
 
-                for (i = 0; i < keys.length; i++) {       
+                for (let i = 0; i < keys.length; i++) {       
                     if (tmp.p.buyables[keys[i]].unlocked) {
                         disp += "<p  style='margin-top: 10px'><h2> " + titles[i] + " </h2><p>"
                         for (j = 0; j < full_dialogue[dkeys[i]].length; j++) {

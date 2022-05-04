@@ -25,7 +25,7 @@ addLayer("g", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.75, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        let mult = new Decimal(1)
         if (hasUpgrade("g", 11))
             mult = mult.mul(upgradeEffect("g", 11))
         return mult
@@ -113,13 +113,13 @@ addLayer("g", {
                 "background-color": "#ffffff"
             },
             onClick() {
-                data = player.g
-                t = data.points
+                let data = player.g
+                let t = data.points
                 
-                harv = new Decimal(0.2).mul(t).mul(tmp.e.fishingEffect).mul(player.i.equips.fishingrod.number)
-                fishing_exp = harv.mul(20).mul(tmp.e.lvlpEffect)
+                let harv = new Decimal(0.2).mul(t).mul(tmp.e.fishingEffect).mul(player.i.equips.fishingrod.number)
+                let fishing_exp = harv.mul(20).mul(tmp.e.lvlpEffect)
 
-                harv_exp = harv.log10()
+                let harv_exp = harv.log10()
                 harv = new Decimal(10).pow(harv_exp.add(Math.random() - 0.8))
                 
                 player.i.fish = player.i.fish.add(harv)
@@ -167,7 +167,7 @@ addLayer("g", {
         "clickables",
         "blank",
         ["display-text", function() {
-            disp = ""
+            let disp = ""
             if (player.g.last_fish.gt(0)) {
                 disp += "<p>你上一次钓鱼获得了 " + format(player.g.last_fish) + " 鱼</p>"
             }
@@ -183,7 +183,7 @@ addLayer("g", {
     doReset(resettingLayer) {
         // console.log("g:receiving " + resettingLayer)
         if (layers[resettingLayer].row > this.row || resettingLayer == "r") {
-            keep = ["depth_best"]
+            let keep = ["depth_best"]
             layerDataReset(this.layer, keep)
             player.g.air_cur = new Decimal(100)
         }
@@ -201,19 +201,19 @@ addLayer("g", {
 
         // console.log(format(data.tot_time))
 
-        time_consume_rate = new Decimal(1)
-        air_consume_rate = new Decimal(10)
+        let time_consume_rate = new Decimal(1)
+        let air_consume_rate = new Decimal(10)
         air_consume_rate = air_consume_rate.mul(buyableEffect("r", 12))
         air_consume_rate = air_consume_rate.mul(buyableEffect("r", 13))
 
-        swim_speed = new Decimal(0.1)
+        let swim_speed = new Decimal(0.1)
         swim_speed = swim_speed.mul(buyableEffect("r", 11))
         swim_speed = swim_speed.mul(buyableEffect("r", 12))
-        air_max = tmp.g.maxAir
+        let air_max = tmp.g.maxAir
         
-        exp_gain = new Decimal(10).mul(tmp.e.lvlpEffect)
+        let exp_gain = new Decimal(10).mul(tmp.e.lvlpEffect)
         if (data.diving_up) {
-            tick_swim_time = new Decimal(diff)
+            let tick_swim_time = new Decimal(diff)
             tick_swim_time = tick_swim_time.min(data.air_cur.div(air_consume_rate))
             tick_swim_time = tick_swim_time.min(data.depth_cur.div(swim_speed))
             tick_swim_time = tick_swim_time.min(data.points)
@@ -248,7 +248,7 @@ addLayer("g", {
             }
 
         } else if (data.diving_down) {
-            tick_swim_time = new Decimal(diff)
+            let tick_swim_time = new Decimal(diff)
             tick_swim_time = tick_swim_time.min(data.air_cur.div(air_consume_rate))
             tick_swim_time = tick_swim_time.min(data.points)
 

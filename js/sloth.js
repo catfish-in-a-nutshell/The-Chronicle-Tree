@@ -34,7 +34,7 @@ addLayer("s", {
             title: "感受怠惰",
             cost(x) { return new Decimal(2).pow(x).mul(120) },
             display() { 
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return "怠惰上限x2\n\n当前上限:" + format(player.s.limit) + ", 下一级价格:" + format(this.cost(cur_amount)) 
             },
             canAfford() { return player[this.layer].sloth.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
@@ -43,7 +43,7 @@ addLayer("s", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             effect() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return new Decimal(2).pow(cur_amount).mul(120)
             }
         },
@@ -51,7 +51,7 @@ addLayer("s", {
             title: "感受时光流逝",
             cost(x) { return new Decimal(3).pow(x).mul(40) },
             display() { 
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return "让全局时间加快x1.1 \n\n当前效果:" + format(this.effect(cur_amount)) + "x, 下一级价格:" + format(this.cost(cur_amount)) 
             },
             canAfford() { 
@@ -62,7 +62,7 @@ addLayer("s", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             effect() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return new Decimal(1.1).pow(cur_amount)
             }
         },
@@ -70,7 +70,7 @@ addLayer("s", {
             title: "更多怠惰",
             cost(x) { return new Decimal(2.5).pow(x).mul(80) },
             display() { 
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return "怠惰增长速率x1.5 \n\n当前效果:" + format(this.effect(cur_amount)) + "x, 下一级价格:" + format(this.cost(cur_amount)) 
             },
             canAfford() { return player[this.layer].sloth.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
@@ -79,7 +79,7 @@ addLayer("s", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             effect() {
-                cur_amount = getBuyableAmount(this.layer, this.id)
+                let cur_amount = getBuyableAmount(this.layer, this.id)
                 return new Decimal(1.5).pow(cur_amount)
             }
         }
@@ -102,11 +102,11 @@ addLayer("s", {
                 "buyables"],
 
     update(diff) {
-        s = player.s
+        let s = player.s
         s.speed = buyableEffect(this.layer, 13)
         s.limit = buyableEffect(this.layer, 11)
 
-        sl = s.speed.mul(diff).mul(buyableEffect(this.layer, 12))
+        let sl = s.speed.mul(diff).mul(buyableEffect(this.layer, 12))
         s.sloth = s.sloth.add(sl).min(s.limit)
     }
 })

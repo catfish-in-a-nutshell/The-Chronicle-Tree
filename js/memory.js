@@ -87,7 +87,21 @@ addLayer("m", {
             done: () => getBuyableAmount("p", 14).gte(8),
             tooltip() {
                 if (hasAchievement("m", this.id)) {
-                    return "在见识了一个流浪汉的生活之后，你意识到偷懒有时也是一门艺术。解锁子页面：懒惰"
+                    return "在见识了一个流浪汉的生活之后，你意识到偷懒有时也是一门艺术。解锁页面：懒惰"
+                } else {
+                    return "未解锁"
+                }
+            }
+        },
+
+        16: {
+            name: "战斗的记忆",
+            unlocked: () => hasUpgrade("p", 35), 
+            onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
+            done: () => player.b.is_fighting,
+            tooltip() {
+                if (hasAchievement("m", this.id)) {
+                    return "你回想起自己曾经很擅长战斗，但现在的身体并不适应。解锁子页面：经验-战斗"
                 } else {
                     return "未解锁"
                 }

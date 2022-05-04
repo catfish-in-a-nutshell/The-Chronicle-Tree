@@ -5,8 +5,8 @@ addLayer("i", {
     symbol: "I", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { 
-        inv = []
-        for (i = 0; i < 64; i++) {
+        let inv = []
+        for (let i = 0; i < 64; i++) {
             inv.push({
                 exist: false, 
                 equiptype: "", 
@@ -110,13 +110,13 @@ addLayer("i", {
     },
 
     addInventory(equip_info) {
-        i = 0
+        let i = 0
         for (; i < player.i.inv_slots; i++) {
             if (!player.i.inventory[i].exist) {
                 break
             }
         }
-        cur_inv = player.i.inventory[i]
+        let cur_inv = player.i.inventory[i]
 
         cur_inv.exist = true
         cur_inv.equiptype = equip_info.equiptype
@@ -128,7 +128,7 @@ addLayer("i", {
     },
 
     useEquip(type, dur_cost) {
-        equip = player.i.equips[type]
+        let equip = player.i.equips[type]
         equip.dur = equip.dur.sub(dur_cost)
         if (equip.dur.lte(0)) {
             // Equipment broken!
@@ -140,10 +140,10 @@ addLayer("i", {
         11: {
             "title": "武器",
             display() {
-                inv = player.i.equips.weapon
+                let inv = player.i.equips.weapon
                 if (!inv.equipped) return ""
 
-                disp = inv.name + "<br>"
+                let disp = inv.name + "<br>"
                 disp += "数字: " + format(inv.number) + "<br>"
                 disp += "耐久: " + format(inv.dur) + "<br>"
 
@@ -157,15 +157,15 @@ addLayer("i", {
                 }
             },
             onClick() {
-                i = 0
+                let i = 0
                 for (; i < player.i.inv_slots; i++) {
                     if (!player.i.inventory[i].exist) {
                         break
                     }
                 }
-                cur_inv = player.i.inventory[i]
+                let cur_inv = player.i.inventory[i]
                 cur_inv.exist = true
-                cur_equip = player.i.equips.weapon
+                let cur_equip = player.i.equips.weapon
 
                 cur_inv.name = cur_equip.name
                 cur_inv.number = cur_equip.number
@@ -180,10 +180,10 @@ addLayer("i", {
         12: {
             "title": "盾牌",
             display() {
-                inv = player.i.equips.shield
+                let inv = player.i.equips.shield
                 if (!inv.equipped) return ""
 
-                disp = inv.name + "<br>"
+                let disp = inv.name + "<br>"
                 disp += "数字: " + format(inv.number) + "<br>"
                 disp += "耐久: " + format(inv.dur) + "<br>"
 
@@ -197,15 +197,15 @@ addLayer("i", {
                 }
             },
             onClick() {
-                i = 0
+                let i = 0
                 for (; i < player.i.inv_slots; i++) {
                     if (!player.i.inventory[i].exist) {
                         break
                     }
                 }
-                cur_inv = player.i.inventory[i]
+                let cur_inv = player.i.inventory[i]
                 cur_inv.exist = true
-                cur_equip = player.i.equips.shield
+                let cur_equip = player.i.equips.shield
 
                 cur_inv.name = cur_equip.name
                 cur_inv.number = cur_equip.number
@@ -220,10 +220,10 @@ addLayer("i", {
         13: {
             "title": "护甲",
             display() {
-                inv = player.i.equips.armor
+                let inv = player.i.equips.armor
                 if (!inv.equipped) return ""
 
-                disp = inv.name + "<br>"
+                let disp = inv.name + "<br>"
                 disp += "数字: " + format(inv.number) + "<br>"
                 disp += "耐久: " + format(inv.dur) + "<br>"
 
@@ -237,15 +237,15 @@ addLayer("i", {
                 }
             },
             onClick() {
-                i = 0
+                let i = 0
                 for (; i < player.i.inv_slots; i++) {
                     if (!player.i.inventory[i].exist) {
                         break
                     }
                 }
-                cur_inv = player.i.inventory[i]
+                let cur_inv = player.i.inventory[i]
                 cur_inv.exist = true
-                cur_equip = player.i.equips.armor
+                let cur_equip = player.i.equips.armor
 
                 cur_inv.name = cur_equip.name
                 cur_inv.number = cur_equip.number
@@ -260,10 +260,10 @@ addLayer("i", {
         14: {
             "title": "戒指",
             display() {
-                inv = player.i.equips.ring
+                let inv = player.i.equips.ring
                 if (!inv.equipped) return ""
 
-                disp = inv.name + "<br>"
+                let disp = inv.name + "<br>"
                 disp += "数字: " + format(inv.number) + "<br>"
                 disp += "耐久: " + format(inv.dur) + "<br>"
 
@@ -277,15 +277,15 @@ addLayer("i", {
                 }
             },
             onClick() {
-                i = 0
+                let i = 0
                 for (; i < player.i.inv_slots; i++) {
                     if (!player.i.inventory[i].exist) {
                         break
                     }
                 }
-                cur_inv = player.i.inventory[i]
+                let cur_inv = player.i.inventory[i]
                 cur_inv.exist = true
-                cur_equip = player.i.equips.ring
+                let cur_equip = player.i.equips.ring
 
                 cur_inv.name = cur_equip.name
                 cur_inv.number = cur_equip.number
@@ -300,10 +300,10 @@ addLayer("i", {
         21: {
             "title": "渔具",
             display() {
-                inv = player.i.equips.fishingrod
+                let inv = player.i.equips.fishingrod
                 if (!inv.equipped) return ""
 
-                disp = inv.name + "<br>"
+                let disp = inv.name + "<br>"
                 disp += "数字: " + format(inv.number) + "<br>"
                 disp += "耐久: " + format(inv.dur) + "<br>"
 
@@ -317,15 +317,15 @@ addLayer("i", {
                 }
             },
             onClick() {
-                i = 0
+                let i = 0
                 for (; i < player.i.inv_slots; i++) {
                     if (!player.i.inventory[i].exist) {
                         break
                     }
                 }
-                cur_inv = player.i.inventory[i]
+                let cur_inv = player.i.inventory[i]
                 cur_inv.exist = true
-                cur_equip = player.i.equips.fishingrod
+                let cur_equip = player.i.equips.fishingrod
 
                 cur_inv.name = cur_equip.name
                 cur_inv.number = cur_equip.number
@@ -340,10 +340,10 @@ addLayer("i", {
         22: {
             "title": "伐木",
             display() {
-                inv = player.i.equips.axe
+                let inv = player.i.equips.axe
                 if (!inv.equipped) return ""
 
-                disp = inv.name + "<br>"
+                let disp = inv.name + "<br>"
                 disp += "数字: " + format(inv.number) + "<br>"
                 disp += "耐久: " + format(inv.dur) + "<br>"
 
@@ -357,15 +357,15 @@ addLayer("i", {
                 }
             },
             onClick() {
-                i = 0
+                let i = 0
                 for (; i < player.i.inv_slots; i++) {
                     if (!player.i.inventory[i].exist) {
                         break
                     }
                 }
-                cur_inv = player.i.inventory[i]
+                let cur_inv = player.i.inventory[i]
                 cur_inv.exist = true
-                cur_equip = player.i.equips.axe
+                let cur_equip = player.i.equips.axe
 
                 cur_inv.name = cur_equip.name
                 cur_inv.number = cur_equip.number
@@ -380,10 +380,10 @@ addLayer("i", {
         23: {
             "title": "挖矿",
             display() {
-                inv = player.i.equips.pickaxe
+                let inv = player.i.equips.pickaxe
                 if (!inv.equipped) return ""
 
-                disp = inv.name + "<br>"
+                let disp = inv.name + "<br>"
                 disp += "数字: " + format(inv.number) + "<br>"
                 disp += "耐久: " + format(inv.dur) + "<br>"
 
@@ -397,15 +397,15 @@ addLayer("i", {
                 }
             },
             onClick() {
-                i = 0
+                let i = 0
                 for (; i < player.i.inv_slots; i++) {
                     if (!player.i.inventory[i].exist) {
                         break
                     }
                 }
-                cur_inv = player.i.inventory[i]
+                let cur_inv = player.i.inventory[i]
                 cur_inv.exist = true
-                cur_equip = player.i.equips.pickaxe
+                let cur_equip = player.i.equips.pickaxe
 
                 cur_inv.name = cur_equip.name
                 cur_inv.number = cur_equip.number
@@ -439,11 +439,11 @@ addLayer("i", {
             }
         },
         onClick(data, id) {
-            inv = player.i.inventory[data]
-            typ = inv.equiptype
+            let inv = player.i.inventory[data]
+            let typ = inv.equiptype
             if (player.i.equips[typ].equipped) {    
                 // change
-                cur = player.i.equips[typ]
+                let cur = player.i.equips[typ]
                 t = cur.number; cur.number = inv.number; inv.number = t;
                 t = cur.dur; cur.dur = inv.dur; inv.dur = t;
                 t = cur.name; cur.name = inv.name; inv.name = t;
@@ -464,7 +464,7 @@ addLayer("i", {
         },
         getDisplay(data, id) {
             if (player.i.inventory[data].exist) {
-                inv = player.i.inventory[data]
+                let inv = player.i.inventory[data]
                 return "数字<br>" + format(inv.number) + "<br>耐久<br>" + format(inv.dur, 0)
             } else {
                 return ""
@@ -479,8 +479,8 @@ addLayer("i", {
     tabFormat: [
         ["display-text",
         function() {
-            d = player.i
-            disp = ""
+            let d = player.i
+            let disp = ""
             disp += "<p>你目前拥有</p><p>——————————————————————————</p>"
             
             disp += "<p><b>" + format(d.gold) + "</b> 金子</p>"
@@ -520,7 +520,7 @@ addLayer("i", {
 
     doReset(resettingLayer) {
         if (layers[resettingLayer].row > this.row || resettingLayer == "r") {
-            keep = ["inv_slots"]
+            let keep = ["inv_slots", "bestfish", "bestfood", "bestgold", "bestwood", "bestfiber", "bestmineral"]
             layerDataReset(this.layer, keep)
         }
     },
@@ -528,12 +528,12 @@ addLayer("i", {
     
     row: "side", // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        i = player.i
-        return i.bestfish.gt(0) || i.bestfood.gt(0) || i.bestgold.gt(0)
+        let i = player.i
+        return i.bestfish.gt(0) || i.bestfood.gt(0) || i.bestgold.gt(0) || i.bestwood.gt(0)
     },
 
     update(diff) {
-        d = player.i
+        let d = player.i
         d.bestfish = d.bestfish.max(d.fish)
         d.bestgold = d.bestgold.max(d.gold)
         d.bestfood = d.bestfood.max(d.food)
