@@ -35,9 +35,219 @@ addLayer("mp", {
         return hasAchievement("m", 13)
     },
 
+    
+    buyables: {
+        11: {
+            title: "向深处探索",
+            cost(x) {
+                return new Decimal(1.8).pow(x).mul(20)
+            },
+            display() {
+                cur_amount = getBuyableAmount(this.layer, this.id)
+                ret = "探索等级 " + format(cur_amount, 0) + "/10\n\n"
+                
+                if (cur_amount.lt(10) && cur_amount.gt(0)) {
+                    ret += "<p style='color: red'> 注意: 继续探索会将区域数量级x3.6, 误入深处可能会非常危险！ </p>\n"
+                }
+
+                if (cur_amount.gte(1)) {
+                    ret += "当前等级: 区域数量级 " + format(this.effect()) + "\n"
+                }
+                if (cur_amount.lt(10)) {
+                    ret += "下一级价格: " + format(this.cost(cur_amount)) + " 投入时间"
+                }
+                return ret
+            },
+            unlocked() {
+                return hasUpgrade("p", 35)
+            },
+            purchaseLimit: new Decimal(10),
+            effect() {
+                cur_amount = getBuyableAmount(this.layer, this.id)
+                return cur_amount.gte(2) ? new Decimal(3.6).pow(cur_amount.sub(1)) : new Decimal(1);
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            }
+        },
+    },
+
+    clickables: {
+        11: {
+            "title": "伐木",
+            display() {
+                disp = "使用当前投入时间的50%以及5食物，获得木材与纤维，并增长劳务能力。\n\n单位时间收益:\n"
+                disp += format(tmp.mp.lumberWoodIncome) + " 木材\n"
+                disp += format(tmp.mp.lumberFiberIncome) + " 纤维\n"
+                disp += format(tmp.mp.lumberExp) + " 经验"
+                return disp
+            },
+            style() {
+                if (!player.r.is_dead) {
+                    return {
+                        "background-color": "#44bd32"
+                    }
+                } else {
+                    return {
+                        "background-color": "#ffffff"
+                    }
+                }
+            },
+            onClick() {
+                data = player.mp
+                t = data.points.mul(0.5)
+                data.points = data.points.sub(t)
+                player.i.food = player.i.food.sub(5) 
+                player.i.wood = player.i.wood.add(t.mul(tmp.mp.lumberWoodIncome))
+                player.i.fiber = player.i.fiber.add(t.mul(tmp.mp.lumberFiberIncome))
+                player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.mp.lumberExp))
+
+                layers["i"].useEquip("axe", t.sqrt())
+            },
+            canClick() {
+                return !player.r.is_dead && player.mp.points.gt(0) && player.i.food.gt(5) && player.i.equips.axe.equipped
+            },
+            unlocked() {
+                return getBuyableAmount(this.layer, 11).gt(0)
+            }
+        },
+
+        12: {
+            "title": "挖矿",
+            display() {
+                disp = "使用当前投入时间的50%以及5食物，获得矿物，并增长劳务能力。\n\n单位时间收益:\n"
+                disp += format(tmp.mp.mineIncome) + " 矿物\n"
+                disp += format(tmp.mp.mineExp) + " 经验"
+                return disp
+            },
+            style() {
+                if (!player.r.is_dead) {
+                    return {
+                        "background-color": "#44bd32"
+                    }
+                } else {
+                    return {
+                        "background-color": "#ffffff"
+                    }
+                }
+            },
+            onClick() {
+                data = player.mp
+                t = data.points.mul(0.5)
+                data.points = data.points.sub(t)
+                player.i.food = player.i.food.sub(5)
+                player.i.mineral = player.i.mineral.add(t.mul(tmp.mp.mineIncome))
+                player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.mp.mineExp))
+                
+                layers["i"].useEquip("pickaxe", t.sqrt())
+            },
+            canClick() {
+                return !player.r.is_dead && player.mp.points.gt(0) && player.i.food.gt(5) && player.i.equips.pickaxe.equipped
+            },
+            unlocked() {
+                return getBuyableAmount(this.layer, 11).gt(0)
+            }
+        },
+
+        13: {
+            "title": "狩猎",
+            display() {
+                disp = "使用当前投入时间的50%以及5食物，有概率发现野兽，并增长索敌能力。\n\n单位时间收益:\n"
+                disp += format(tmp.mp.huntProbability) + " 几率发现猎物\n"
+                disp += format(tmp.mp.huntExp) + " 经验(成功发现时x1.5)"
+                return disp
+            },
+            style() {
+                if (!player.r.is_dead) {
+                    return {
+                        "background-color": "#44bd32"
+                    }
+                } else {
+                    return {
+                        "background-color": "#ffffff"
+                    }
+                }
+            },
+            onClick() {
+                data = player.mp
+                t = data.points.mul(0.5)
+                data.points = data.points.sub(t)
+                player.i.food = player.i.food.sub(5)
+
+                r = Math.random()
+                exp = t.mul(tmp.mp.huntExp)
+
+                if (huntProbability.gte(r)) {
+                    // TODO: hunted
+                    exp = exp.mul(1.5)
+                } 
+
+                player.e.hunting.cur_exp = player.e.hunting.cur_exp.add(exp)
+            },
+            canClick() {
+                return !player.r.is_dead && player.mp.points.gt(0) && player.i.food.gt(5) && player.i.equips.weapon.equipped
+            },
+            unlocked() {
+                return getBuyableAmount(this.layer, 11).gt(0)
+            }
+        },
+    },
+
+    lumberWoodIncome() {
+        number_eff = player.r.number.sqrt().mul(player.i.equips.axe.number.sqrt())
+        return number_eff.mul(tmp.e.laboringEffect).mul(0.1)
+    },
+
+    lumberFiberIncome() {
+        number_eff = player.r.number.sqrt().mul(player.i.equips.axe.number.sqrt())
+        return number_eff.mul(tmp.e.laboringEffect).mul(0.04)
+    },
+
+    lumberExp() {
+        return new Decimal(10).mul(tmp.e.lvlpEffect)
+    },
+
+    mineIncome() {
+        number_eff = player.r.number.sqrt().mul(player.i.equips.pickaxe.number.sqrt())
+        return number_eff.mul(tmp.e.laboringEffect).mul(0.01)
+    },
+
+    mineExp() {
+        return new Decimal(10).mul(tmp.e.lvlpEffect)
+    },
+
+    huntProbability() {
+        t = player.mp.points.mul(0.5)
+        theta = new Decimal(30).div(tmp.e.huntingEffect)
+        return new Decimal(1) - t.div(theta).neg().exp()
+    },
+
+    huntExp() {
+        return new Decimal(10).mul(tmp.e.lvlpEffect)
+    },
+
+
     update(diff) {
 
     },
+
+    tabFormat: [
+        ["display-text", function() {
+            return "在幂次原野区域，你目前有<b> " + format(player.mp.points) + " </b>投入时间"    
+        }, {"font-size": "20px"}],
+        
+        "blank",
+        "prestige-button", "resource-display",
+        "blank",
+        "upgrades",
+        "blank",
+        "clickables",
+        "blank",
+        "buyables",
+        "blank",
+    ],
 
 
     branches() {return ['p']},

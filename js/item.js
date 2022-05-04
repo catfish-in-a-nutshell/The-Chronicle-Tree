@@ -25,6 +25,12 @@ addLayer("i", {
             bestgold: new Decimal(0),
             fish: new Decimal(0),
             bestfish: new Decimal(0),
+            wood: new Decimal(0),
+            bestwood: new Decimal(0),
+            fiber: new Decimal(0),
+            bestfiber: new Decimal(0),
+            mineral: new Decimal(0),
+            bestmineral: new Decimal(0),
 
             equips: {
                 fishingrod: {
@@ -485,6 +491,15 @@ addLayer("i", {
             if (d.bestfish.gt(0)) {
                 disp += "<p><b>" + format(d.fish) + "</b> 鱼</p>"
             }
+            if (d.bestwood.gt(0)) {
+                disp += "<p><b>" + format(d.wood) + "</b> 木材</p>"
+            }
+            if (d.bestfiber.gt(0)) {
+                disp += "<p><b>" + format(d.fiber) + "</b> 纤维</p>"
+            }
+            if (d.bestmineral.gt(0)) {
+                disp += "<p><b>" + format(d.mineral) + "</b> 矿物</p>"
+            }
 
             return disp
         },
@@ -522,5 +537,8 @@ addLayer("i", {
         d.bestfish = d.bestfish.max(d.fish)
         d.bestgold = d.bestgold.max(d.gold)
         d.bestfood = d.bestfood.max(d.food)
+        d.bestwood = d.bestwood.max(d.wood)
+        d.bestfiber = d.bestfiber.max(d.fiber)
+        d.bestmineral = d.bestmineral.max(d.mineral)
     }
 })

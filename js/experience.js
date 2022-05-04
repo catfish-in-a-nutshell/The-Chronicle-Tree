@@ -38,6 +38,11 @@ addLayer("e", {
             lvl: new Decimal(0),
             prog: new Decimal(0)
         },
+        hunting: {
+            cur_exp: new Decimal(0),
+            lvl: new Decimal(0),
+            prog: new Decimal(0)
+        },
     }},
     color: "#27ae60",
     requires: new Decimal(1), // Can be a function that takes requirement increases into account
@@ -89,6 +94,10 @@ addLayer("e", {
         return new Decimal(1)
     }, 
 
+    huntingGainMult() {
+        return new Decimal(1)
+    }, 
+
     communicationEffect() {
         return player.e.communication.lvl.mul(0.2).add(1)
     },
@@ -113,6 +122,9 @@ addLayer("e", {
         return player.e.fishing.lvl.mul(0.5).add(1)
     }, 
 
+    huntingEffect() {
+        return player.e.hunting.lvl.sqrt().mul(0.1).add(1)
+    }, 
 
 
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -162,7 +174,12 @@ addLayer("e", {
         ["display-text", function() {
             return "钓鱼lv" + format(player.e.fishing.lvl, 0) + ": 提升水中资源的产出，目前效果 x" + format(tmp.e.fishingEffect)
         }],
-        ["bar", "fishingBar"]],
+        ["bar", "fishingBar"],
+        "blank",
+        ["display-text", function() {
+            return "索敌lv" + format(player.e.hunting.lvl, 0) + ": 提升发现敌人的概率，目前效果 x" + format(tmp.e.huntingEffect)
+        }],
+        ["bar", "huntingBar"]],
 
     
     bars: {
@@ -231,11 +248,22 @@ addLayer("e", {
             progress() { return player.e.fishing.cur_exp.div(player.e.fishing.nxt_exp) },
             display() { return "下一级经验: " + format(player.e.fishing.cur_exp) + "/" + format(player.e.fishing.nxt_exp) },
             unlocked: true
+        },
+        huntingBar: {
+            direction: RIGHT,
+            width: 300,
+            height: 30,
+            fillStyle: {'background-color' : "#27ae60"},
+            baseStyle: {'background-color' : "#000000"},
+            borderStyle() {return {}},
+            progress() { return player.e.hunting.cur_exp.div(player.e.hunting.nxt_exp) },
+            display() { return "下一级经验: " + format(player.e.hunting.cur_exp) + "/" + format(player.e.hunting.nxt_exp) },
+            unlocked: true
         }
     },
 
     update(diff) {
-        skill_list = ["communication", "swimming", "laboring", "cooking", "trading", "fishing"]
+        skill_list = ["communication", "swimming", "laboring", "cooking", "trading", "fishing", "hunting"]
         for (i = 0; i < skill_list.length; i++) {
             data = player.e[skill_list[i]]
             if (data.cur_exp.gte(data.nxt_exp)) {

@@ -116,7 +116,7 @@ addLayer("g", {
                 data = player.g
                 t = data.points
                 
-                harv = new Decimal(0.2).mul(t).mul(tmp.e.fishingEffect)
+                harv = new Decimal(0.2).mul(t).mul(tmp.e.fishingEffect).mul(player.i.equips.fishingrod.number)
                 fishing_exp = harv.mul(20).mul(tmp.e.lvlpEffect)
 
                 harv_exp = harv.log10()
@@ -211,7 +211,7 @@ addLayer("g", {
         swim_speed = swim_speed.mul(buyableEffect("r", 12))
         air_max = tmp.g.maxAir
         
-
+        exp_gain = new Decimal(10).mul(tmp.e.lvlpEffect)
         if (data.diving_up) {
             tick_swim_time = new Decimal(diff)
             tick_swim_time = tick_swim_time.min(data.air_cur.div(air_consume_rate))

@@ -52,7 +52,7 @@ addLayer("s", {
             cost(x) { return new Decimal(3).pow(x).mul(40) },
             display() { 
                 cur_amount = getBuyableAmount(this.layer, this.id)
-                return "让全局时间加快x1.2 \n\n当前效果:" + format(this.effect(cur_amount)) + "x, 下一级价格:" + format(this.cost(cur_amount)) 
+                return "让全局时间加快x1.1 \n\n当前效果:" + format(this.effect(cur_amount)) + "x, 下一级价格:" + format(this.cost(cur_amount)) 
             },
             canAfford() { 
                 return player[this.layer].sloth.gte(this.cost(getBuyableAmount(this.layer, this.id))) 
@@ -63,7 +63,7 @@ addLayer("s", {
             },
             effect() {
                 cur_amount = getBuyableAmount(this.layer, this.id)
-                return new Decimal(1.2).pow(cur_amount)
+                return new Decimal(1.1).pow(cur_amount)
             }
         },
         13: {
