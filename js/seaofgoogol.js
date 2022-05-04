@@ -1,7 +1,7 @@
 addLayer("g", {
     name: "古戈尔之海", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "~", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
@@ -127,8 +127,9 @@ addLayer("g", {
                 data.points = new Decimal(0)
 
                 player.e.fishing.cur_exp = player.e.fishing.cur_exp.add(fishing_exp)
+                layers["i"].useEquip("fishingrod", t.sqrt())
             },
-            canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.r.points.gt(0),
+            canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.r.points.gt(0) && player.i.equips.fishingrod.equipped,
             unlocked: () => hasUpgrade("p", 31)
         }
     },

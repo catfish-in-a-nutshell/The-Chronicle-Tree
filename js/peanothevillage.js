@@ -1,7 +1,7 @@
 addLayer("p", {
     name: "皮亚诺村", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "p", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
 		points: new Decimal(0),
@@ -108,7 +108,15 @@ addLayer("p", {
             cost: () => new Decimal(10).div(tmp.e.tradingEffect),
             currencyDisplayName: "金子",
             currencyInternalName: "gold",
-            currencyLocation: () => player.i
+            currencyLocation: () => player.i,
+            onPurchase() {
+                layers["i"].addInventory({
+                    equiptype: "fishingrod",
+                    name: "鱼竿",
+                    number: 1,
+                    dur: 100
+                })
+            }
         },
 
         32: {
@@ -118,7 +126,15 @@ addLayer("p", {
             cost: () => new Decimal(20).div(tmp.e.tradingEffect),
             currencyDisplayName: "金子",
             currencyInternalName: "gold",
-            currencyLocation: () => player.i
+            currencyLocation: () => player.i,
+            onPurchase() {
+                layers["i"].addInventory({
+                    equiptype: "axe",
+                    name: "斧头",
+                    number: 1,
+                    dur: 100
+                })
+            }
         },
 
         33: {
@@ -128,7 +144,15 @@ addLayer("p", {
             cost: () => new Decimal(50).div(tmp.e.tradingEffect),
             currencyDisplayName: "金子",
             currencyInternalName: "gold",
-            currencyLocation: () => player.i
+            currencyLocation: () => player.i,
+            onPurchase() {
+                layers["i"].addInventory({
+                    equiptype: "pickaxe",
+                    name: "铁镐",
+                    number: 1,
+                    dur: 100
+                })
+            }
         },
 
         34: {
@@ -138,7 +162,15 @@ addLayer("p", {
             cost: () => new Decimal(100).div(tmp.e.tradingEffect),
             currencyDisplayName: "金子",
             currencyInternalName: "gold",
-            currencyLocation: () => player.i
+            currencyLocation: () => player.i,
+            onPurchase() {
+                layers["i"].addInventory({
+                    equiptype: "weapon",
+                    name: "铁剑",
+                    number: 1,
+                    dur: 100
+                })
+            }
         },
 
         35: {
@@ -448,7 +480,7 @@ addLayer("p", {
         lore: {
             title: "故事",
             body() {
-                disp = ""
+                disp = "你来到海边异常平和的小村庄。你对这里有着朦胧的印象，但似乎没有一个人认识你。"
 
                 keys = [11, 12, 13, 14]
                 dkeys = ["p11", "p12", "p13", "p14"]
@@ -536,5 +568,7 @@ addLayer("p", {
                 ["infobox", "lore"]
             ]
         }
-    } 
+    },
+    
+    branches() {return ['g']},
 })
