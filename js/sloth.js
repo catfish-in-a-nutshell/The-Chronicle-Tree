@@ -35,7 +35,9 @@ addLayer("s", {
             cost(x) { return new Decimal(2).pow(x).mul(120) },
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return "怠惰上限x2\n\n当前上限:" + format(player.s.limit) + ", 下一级价格:" + format(this.cost(cur_amount)) 
+                return `怠惰上限x2\n
+                当前上限: ${format(player.s.limit)}
+                下一级价格: ${format(this.cost(cur_amount))}` 
             },
             canAfford() { return player[this.layer].sloth.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -52,7 +54,9 @@ addLayer("s", {
             cost(x) { return new Decimal(3).pow(x).mul(40) },
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return "让全局时间加快x1.1 \n\n当前效果:" + format(this.effect(cur_amount)) + "x, 下一级价格:" + format(this.cost(cur_amount)) 
+                return `让全局时间加快x1.1 \n
+                当前效果: ${format(this.effect(cur_amount))}x
+                下一级价格: ${format(this.cost(cur_amount))}` 
             },
             canAfford() { 
                 return player[this.layer].sloth.gte(this.cost(getBuyableAmount(this.layer, this.id))) 
@@ -71,7 +75,9 @@ addLayer("s", {
             cost(x) { return new Decimal(2.5).pow(x).mul(80) },
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return "怠惰增长速率x1.5 \n\n当前效果:" + format(this.effect(cur_amount)) + "x, 下一级价格:" + format(this.cost(cur_amount)) 
+                return `怠惰增长速率x1.5 \n
+                当前效果: ${format(this.effect(cur_amount))}x
+                下一级价格: ${format(this.cost(cur_amount))}` 
             },
             canAfford() { return player[this.layer].sloth.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -95,8 +101,7 @@ addLayer("s", {
     },
 
     tabFormat: [["display-text", function() {
-        return "你拥有 <span style='color:#f1c40f; font-size:25px'>" + format(player.s.sloth, 0) + "</span> / "
-         + format(player.s.limit) + " 怠惰 (" + format(player.s.speed) + "/s)"  
+        return `你拥有 <span style='color:#f1c40f; font-size:25px'>${format(player.s.sloth, 0)}</span> / ${format(player.s.limit)} 怠惰 (${format(player.s.speed)}/s)`
      }, {"font-size": "20px"}],
                 "blank",
                 "buyables"],

@@ -50,7 +50,7 @@ addLayer("g", {
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
             progress: () => player.g.depth_cur.gt(0) ? player.g.air_cur_progress : new Decimal(1),
-            display() { return player.g.depth_cur.gt(0) ? "剩余氧气: " + format(player.g.air_cur) + "/" + format(tmp.g.maxAir) : ""},
+            display() { return player.g.depth_cur.gt(0) ? `剩余氧气: ${format(player.g.air_cur)}/${format(tmp.g.maxAir)}` : ""},
             unlocked: true
         }
     },
@@ -59,7 +59,7 @@ addLayer("g", {
         11: {
             "title": "向上游",
             display() {
-                return "你距离水面还有 " + format(player.g.depth_cur) + " 米"
+                return `你距离水面还有 ${format(player.g.depth_cur)} 米`
             },
             style() {
                 if (player.g.diving_up) {
@@ -153,7 +153,7 @@ addLayer("g", {
         }
     },
     tabFormat: [["display-text", function() {
-            return "在古戈尔之海区域，你目前有<b> " + format(player.g.points) + " </b>投入时间"    
+            return `在古戈尔之海区域，你目前有<b> ${format(player.g.points)} </b>投入时间`
         }, {"font-size": "20px"}],
         "blank",
         "prestige-button", "resource-display",
@@ -169,7 +169,7 @@ addLayer("g", {
         ["display-text", function() {
             let disp = ""
             if (player.g.last_fish.gt(0)) {
-                disp += "<p>你上一次钓鱼获得了 " + format(player.g.last_fish) + " 鱼</p>"
+                disp += `<p>你上一次钓鱼获得了 ${format(player.g.last_fish)} 鱼</p>`
             }
             return disp
         }]

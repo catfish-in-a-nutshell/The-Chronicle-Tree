@@ -23,7 +23,7 @@ addLayer("mp", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    tooltip: () => "幂次原野: " + format(player.mp.points) + " 投入时间",
+    tooltip: () => `幂次原野: ${format(player.mp.points)} 投入时间`,
     tooltipLocked: () => "幂次原野 - 需要升级: 从皮亚诺村启程",
     
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -44,17 +44,17 @@ addLayer("mp", {
             },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                let ret = "探索等级 " + format(cur_amount, 0) + "/10\n\n"
+                let ret = `探索等级 ${format(cur_amount, 0)}/10\n\n`
                 
                 if (cur_amount.lt(10) && cur_amount.gt(0)) {
                     ret += "<p style='color: red'> 注意: 继续探索会将区域数量级x3.6, 误入深处可能会非常危险！ </p>\n"
                 }
 
                 if (cur_amount.gte(1)) {
-                    ret += "当前等级: 区域数量级 " + format(this.effect()) + "\n"
+                    ret += `当前等级: 区域数量级 ${format(this.effect())}\n`
                 }
                 if (cur_amount.lt(10)) {
-                    ret += "下一级价格: " + format(this.cost(cur_amount)) + " 投入时间"
+                    ret += `下一级价格: ${format(this.cost(cur_amount))} 投入时间`
                 }
                 return ret
             },
@@ -78,10 +78,11 @@ addLayer("mp", {
         11: {
             "title": "伐木",
             display() {
-                let disp = "使用当前投入时间的50%以及5食物，获得木材与纤维，并增长劳务能力。\n\n单位时间收益:\n"
-                disp += format(tmp.mp.lumberWoodIncome) + " 木材\n"
-                disp += format(tmp.mp.lumberFiberIncome) + " 纤维\n"
-                disp += format(tmp.mp.lumberExp) + " 经验"
+                let disp = `使用当前投入时间的50%以及5食物，获得木材与纤维，并增长劳务能力。\n
+                单位时间收益:
+                ${format(tmp.mp.lumberWoodIncome)} 木材
+                ${format(tmp.mp.lumberFiberIncome)} 纤维
+                ${format(tmp.mp.lumberExp)} 经验`
                 return disp
             },
             style() {
@@ -117,9 +118,10 @@ addLayer("mp", {
         12: {
             "title": "挖矿",
             display() {
-                disp = "使用当前投入时间的50%以及5食物，获得矿物，并增长劳务能力。\n\n单位时间收益:\n"
-                disp += format(tmp.mp.mineIncome) + " 矿物\n"
-                disp += format(tmp.mp.mineExp) + " 经验"
+                disp = `使用当前投入时间的50%以及5食物，获得矿物，并增长劳务能力。\n
+                单位时间收益:
+                ${format(tmp.mp.mineIncome)} 矿物
+                ${format(tmp.mp.mineExp)} 经验`
                 return disp
             },
             style() {
@@ -154,9 +156,10 @@ addLayer("mp", {
         13: {
             "title": "狩猎",
             display() {
-                let disp = "使用当前投入时间的50%以及5食物，有概率发现野兽，并增长索敌能力。\n\n单位时间收益:\n"
-                disp += format(tmp.mp.huntProbability) + " 几率发现猎物\n"
-                disp += format(tmp.mp.huntExp) + " 经验(成功发现时x1.5)"
+                let disp = `使用当前投入时间的50%以及5食物，有概率发现野兽，并增长索敌能力。\n
+                单位时间收益:
+                ${format(tmp.mp.huntProbability)} 几率发现猎物
+                ${format(tmp.mp.huntExp)} 经验(成功发现时x1.5)`
                 return disp
             },
             style() {
@@ -235,7 +238,7 @@ addLayer("mp", {
 
     tabFormat: [
         ["display-text", function() {
-            return "在幂次原野区域，你目前有<b> " + format(player.mp.points) + " </b>投入时间"    
+            return `在幂次原野区域，你目前有<b> ${format(player.mp.points)} </b>投入时间`
         }, {"font-size": "20px"}],
         
         "blank",

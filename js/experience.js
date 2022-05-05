@@ -143,41 +143,41 @@ addLayer("e", {
         ["display-text", "</b>你的躯体会随着冒险变强，但如果死去，此页面的内容将被重置！</b>", {"font-size": "20px"}],
         "blank",
         ["display-text", function() {
-            return "你目前技能总等级 " + format(player.e.lvlpoints, 0) + ", 提升技能经验值获取 x" + format(tmp.e.lvlpEffect)
+            return `你目前技能总等级 ${format(player.e.lvlpoints, 0)}, 提升技能经验值获取 x${format(tmp.e.lvlpEffect)}`
         }, {"font-size": "20px"}],
         "blank",
         ["display-text", function() {
-            return "交流lv" + format(player.e.communication.lvl, 0) + ": 降低一切与人交流的时间花费，目前效果 x" + format(tmp.e.communicationEffect)
+            return `交流lv${format(player.e.communication.lvl, 0)}: 降低一切与人交流的时间花费，目前效果 x${format(tmp.e.communicationEffect)}`
         }],
         ["bar", "communicationBar"],
         "blank",
         ["display-text", function() {
-            return "游泳lv" + format(player.e.swimming.lvl, 0) + ": 加快游泳速度，目前效果 x" + format(tmp.e.swimmingEffect)
+            return `游泳lv${format(player.e.swimming.lvl, 0)}: 加快游泳速度，目前效果 x${format(tmp.e.swimmingEffect)}`
         }],
         ["bar", "swimmingBar"],
         "blank",
         ["display-text", function() {
-            return "劳务lv" + format(player.e.laboring.lvl, 0) + ": 提升体力劳动的产出，目前效果 x" + format(tmp.e.laboringEffect)
+            return `劳务lv${format(player.e.laboring.lvl, 0)}: 提升体力劳动的产出，目前效果 x${format(tmp.e.laboringEffect)}`
         }],
         ["bar", "laboringBar"],
         "blank",
         ["display-text", function() {
-            return "烹饪lv" + format(player.e.cooking.lvl, 0) + ": 提升食物转化效率，目前效果 x" + format(tmp.e.cookingEffect)
+            return `烹饪lv${format(player.e.cooking.lvl, 0)}: 提升食物转化效率，目前效果 x${format(tmp.e.cookingEffect)}`
         }],
         ["bar", "cookingBar"],
         "blank",
         ["display-text", function() {
-            return "贸易lv" + format(player.e.trading.lvl, 0) + ": 降低购买时的成本、提升卖出时的收益，目前效果 x" + format(tmp.e.tradingEffect)
+            return `贸易lv${format(player.e.trading.lvl, 0)}: 降低购买时的成本、提升卖出时的收益，目前效果 x${format(tmp.e.tradingEffect)}`
         }],
         ["bar", "tradingBar"],
         "blank",
         ["display-text", function() {
-            return "钓鱼lv" + format(player.e.fishing.lvl, 0) + ": 提升水中资源的产出，目前效果 x" + format(tmp.e.fishingEffect)
+            return `钓鱼lv${format(player.e.fishing.lvl, 0)}: 提升水中资源的产出，目前效果 x${format(tmp.e.fishingEffect)}`
         }],
         ["bar", "fishingBar"],
         "blank",
         ["display-text", function() {
-            return "索敌lv" + format(player.e.hunting.lvl, 0) + ": 提升发现敌人的概率，目前效果 x" + format(tmp.e.huntingEffect)
+            return `索敌lv${format(player.e.hunting.lvl, 0)}: 提升发现敌人的概率，目前效果 x${format(tmp.e.huntingEffect)}`
         }],
         ["bar", "huntingBar"]],
 
@@ -191,7 +191,7 @@ addLayer("e", {
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
             progress() { return player.e.communication.cur_exp.div(player.e.communication.nxt_exp) },
-            display() { return "下一级经验: " + format(player.e.communication.cur_exp) + "/" + format(player.e.communication.nxt_exp) },
+            display() { return `下一级经验: ${format(player.e.communication.cur_exp)}/${format(player.e.communication.nxt_exp)}`},
             unlocked: true
         },
         swimmingBar: {
@@ -202,7 +202,7 @@ addLayer("e", {
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
             progress() { return player.e.swimming.cur_exp.div(player.e.swimming.nxt_exp) },
-            display() { return "下一级经验: " + format(player.e.swimming.cur_exp) + "/" + format(player.e.swimming.nxt_exp) },
+            display() { return `下一级经验: ${format(player.e.swimming.cur_exp)}/${format(player.e.swimming.nxt_exp)}`},
             unlocked: true
         },
         laboringBar: {
@@ -213,7 +213,7 @@ addLayer("e", {
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
             progress() { return player.e.laboring.cur_exp.div(player.e.laboring.nxt_exp) },
-            display() { return "下一级经验: " + format(player.e.laboring.cur_exp) + "/" + format(player.e.laboring.nxt_exp) },
+            display() { return `下一级经验: ${format(player.e.laboring.cur_exp)}/${format(player.e.laboring.nxt_exp)}`},
             unlocked: true
         },
         cookingBar: {
@@ -224,7 +224,7 @@ addLayer("e", {
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
             progress() { return player.e.cooking.cur_exp.div(player.e.cooking.nxt_exp) },
-            display() { return "下一级经验: " + format(player.e.cooking.cur_exp) + "/" + format(player.e.cooking.nxt_exp) },
+            display() { return `下一级经验: ${format(player.e.cooking.cur_exp)}/${format(player.e.cooking.nxt_exp)}`},
             unlocked: true
         },
         tradingBar: {
@@ -235,7 +235,7 @@ addLayer("e", {
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
             progress() { return player.e.trading.cur_exp.div(player.e.trading.nxt_exp) },
-            display() { return "下一级经验: " + format(player.e.trading.cur_exp) + "/" + format(player.e.trading.nxt_exp) },
+            display() { return `下一级经验: ${format(player.e.trading.cur_exp)}/${format(player.e.trading.nxt_exp)}`},
             unlocked: true
         },
         fishingBar: {
@@ -246,7 +246,7 @@ addLayer("e", {
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
             progress() { return player.e.fishing.cur_exp.div(player.e.fishing.nxt_exp) },
-            display() { return "下一级经验: " + format(player.e.fishing.cur_exp) + "/" + format(player.e.fishing.nxt_exp) },
+            display() { return `下一级经验: ${format(player.e.fishing.cur_exp)}/${format(player.e.fishing.nxt_exp)}`},
             unlocked: true
         },
         huntingBar: {
@@ -257,7 +257,7 @@ addLayer("e", {
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
             progress() { return player.e.hunting.cur_exp.div(player.e.hunting.nxt_exp) },
-            display() { return "下一级经验: " + format(player.e.hunting.cur_exp) + "/" + format(player.e.hunting.nxt_exp) },
+            display() { return `下一级经验: ${format(player.e.hunting.cur_exp)}/${format(player.e.hunting.nxt_exp)}`},
             unlocked: true
         }
     },

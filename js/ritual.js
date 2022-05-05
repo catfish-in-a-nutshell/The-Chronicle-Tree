@@ -46,7 +46,8 @@ addLayer("r", {
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) },
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return "你可以游得更快。\n当前效果:" + format(this.effect(cur_amount)) + ", 下一级价格:" + format(this.cost(cur_amount)) 
+                return `你可以游得更快。
+                当前效果: ${format(this.effect(cur_amount))}, 下一级价格: ${format(this.cost(cur_amount)) }`
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -63,7 +64,8 @@ addLayer("r", {
             cost(x) { return new Decimal(2).mul(x.add(1).pow(3))},
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return "你可以游得更快，但消耗氧气也等比例增加。 \n当前效果:" + format(this.effect(cur_amount)) + ", 下一级价格:" + format(this.cost(cur_amount)) 
+                return `你可以游得更快，但消耗氧气也等比例增加。 
+                当前效果: ${format(this.effect(cur_amount))}, 下一级价格: ${format(this.cost(cur_amount)) }`
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -80,7 +82,8 @@ addLayer("r", {
             cost(x) { return new Decimal(3).mul(x.add(1).pow(2))},
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return "消耗氧气速度降低。 \n当前效果:" + format(this.effect(cur_amount)) + "x, 下一级价格:" + format(this.cost(cur_amount)) 
+                return `消耗氧气速度降低。 
+                当前效果: ${format(this.effect(cur_amount))}, 下一级价格: ${format(this.cost(cur_amount)) }`
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -119,7 +122,6 @@ addLayer("r", {
         {key: "r", description: "r: 重生", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     doReset(resettingLayer) {
-        console.log("r:receiving " + resettingLayer)
         if (resettingLayer == "r") {
             player.r.is_dead = false
             player.r.last_death_cause = ""
@@ -152,11 +154,11 @@ addLayer("r", {
 
         "数字": {
             content: [["display-text", function(){
-                let ret = "<p style='font-size: 20px; margin-bottom: 20px'>你目前的数字为 " + format(player.r.number) + "</p>"
+                let ret = `<p style='font-size: 20px; margin-bottom: 20px'>你目前的数字为 ${format(player.r.number)}</p>`
 
-                ret += "<p>你的物理尺寸提升 x" + format(tmp.r.physicalEffect) + "</p>"
-                ret += "<p>你的资源消耗提升 x" + format(tmp.r.consumptionEffect) + "</p>"
-                ret += "<p>你的时间速度提升 x" + format(tmp.r.speedUp) + "</p>"
+                ret += `<p>你的物理尺寸提升 x${format(tmp.r.physicalEffect)}</p>`
+                ret += `<p>你的资源消耗提升 x${format(tmp.r.consumptionEffect)}</p>`
+                ret += `<p>你的时间速度提升 x${format(tmp.r.speedUp)}</p>`
 
                 return ret
             }]],

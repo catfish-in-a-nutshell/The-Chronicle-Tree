@@ -36,7 +36,7 @@ addLayer("p", {
         let exp = new Decimal(1)
         return exp
     },
-    tooltip: () => "皮亚诺村: " + format(player.p.points) + " 投入时间",
+    tooltip: () => `皮亚诺村: ${format(player.p.points)} 投入时间`,
     tooltipLocked: () => "皮亚诺村",
     hotkeys: [
         {key: "p", description: "p: 将空余时间投入皮亚诺村区域", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -195,15 +195,15 @@ addLayer("p", {
             },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                let ret = "进度 " + format(cur_amount, 0) + "/7\n\n"
+                let ret = `进度 ${format(cur_amount, 0)}/7\n\n`
                 if (cur_amount.gte(1) && cur_amount.lt(7)) {
                     ret += full_dialogue["p11"][format(cur_amount, 0)] + "\n\n"
                 }
                 if (cur_amount.gte(3)) {
-                    ret += "当前效果：本地投入时间转化效率x" + format(this.effect()) + "\n"
+                    ret += `当前效果：本地投入时间转化效率 x${format(this.effect())}\n`
                 }
                 if (cur_amount.lt(7)) {
-                    ret += "下一级价格: " + format(this.cost(cur_amount)) + " 投入时间"
+                    ret += `下一级价格: ${format(this.cost(cur_amount))} 投入时间`
                 }
                 return ret
             },
@@ -230,15 +230,12 @@ addLayer("p", {
             },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                let ret = "进度 " + format(cur_amount, 0) + "/14\n\n"
+                let ret = `进度 ${format(cur_amount, 0)}/14\n\n`
                 if (cur_amount.gte(1) && cur_amount.lt(14)) {
                     ret += full_dialogue["p12"][format(cur_amount, 0)] + "\n\n"
                 }
-                // if (cur_amount.gte(3)) {
-                //     ret += "当前效果：本地投入时间转化效率x" + format(this.effect())
-                // }
                 if (cur_amount.lt(14)) {
-                    ret += "下一级价格:" + format(this.cost(cur_amount))  + " 投入时间"
+                    ret += `下一级价格: ${format(this.cost(cur_amount)) } 投入时间`
                 }
                 return ret
             },
@@ -261,13 +258,13 @@ addLayer("p", {
             },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                let ret = "进度 " + format(cur_amount, 0) + "/8\n\n"
+                let ret = `进度 ${format(cur_amount, 0)}/8\n\n`
                 if (cur_amount.gte(1) && cur_amount.lt(8)) {
                     ret += full_dialogue["p13"][format(cur_amount, 0)] + "\n\n"
                 }
-                ret += "当前效果：村中对话花费 x" + format(this.effect()) + "\n"
+                ret += `当前效果：村中对话花费 x${format(this.effect())}\n`
                 if (cur_amount.lt(8)) {
-                    ret += "下一级价格:" + format(this.cost(cur_amount)) + " 金子"
+                    ret += `下一级价格: ${format(this.cost(cur_amount))} 金子`
                 }
                 return ret
             },
@@ -321,9 +318,10 @@ addLayer("p", {
         11: {
             "title": "在酒馆帮忙",
             display() {
-                let disp = "使用当前投入时间的50%，获得少量报酬，并增长交流能力。\n\n单位时间收益:\n"
-                disp += format(tmp.p.tavernIncome) + " 金子\n"
-                disp += format(tmp.p.tavernExp) + " 经验"
+                let disp = `使用当前投入时间的50%，获得少量报酬，并增长交流能力。\n
+                单位时间收益:
+                ${format(tmp.p.tavernIncome)} 金子
+                ${format(tmp.p.tavernExp)} 经验`
                 return disp
             },
             style() {
@@ -355,10 +353,11 @@ addLayer("p", {
         12: {
             "title": "在农家帮忙",
             display() {
-                let disp = "使用当前投入时间的50%，获得较多报酬，并增长劳务能力。\n\n单位时间收益:\n"
-                disp += format(tmp.p.farmGoldIncome) + " 金子\n"
-                disp += format(tmp.p.farmFoodIncome) + " 食物\n"
-                disp += format(tmp.p.farmExp) + " 经验"
+                let disp = `使用当前投入时间的50%，获得较多报酬，并增长劳务能力。\n
+                单位时间收益:
+                ${format(tmp.p.farmGoldIncome)} 金子
+                ${format(tmp.p.farmFoodIncome)} 食物
+                ${format(tmp.p.farmExp)} 经验`
                 return disp
             },
             style() {
@@ -388,9 +387,10 @@ addLayer("p", {
         13: {
             "title": "卖鱼",
             display() {
-                let disp = "卖掉当前鱼的50%，获得报酬，并增长交易能力。\n\n单位鱼收益:\n"
-                disp += format(tmp.p.farmGoldIncome) + " 金子\n"
-                disp += format(tmp.p.farmExp) + " 经验"
+                let disp = `卖掉当前鱼的50%，获得报酬，并增长交易能力。\n
+                单位鱼收益:
+                ${format(tmp.p.farmGoldIncome)} 金子
+                ${format(tmp.p.farmExp)} 经验`
                 return disp
             },
             style() {
@@ -419,9 +419,10 @@ addLayer("p", {
         14: {
             "title": "将鱼制成食物",
             display() {
-                let disp = "处理当前鱼的50%，转化为对应的食物，并增长烹饪能力。\n\n单位鱼收益:\n"
-                disp += format(tmp.p.dealFishIncome) + " 食物\n"
-                disp += format(tmp.p.dealFishExp) + " 经验"
+                let disp = `处理当前鱼的50%，转化为对应的食物，并增长烹饪能力。\n
+                单位鱼收益:
+                ${format(tmp.p.dealFishIncome)} 食物
+                ${format(tmp.p.dealFishExp)} 经验`
                 return disp
             },
             style() {
@@ -450,9 +451,10 @@ addLayer("p", {
         15: {
             "title": "购买食物",
             display() {
-                let disp = "花金子购买食物，并增长交易能力。\n\n 单次效益:\n"
-                disp += "+ 10 食物\n- " + format(tmp.p.buyFoodCost) +  " 金子\n"
-                disp += format(tmp.p.buyFoodExp) + " 经验"
+                let disp = `花金子购买食物，并增长交易能力。\n
+                单次效益:
+                + 10 食物\n- ${format(tmp.p.buyFoodCost)} 金子
+                ${format(tmp.p.buyFoodExp)} 经验`
                 return disp
             },
             style() {
@@ -488,10 +490,10 @@ addLayer("p", {
 
                 for (let i = 0; i < keys.length; i++) {       
                     if (tmp.p.buyables[keys[i]].unlocked) {
-                        disp += "<p  style='margin-top: 10px'><h2> " + titles[i] + " </h2><p>"
+                        disp += `<p  style='margin-top: 10px'><h2> ${titles[i]} </h2><p>`
                         for (j = 0; j < full_dialogue[dkeys[i]].length; j++) {
                             if (getBuyableAmount("p", keys[i]).gt(j)) {
-                                disp += "<p style='margin-top: 5px'>" + full_dialogue[dkeys[i]][j] + "</p>"
+                                disp += `<p style='margin-top: 5px'>${full_dialogue[dkeys[i]][j]}</p>`
                             }
                         }
                         disp += "<p style='margin-top: 5px'> --------------------------------------</p>"
@@ -550,7 +552,7 @@ addLayer("p", {
         "主界面": {
             content: [
             ["display-text", function() {
-                return "在皮亚诺村区域，你目前有<b> " + format(player.p.points) + " </b>投入时间"    
+                return `在皮亚诺村区域，你目前有<b> ${format(player.p.points)} + " </b>投入时间`    
             }, {"font-size": "20px"}],
             
             "blank",

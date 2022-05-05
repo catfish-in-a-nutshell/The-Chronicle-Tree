@@ -126,7 +126,7 @@ addLayer("m", {
     },
 
     tabFormat: [["display-text", function() {
-           return "你拥有 <span style='color:#8e44ad; font-size:25px'>" + format(player.m.milestone_cnt, 0) + "</span> 记忆"  
+           return `你拥有 <span style='color:#8e44ad; font-size:25px'>${format(player.m.milestone_cnt, 0)}</span> 记忆`  
         }, {"font-size": "20px"}],
         "blank",
         ["infobox", "desc"],

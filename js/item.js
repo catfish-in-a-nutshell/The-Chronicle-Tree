@@ -144,8 +144,8 @@ addLayer("i", {
                 if (!inv.equipped) return ""
 
                 let disp = inv.name + "<br>"
-                disp += "数字: " + format(inv.number) + "<br>"
-                disp += "耐久: " + format(inv.dur) + "<br>"
+                disp += `数字: ${format(inv.number)}<br>`
+                disp += `耐久: ${format(inv.dur)}<br>`
 
                 // TODO: should include additional information, like effects
                 return disp
@@ -184,8 +184,8 @@ addLayer("i", {
                 if (!inv.equipped) return ""
 
                 let disp = inv.name + "<br>"
-                disp += "数字: " + format(inv.number) + "<br>"
-                disp += "耐久: " + format(inv.dur) + "<br>"
+                disp += `数字: ${format(inv.number)}<br>`
+                disp += `耐久: ${format(inv.dur)}<br>`
 
                 // TODO: should include additional information, like effects
                 return disp
@@ -224,8 +224,8 @@ addLayer("i", {
                 if (!inv.equipped) return ""
 
                 let disp = inv.name + "<br>"
-                disp += "数字: " + format(inv.number) + "<br>"
-                disp += "耐久: " + format(inv.dur) + "<br>"
+                disp += `数字: ${format(inv.number)}<br>`
+                disp += `耐久: ${format(inv.dur)}<br>`
 
                 // TODO: should include additional information, like effects
                 return disp
@@ -264,8 +264,8 @@ addLayer("i", {
                 if (!inv.equipped) return ""
 
                 let disp = inv.name + "<br>"
-                disp += "数字: " + format(inv.number) + "<br>"
-                disp += "耐久: " + format(inv.dur) + "<br>"
+                disp += `数字: ${format(inv.number)}<br>`
+                disp += `耐久: ${format(inv.dur)}<br>`
 
                 // TODO: should include additional information, like effects
                 return disp
@@ -304,8 +304,8 @@ addLayer("i", {
                 if (!inv.equipped) return ""
 
                 let disp = inv.name + "<br>"
-                disp += "数字: " + format(inv.number) + "<br>"
-                disp += "耐久: " + format(inv.dur) + "<br>"
+                disp += `数字: ${format(inv.number)}<br>`
+                disp += `耐久: ${format(inv.dur)}<br>`
 
                 // TODO: should include additional information, like effects
                 return disp
@@ -344,8 +344,8 @@ addLayer("i", {
                 if (!inv.equipped) return ""
 
                 let disp = inv.name + "<br>"
-                disp += "数字: " + format(inv.number) + "<br>"
-                disp += "耐久: " + format(inv.dur) + "<br>"
+                disp += `数字: ${format(inv.number)}<br>`
+                disp += `耐久: ${format(inv.dur)}<br>`
 
                 // TODO: should include additional information, like effects
                 return disp
@@ -384,8 +384,8 @@ addLayer("i", {
                 if (!inv.equipped) return ""
 
                 let disp = inv.name + "<br>"
-                disp += "数字: " + format(inv.number) + "<br>"
-                disp += "耐久: " + format(inv.dur) + "<br>"
+                disp += `数字: ${format(inv.number)}<br>`
+                disp += `耐久: ${format(inv.dur)}<br>`
 
                 // TODO: should include additional information, like effects
                 return disp
@@ -465,7 +465,7 @@ addLayer("i", {
         getDisplay(data, id) {
             if (player.i.inventory[data].exist) {
                 let inv = player.i.inventory[data]
-                return "数字<br>" + format(inv.number) + "<br>耐久<br>" + format(inv.dur, 0)
+                return `数字<br>${format(inv.number)}<br>耐久<br>${format(inv.dur, 0)}`
             } else {
                 return ""
             }
@@ -483,22 +483,22 @@ addLayer("i", {
             let disp = ""
             disp += "<p>你目前拥有</p><p>——————————————————————————</p>"
             
-            disp += "<p><b>" + format(d.gold) + "</b> 金子</p>"
+            disp += `<p><b>${format(d.gold)}</b> 金子</p>`
 
             if (d.bestfood.gt(0)) {
-                disp += "<p><b>" + format(d.food) + "</b> 食物</p>"
+                disp += `<p><b>${format(d.food)}</b> 食物</p>`
             }
             if (d.bestfish.gt(0)) {
-                disp += "<p><b>" + format(d.fish) + "</b> 鱼</p>"
+                disp += `<p><b>${format(d.fish)}</b> 鱼</p>`
             }
             if (d.bestwood.gt(0)) {
-                disp += "<p><b>" + format(d.wood) + "</b> 木材</p>"
+                disp += `<p><b>${format(d.wood)}</b> 木材</p>`
             }
             if (d.bestfiber.gt(0)) {
-                disp += "<p><b>" + format(d.fiber) + "</b> 纤维</p>"
+                disp += `<p><b>${format(d.fiber)}</b> 纤维</p>`
             }
             if (d.bestmineral.gt(0)) {
-                disp += "<p><b>" + format(d.mineral) + "</b> 矿物</p>"
+                disp += `<p><b>${format(d.mineral)}</b> 矿物</p>`
             }
 
             return disp
