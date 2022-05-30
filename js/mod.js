@@ -4,6 +4,7 @@ let modInfo = {
 	author: "catfish",
 	pointsName: "空余时间",
 	modFiles: [
+		"utils/funcutils.js",
 		"tree.js", 
 		// Area layers
 		"seaofgoogol.js", 
@@ -19,7 +20,9 @@ let modInfo = {
 		"battle.js",
 		// Resource files
 		"texts/dialogue.js",
-		"texts/bufftable.js"],
+		"texts/bufftable.js",
+		"texts/equiptable.js",
+		"texts/enemytable.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -43,7 +46,8 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "youDied", "addRawScore", "addInventory", "useEquip", "startEncounter"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "youDied", "addRawScore", "addInventory", "useEquip",
+ "startEncounter", "startZone", "pushBattleLog", "addBattleExp"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -51,7 +55,7 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	return (!player.r.is_dead)
+	return (!player.r.is_dead) && (!player.b.in_battle)
 }
 
 // Calculate points/sec!
@@ -72,7 +76,7 @@ function addedPlayerData() { return {
 var displayThings = [
 	function() {
 		if (player.r.is_dead) {
-			return player.r.last_death_cause + "你的身体已经死亡！在重生之前，无法进行任何操作。"
+			return "<p>" + player.r.last_death_cause + "</p><p>你的身体已经死亡！在重生之前，无法进行任何操作。</p>"
 		}
 	}
 ]

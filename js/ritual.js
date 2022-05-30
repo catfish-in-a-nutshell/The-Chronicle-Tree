@@ -1,22 +1,31 @@
 // Ritual, a.k.a Reincarnation, Rebirth, Abdicate, Prestige...
 
+let ritual_buyable_style = {
+    "width": "200px",
+    "height": "120px",
+    "margin-top": "10px",
+    "border-radius": "0px",
+    "border": "1px",
+    "border-color": "rgba(0, 0, 0, 0.125)"
+}
+
 addLayer("r", {
     name: "重生", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-        points: new Decimal(0),
-        score: new Decimal(0),
-        deaths: new Decimal(0),
+        points: decimalZero,
+        score: decimalZero,
+        deaths: decimalZero,
         number: new Decimal(1),
         is_dead: false
     }},
     color: "#3498db",
-    requires: new Decimal(5), // Can be a function that takes requirement increases into account
+    requires: new Decimal(1), // Can be a function that takes requirement increases into account
     resource: "重生点", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on
-    baseAmount() {return player.r.score}, // Get the current amount of baseResource
+    baseAmount() {return player.r.score.add(1)}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.8, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -44,10 +53,12 @@ addLayer("r", {
         11: {
             title: "游泳",
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) },
-            display() { 
+            display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `你可以游得更快。
-                当前效果: ${format(this.effect(cur_amount))}, 下一级价格: ${format(this.cost(cur_amount)) }`
+                return `提升游泳技能初始等级
+                
+                当前效果: +${format(this.effect(cur_amount), 0)} 
+                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -56,16 +67,20 @@ addLayer("r", {
             },
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount.add(1).pow(2)
-            }
+                return cur_amount
+            },
+            style: ritual_buyable_style
         },
+        
         12: {
-            title: "游泳 II",
-            cost(x) { return new Decimal(2).mul(x.add(1).pow(3))},
-            display() { 
+            title: "交流", 
+            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `你可以游得更快，但消耗氧气也等比例增加。 
-                当前效果: ${format(this.effect(cur_amount))}, 下一级价格: ${format(this.cost(cur_amount)) }`
+                return `提升交流技能初始等级
+                
+                当前效果: +${format(this.effect(cur_amount), 0)} 
+                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -74,16 +89,20 @@ addLayer("r", {
             },
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return new Decimal(1.8).pow(cur_amount)
-            }
+                return cur_amount
+            },
+            style: ritual_buyable_style
         },
+        
         13: {
-            title: "游泳 III",
-            cost(x) { return new Decimal(3).mul(x.add(1).pow(2))},
-            display() { 
+            title: "劳务",
+            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `消耗氧气速度降低。 
-                当前效果: ${format(this.effect(cur_amount))}, 下一级价格: ${format(this.cost(cur_amount)) }`
+                return `提升劳务技能初始等级
+                
+                当前效果: +${format(this.effect(cur_amount), 0)} 
+                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -92,9 +111,98 @@ addLayer("r", {
             },
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return new Decimal(0.6).pow(cur_amount)
-            }
-        }
+                return cur_amount
+            },
+            style: ritual_buyable_style
+        },
+        
+        21: {
+            title: "烹饪",
+            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            display() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                return `提升烹饪技能初始等级
+                
+                当前效果: +${format(this.effect(cur_amount), 0)} 
+                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                return cur_amount
+            },
+            style: ritual_buyable_style
+        },
+
+        22: {
+            title: "贸易",
+            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            display() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                return `提升贸易技能初始等级
+                
+                当前效果: +${format(this.effect(cur_amount), 0)} 
+                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                return cur_amount
+            },
+            style: ritual_buyable_style
+        },
+
+        23: {
+            title: "钓鱼",
+            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            display() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                return `提升钓鱼技能初始等级
+                
+                当前效果: +${format(this.effect(cur_amount), 0)} 
+                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                return cur_amount
+            },
+            style: ritual_buyable_style
+        },
+        
+        31: {
+            title: "索敌",
+            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            display() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                return `提升劳务技能初始等级
+                
+                当前效果: +${format(this.effect(cur_amount), 0)} 
+                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                return cur_amount
+            },
+            style: ritual_buyable_style
+        },
     },
 
 
@@ -125,7 +233,7 @@ addLayer("r", {
         if (resettingLayer == "r") {
             player.r.is_dead = false
             player.r.last_death_cause = ""
-            player.r.score = new Decimal(0)
+            player.r.score = decimalZero
         }
     },
     layerShown() {

@@ -7,8 +7,8 @@ addLayer("m", {
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-        points: new Decimal(0),
-        milestone_cnt: new Decimal(0)
+        points: decimalZero,
+        milestone_cnt: decimalZero
     }},
     color: "#8e44ad",
     requires: new Decimal(1), // Can be a function that takes requirement increases into account
@@ -98,7 +98,7 @@ addLayer("m", {
             name: "战斗的记忆",
             unlocked: () => hasUpgrade("p", 35), 
             onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
-            done: () => player.b.is_fighting,
+            done: () => player.b.in_battle,
             tooltip() {
                 if (hasAchievement("m", this.id)) {
                     return "你回想起自己曾经很擅长战斗，但现在的身体并不适应。解锁子页面：经验-战斗"

@@ -1,47 +1,55 @@
 // Experience, a.k.a exp, habit, adv. training(?)
 
+var prices = {
+    "swimming": {
+        priceStart: new Decimal(10),
+        priceAdd: new Decimal(20),
+        lvlDivider: new Decimal(5)
+    }
+}
+
 addLayer("e", {
     name: "经验", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "E", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-        points: new Decimal(0),
-        lvlpoints: new Decimal(0),
+        points: decimalZero,
+        lvlpoints: decimalZero,
         communication: {
-            cur_exp: new Decimal(0),
-            lvl: new Decimal(0),
+            cur_exp: decimalZero,
+            lvl: decimalZero,
             nxt_exp: new Decimal(100),
         },
         swimming: {
-            cur_exp: new Decimal(0),
-            lvl: new Decimal(0),
-            prog: new Decimal(0)
+            cur_exp: decimalZero,
+            lvl: decimalZero,
+            nxt_exp: new Decimal(100)
         },
         laboring: {
-            cur_exp: new Decimal(0),
-            lvl: new Decimal(0),
-            prog: new Decimal(0)
+            cur_exp: decimalZero,
+            lvl: decimalZero,
+            nxt_exp: new Decimal(100)
         },
         cooking: {
-            cur_exp: new Decimal(0),
-            lvl: new Decimal(0),
-            prog: new Decimal(0)
+            cur_exp: decimalZero,
+            lvl: decimalZero,
+            nxt_exp: new Decimal(100)
         },
         trading: {
-            cur_exp: new Decimal(0),
-            lvl: new Decimal(0),
-            prog: new Decimal(0)
+            cur_exp: decimalZero,
+            lvl: decimalZero,
+            nxt_exp: new Decimal(100)
         },
         fishing: {
-            cur_exp: new Decimal(0),
-            lvl: new Decimal(0),
-            prog: new Decimal(0)
+            cur_exp: decimalZero,
+            lvl: decimalZero,
+            nxt_exp: new Decimal(100)
         },
         hunting: {
-            cur_exp: new Decimal(0),
-            lvl: new Decimal(0),
-            prog: new Decimal(0)
+            cur_exp: decimalZero,
+            lvl: decimalZero,
+            nxt_exp: new Decimal(100)
         },
     }},
     color: "#27ae60",
@@ -69,6 +77,10 @@ addLayer("e", {
     //         description: "",
     //     }
     // },
+
+    addBattleExp(exp) {
+        // TODO: implement battle related system
+    },
 
     communicationGainMult() {
         return new Decimal(1)
@@ -99,11 +111,13 @@ addLayer("e", {
     }, 
 
     communicationEffect() {
-        return player.e.communication.lvl.mul(0.2).add(1)
+        let lvl = player.e.communication.lvl
+        return lvl.mul(0.2).add(1)
     },
 
     swimmingEffect() {
-        return player.e.swimming.lvl.mul(0.5).add(1)
+        let lvl = player.e.swimming.lvl.add(buyableEffect("r", 11))
+        return lvl.mul(0.5).add(1)
     },
 
     laboringEffect() {
@@ -131,7 +145,7 @@ addLayer("e", {
     displayRow: "side",
     
     layerShown() {
-        return hasAchievement("m", 12)
+        return hasAchievement("m", 11)
     },
 
     lvlpEffect() {
@@ -143,7 +157,7 @@ addLayer("e", {
         ["display-text", "</b>你的躯体会随着冒险变强，但如果死去，此页面的内容将被重置！</b>", {"font-size": "20px"}],
         "blank",
         ["display-text", function() {
-            return `你目前技能总等级 ${format(player.e.lvlpoints, 0)}, 提升技能经验值获取 x${format(tmp.e.lvlpEffect)}`
+            return `你目前总技能点 ${format(player.e.lvlpoints, 0)}, 提升技能经验值获取 x${format(tmp.e.lvlpEffect)}`
         }, {"font-size": "20px"}],
         "blank",
         ["display-text", function() {
@@ -152,7 +166,7 @@ addLayer("e", {
         ["bar", "communicationBar"],
         "blank",
         ["display-text", function() {
-            return `游泳lv${format(player.e.swimming.lvl, 0)}: 加快游泳速度，目前效果 x${format(tmp.e.swimmingEffect)}`
+            return `游泳lv${format(player.e.swimming.lvl, 0)}+${buyableEffect("r", 11)}: 加快游泳速度，目前效果 x${format(tmp.e.swimmingEffect)}`
         }],
         ["bar", "swimmingBar"],
         "blank",
@@ -265,17 +279,29 @@ addLayer("e", {
     update(diff) {
         skill_list = ["communication", "swimming", "laboring", "cooking", "trading", "fishing", "hunting"]
         for (let i = 0; i < skill_list.length; i++) {
-            let data = player.e[skill_list[i]]
+            let skill = skill_list[i]
+            let data = player.e[skill]
             if (data.cur_exp.gte(data.nxt_exp)) {
+
                 let priceStart = new Decimal(100)
                 let priceAdd = new Decimal(100)
+                let lvlDivider = new Decimal(1)
+
+                if (prices[skill]) {
+                    priceStart = prices[skill].priceStart
+                    priceAdd = prices[skill].priceAdd
+                    lvlDivider = prices[skill].lvlDivider
+                }
+
                 let affordLvls = Decimal.affordArithmeticSeries(data.cur_exp, priceStart, priceAdd, data.lvl)
                 let sumPrice = Decimal.sumArithmeticSeries(affordLvls, priceStart, priceAdd, data.lvl)
     
                 data.cur_exp = data.cur_exp.sub(sumPrice)
                 data.lvl = data.lvl.add(affordLvls)
-                player.e.lvlpoints = player.e.lvlpoints.add(affordLvls)
+                player.e.lvlpoints = player.e.lvlpoints.add(affordLvls.div(lvlDivider))
+
                 data.nxt_exp = priceStart.add(priceAdd.mul(data.lvl))
+                layers["r"].addRawScore(affordLvls.div(lvlDivider))
             }
         }
     }

@@ -4,7 +4,7 @@ addLayer("p", {
     position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-		points: new Decimal(0),
+		points: decimalZero,
     }},
     row: 0,
     layerShown() {
@@ -55,14 +55,14 @@ addLayer("p", {
             description: "向看上去就无所事事的村民问路。本地投入时间转化效率x1.3",
             unlocked: () => hasUpgrade("p", 11),
             effect: () => new Decimal(1.3),
-            cost: () => new Decimal(20).mul(tmp.e.communicationEffect),
+            cost: () => new Decimal(20).div(tmp.e.communicationEffect),
         },
         13: {
             title: "搭话",
             description: "向路过村民了解村子的情况。本地投入时间转化效率x1.2",
             unlocked: () => hasUpgrade("p", 11),
             effect: () => new Decimal(1.2),
-            cost: () => new Decimal(100).mul(tmp.e.communicationEffect),
+            cost: () => new Decimal(100).div(tmp.e.communicationEffect),
         },
         21: {
             title: "拜访村长家",
@@ -105,14 +105,14 @@ addLayer("p", {
             title: "购买渔具",
             description: "可以在古戈尔之海钓鱼。钓鱼是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 23),
-            cost: () => new Decimal(10).div(tmp.e.tradingEffect),
+            cost: () => new Decimal(8).div(tmp.e.tradingEffect),
             currencyDisplayName: "金子",
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
             onPurchase() {
                 layers["i"].addInventory({
                     equiptype: "fishingrod",
-                    name: "鱼竿",
+                    name: "fishingrod0",
                     number: 1,
                     dur: 100
                 })
@@ -130,7 +130,7 @@ addLayer("p", {
             onPurchase() {
                 layers["i"].addInventory({
                     equiptype: "axe",
-                    name: "斧头",
+                    name: "axe0",
                     number: 1,
                     dur: 100
                 })
@@ -148,7 +148,7 @@ addLayer("p", {
             onPurchase() {
                 layers["i"].addInventory({
                     equiptype: "pickaxe",
-                    name: "铁镐",
+                    name: "pickaxe0",
                     number: 1,
                     dur: 100
                 })
@@ -166,7 +166,7 @@ addLayer("p", {
             onPurchase() {
                 layers["i"].addInventory({
                     equiptype: "weapon",
-                    name: "铁剑",
+                    name: "sword0",
                     number: 1,
                     dur: 100
                 })
@@ -177,7 +177,7 @@ addLayer("p", {
             title: "从皮亚诺村启程",
             description: "需要拥有斧头、铁镐、铁剑中至少一件。解锁: 幂次原野",
             unlocked: () => hasAchievement("m", 13),
-            cost: new Decimal(50),
+            cost: new Decimal(40),
             canAfford: () => hasUpgrade("p", 32) || hasUpgrade("p", 33) || hasUpgrade("p", 34),
             currencyDisplayName: "食物",
             currencyInternalName: "food",
@@ -196,8 +196,8 @@ addLayer("p", {
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 let ret = `进度 ${format(cur_amount, 0)}/7\n\n`
-                if (cur_amount.gte(1) && cur_amount.lt(7)) {
-                    ret += full_dialogue["p11"][format(cur_amount, 0)] + "\n\n"
+                if (cur_amount.gte(1) && cur_amount.lte(7)) {
+                    ret += full_dialogue["p11"][format(cur_amount, 0)-1] + "\n\n"
                 }
                 if (cur_amount.gte(3)) {
                     ret += `当前效果：本地投入时间转化效率 x${format(this.effect())}\n`
@@ -232,7 +232,7 @@ addLayer("p", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 let ret = `进度 ${format(cur_amount, 0)}/14\n\n`
                 if (cur_amount.gte(1) && cur_amount.lt(14)) {
-                    ret += full_dialogue["p12"][format(cur_amount, 0)] + "\n\n"
+                    ret += full_dialogue["p12"][format(cur_amount, 0)-1] + "\n\n"
                 }
                 if (cur_amount.lt(14)) {
                     ret += `下一级价格: ${format(this.cost(cur_amount)) } 投入时间`
@@ -260,7 +260,7 @@ addLayer("p", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 let ret = `进度 ${format(cur_amount, 0)}/8\n\n`
                 if (cur_amount.gte(1) && cur_amount.lt(8)) {
-                    ret += full_dialogue["p13"][format(cur_amount, 0)] + "\n\n"
+                    ret += full_dialogue["p13"][format(cur_amount, 0)-1] + "\n\n"
                 }
                 ret += `当前效果：村中对话花费 x${format(this.effect())}\n`
                 if (cur_amount.lt(8)) {
@@ -291,7 +291,7 @@ addLayer("p", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 let ret = "进度 " + format(cur_amount, 0) + "/8\n"
                 if (cur_amount.gte(1) && cur_amount.lt(8)) {
-                    ret += full_dialogue["p14"][format(cur_amount, 0)] + "\n"
+                    ret += full_dialogue["p14"][format(cur_amount, 0)-1] + "\n"
                 }
                 if (cur_amount.lt(8)) {
                     ret += "下一级价格:" + format(this.cost(cur_amount)) + " 食物"
@@ -389,8 +389,8 @@ addLayer("p", {
             display() {
                 let disp = `卖掉当前鱼的50%，获得报酬，并增长交易能力。\n
                 单位鱼收益:
-                ${format(tmp.p.farmGoldIncome)} 金子
-                ${format(tmp.p.farmExp)} 经验`
+                ${format(tmp.p.sellFishIncome)} 金子
+                ${format(tmp.p.sellFishExp)} 经验`
                 return disp
             },
             style() {
@@ -552,7 +552,7 @@ addLayer("p", {
         "主界面": {
             content: [
             ["display-text", function() {
-                return `在皮亚诺村区域，你目前有<b> ${format(player.p.points)} + " </b>投入时间`    
+                return `在皮亚诺村区域，你目前有<b> ${format(player.p.points)} </b>投入时间`    
             }, {"font-size": "20px"}],
             
             "blank",

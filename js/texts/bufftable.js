@@ -1,4 +1,4 @@
-full_buffs = {
+var full_buffs = {
     "burning": {
         name: "燃烧",
         params: ["time", "dot"]
@@ -32,5 +32,11 @@ full_buffs = {
     "stunned": {
         name: "眩晕",
         params: ["moves"]
+    }
+}
+
+var full_traits = {
+    "induce_bleeding": {
+        
     }
 }

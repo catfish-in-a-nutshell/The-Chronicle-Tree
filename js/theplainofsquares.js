@@ -78,7 +78,7 @@ addLayer("mp", {
         11: {
             "title": "伐木",
             display() {
-                let disp = `使用当前投入时间的50%以及5食物，获得木材与纤维，并增长劳务能力。\n
+                let disp = `使用当前投入时间的50%以及4食物，获得木材与纤维，并增长劳务能力。\n
                 单位时间收益:
                 ${format(tmp.mp.lumberWoodIncome)} 木材
                 ${format(tmp.mp.lumberFiberIncome)} 纤维
@@ -100,7 +100,7 @@ addLayer("mp", {
                 let data = player.mp
                 let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
-                player.i.food = player.i.food.sub(5) 
+                player.i.food = player.i.food.sub(4) 
                 player.i.wood = player.i.wood.add(t.mul(tmp.mp.lumberWoodIncome))
                 player.i.fiber = player.i.fiber.add(t.mul(tmp.mp.lumberFiberIncome))
                 player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.mp.lumberExp))
@@ -118,7 +118,7 @@ addLayer("mp", {
         12: {
             "title": "挖矿",
             display() {
-                disp = `使用当前投入时间的50%以及5食物，获得矿物，并增长劳务能力。\n
+                disp = `使用当前投入时间的50%以及4食物，获得矿物，并增长劳务能力。\n
                 单位时间收益:
                 ${format(tmp.mp.mineIncome)} 矿物
                 ${format(tmp.mp.mineExp)} 经验`
@@ -139,7 +139,7 @@ addLayer("mp", {
                 let data = player.mp
                 let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
-                player.i.food = player.i.food.sub(5)
+                player.i.food = player.i.food.sub(4)
                 player.i.mineral = player.i.mineral.add(t.mul(tmp.mp.mineIncome))
                 player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.mp.mineExp))
                 
@@ -156,7 +156,7 @@ addLayer("mp", {
         13: {
             "title": "狩猎",
             display() {
-                let disp = `使用当前投入时间的50%以及5食物，有概率发现野兽，并增长索敌能力。\n
+                let disp = `使用当前投入时间的50%以及4食物，有概率发现野兽，并增长索敌能力。\n
                 单位时间收益:
                 ${format(tmp.mp.huntProbability)} 几率发现猎物
                 ${format(tmp.mp.huntExp)} 经验(成功发现时x1.5)`
@@ -177,14 +177,17 @@ addLayer("mp", {
                 let data = player.mp
                 let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
-                player.i.food = player.i.food.sub(5)
+                player.i.food = player.i.food.sub(4)
 
                 let r = Math.random()
                 let exp = t.mul(tmp.mp.huntExp)
 
-                if (huntProbability.gte(r)) {
-                    // TODO: hunted
+                if (tmp.mp.huntProbability.gte(r)) {
                     exp = exp.mul(1.5)
+
+                    let {weights, targets} = areas["mphunting"]
+                    target = targets[weighted_choice(weights)]
+                    layers["b"].startEncounter(target, buyableEffect(this.layer, 11))
                 } 
 
                 player.e.hunting.cur_exp = player.e.hunting.cur_exp.add(exp)
@@ -194,6 +197,105 @@ addLayer("mp", {
             },
             unlocked() {
                 return getBuyableAmount(this.layer, 11).gt(0)
+            }
+        },
+
+        21: {
+            "title": "洞穴",
+            display() {
+                let disp = `副本
+                    平均数字: 5
+                    首通奖励: 解锁技能点升级
+                    奖励: 金子、矿物、装备`
+                return disp
+            },
+            style() {
+                if (!player.r.is_dead) {
+                    return {
+                        "background-color": "#44bd32"
+                    }
+                } else {
+                    return {
+                        "background-color": "#ffffff"
+                    }
+                }
+            },
+            onClick() {
+                layers["b"].startZone("mpcave")
+            },
+            canClick() {
+                return !player.r.is_dead && player.mp.points.gt(0) 
+                    && player.i.equips.weapon.equipped
+                    && !player.b.in_battle
+            },
+            unlocked() {
+                return getBuyableAmount(this.layer, 11).gt(0)
+            }
+        },
+
+        22: {
+            "title": "动物集落",
+            display() {
+                let disp = `副本
+                    平均数字: 50
+                    首通奖励: 解锁更多重生升级
+                    奖励: 食物、装备`
+                return disp
+            },
+            style() {
+                if (!player.r.is_dead) {
+                    return {
+                        "background-color": "#44bd32"
+                    }
+                } else {
+                    return {
+                        "background-color": "#ffffff"
+                    }
+                }
+            },
+            onClick() {
+                layers["b"].startZone("mphorde")
+            },
+            canClick() {
+                return !player.r.is_dead && player.mp.points.gt(0) 
+                    && player.i.equips.weapon.equipped
+                    && !player.b.in_battle
+            },
+            unlocked() {
+                return getBuyableAmount(this.layer, 11).gt(2)
+            }
+        },
+
+        23: {
+            "title": "安娜的秘密基地",
+            display() {
+                let disp = `副本
+                    平均数字: 1e5
+                    首通奖励: 解锁更多重生升级
+                    奖励: 装备`
+                return disp
+            },
+            style() {
+                if (!player.r.is_dead) {
+                    return {
+                        "background-color": "#44bd32"
+                    }
+                } else {
+                    return {
+                        "background-color": "#ffffff"
+                    }
+                }
+            },
+            onClick() {
+                layers["b"].startZone("mpannazone")
+            },
+            canClick() {
+                return !player.r.is_dead && player.mp.points.gt(0) 
+                    && player.i.equips.weapon.equipped
+                    && !player.b.in_battle
+            },
+            unlocked() {
+                return getBuyableAmount(this.layer, 11).gt(2)
             }
         },
     },
@@ -224,7 +326,7 @@ addLayer("mp", {
     huntProbability() {
         let t = player.mp.points.mul(0.5)
         let theta = new Decimal(30).div(tmp.e.huntingEffect)
-        return new Decimal(1) - t.div(theta).neg().exp()
+        return new Decimal(1).sub(t.div(theta).neg().exp())
     },
 
     huntExp() {

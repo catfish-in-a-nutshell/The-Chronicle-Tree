@@ -10,67 +10,67 @@ addLayer("i", {
             inv.push({
                 exist: false, 
                 equiptype: "", 
-                number: new Decimal(0), 
-                dur: new Decimal(0), 
+                number: decimalZero, 
+                dur: decimalZero, 
                 name: ""
             })
         }
 
         return {
             unlocked: true,
-            points: new Decimal(0),
-            food: new Decimal(0),
-            bestfood: new Decimal(0),
-            gold: new Decimal(0),
-            bestgold: new Decimal(0),
-            fish: new Decimal(0),
-            bestfish: new Decimal(0),
-            wood: new Decimal(0),
-            bestwood: new Decimal(0),
-            fiber: new Decimal(0),
-            bestfiber: new Decimal(0),
-            mineral: new Decimal(0),
-            bestmineral: new Decimal(0),
+            points: decimalZero,
+            food: decimalZero,
+            bestfood: decimalZero,
+            gold: decimalZero,
+            bestgold: decimalZero,
+            fish: decimalZero,
+            bestfish: decimalZero,
+            wood: decimalZero,
+            bestwood: decimalZero,
+            fiber: decimalZero,
+            bestfiber: decimalZero,
+            mineral: decimalZero,
+            bestmineral: decimalZero,
 
             equips: {
                 fishingrod: {
-                    number: new Decimal(1),
+                    number: decimalOne,
                     equipped: false,
                     name: "",
                     dur: new Decimal(100)
                 },
                 axe: {
-                    number: new Decimal(1),
+                    number: decimalOne,
                     equipped: false,
                     name: "",
                     dur: new Decimal(100)
                 },
                 pickaxe: {
-                    number: new Decimal(1),
+                    number: decimalOne,
                     equipped: false,
                     name: "",
                     dur: new Decimal(100)
                 },
                 weapon: {
-                    number: new Decimal(1),
+                    number: decimalOne,
                     equipped: false,
                     name: "",
                     dur: new Decimal(100)
                 },
                 shield: {
-                    number: new Decimal(1),
+                    number: decimalOne,
                     equipped: false,
                     name: "",
                     dur: new Decimal(100)
                 },
                 armor: {
-                    number: new Decimal(1),
+                    number: decimalOne,
                     equipped: false,
                     name: "",
                     dur: new Decimal(100)
                 },
                 ring: {
-                    number: new Decimal(1),
+                    number: decimalOne,
                     equipped: false,
                     name: "",
                     dur: new Decimal(100)
@@ -143,7 +143,7 @@ addLayer("i", {
                 let inv = player.i.equips.weapon
                 if (!inv.equipped) return ""
 
-                let disp = inv.name + "<br>"
+                let disp = full_equips[inv.name].dispn + "<br>"
                 disp += `数字: ${format(inv.number)}<br>`
                 disp += `耐久: ${format(inv.dur)}<br>`
 
@@ -183,7 +183,7 @@ addLayer("i", {
                 let inv = player.i.equips.shield
                 if (!inv.equipped) return ""
 
-                let disp = inv.name + "<br>"
+                let disp = full_equips[inv.name].dispn + "<br>"
                 disp += `数字: ${format(inv.number)}<br>`
                 disp += `耐久: ${format(inv.dur)}<br>`
 
@@ -223,7 +223,7 @@ addLayer("i", {
                 let inv = player.i.equips.armor
                 if (!inv.equipped) return ""
 
-                let disp = inv.name + "<br>"
+                let disp = full_equips[inv.name].dispn + "<br>"
                 disp += `数字: ${format(inv.number)}<br>`
                 disp += `耐久: ${format(inv.dur)}<br>`
 
@@ -263,7 +263,7 @@ addLayer("i", {
                 let inv = player.i.equips.ring
                 if (!inv.equipped) return ""
 
-                let disp = inv.name + "<br>"
+                let disp = full_equips[inv.name].dispn + "<br>"
                 disp += `数字: ${format(inv.number)}<br>`
                 disp += `耐久: ${format(inv.dur)}<br>`
 
@@ -303,7 +303,7 @@ addLayer("i", {
                 let inv = player.i.equips.fishingrod
                 if (!inv.equipped) return ""
 
-                let disp = inv.name + "<br>"
+                let disp = full_equips[inv.name].dispn + "<br>"
                 disp += `数字: ${format(inv.number)}<br>`
                 disp += `耐久: ${format(inv.dur)}<br>`
 
@@ -343,7 +343,7 @@ addLayer("i", {
                 let inv = player.i.equips.axe
                 if (!inv.equipped) return ""
 
-                let disp = inv.name + "<br>"
+                let disp = full_equips[inv.name].dispn + "<br>"
                 disp += `数字: ${format(inv.number)}<br>`
                 disp += `耐久: ${format(inv.dur)}<br>`
 
@@ -383,7 +383,7 @@ addLayer("i", {
                 let inv = player.i.equips.pickaxe
                 if (!inv.equipped) return ""
 
-                let disp = inv.name + "<br>"
+                let disp = full_equips[inv.name].dispn + "<br>"
                 disp += `数字: ${format(inv.number)}<br>`
                 disp += `耐久: ${format(inv.dur)}<br>`
 
@@ -442,11 +442,11 @@ addLayer("i", {
             let inv = player.i.inventory[data]
             let typ = inv.equiptype
             if (player.i.equips[typ].equipped) {    
-                // change
+                // swap
                 let cur = player.i.equips[typ]
-                t = cur.number; cur.number = inv.number; inv.number = t;
-                t = cur.dur; cur.dur = inv.dur; inv.dur = t;
-                t = cur.name; cur.name = inv.name; inv.name = t;
+                [cur.number, inv.number] = [inv.number, cur.number]
+                [cur.dur, inv.dur] = [inv.dur, cur.dur]
+                [cur.name, inv.name] = [inv.name, cur.name]
 
             } else {
                 // equip
@@ -460,7 +460,7 @@ addLayer("i", {
             }
         },
         getTitle(data, id) {
-            return player.i.inventory[data].exist ? player.i.inventory[data].name : "空"
+            return player.i.inventory[data].exist ? full_equips[player.i.inventory[data].name].dispn : "空"
         },
         getDisplay(data, id) {
             if (player.i.inventory[data].exist) {

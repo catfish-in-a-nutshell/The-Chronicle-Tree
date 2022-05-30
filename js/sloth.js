@@ -6,8 +6,8 @@ addLayer("s", {
     position: 4, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-        points: new Decimal(0),
-        sloth: new Decimal(0),
+        points: decimalZero,
+        sloth: decimalZero,
         limit: new Decimal(120),
         speed: new Decimal(1)
     }},

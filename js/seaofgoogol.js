@@ -4,14 +4,14 @@ addLayer("g", {
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-		points: new Decimal(0),
+		points: decimalZero,
         air_cur: new Decimal(100),
-        air_cur_progress: new Decimal(0),
+        air_cur_progress: decimalZero,
         depth_cur: new Decimal(10),
         depth_best: new Decimal(10),
         diving_up: false,
         diving_down: false,
-        tot_time: new Decimal(0),
+        tot_time: decimalZero,
         last_fish: new Decimal(-1)
     }},
     canReset() {
@@ -107,7 +107,7 @@ addLayer("g", {
         13: { 
             "title": "钓鱼",
             display() {
-                return ""
+                return "（别忘了先装备鱼竿）"
             },
             style: {
                 "background-color": "#ffffff"
@@ -116,20 +116,21 @@ addLayer("g", {
                 let data = player.g
                 let t = data.points
                 
-                let harv = new Decimal(0.2).mul(t).mul(tmp.e.fishingEffect).mul(player.i.equips.fishingrod.number)
+                let harv = new Decimal(0.5).mul(t).mul(player.i.equips.fishingrod.number)
                 let fishing_exp = harv.mul(20).mul(tmp.e.lvlpEffect)
 
+                harv = harv.mul(tmp.e.fishingEffect)
                 let harv_exp = harv.log10()
                 harv = new Decimal(10).pow(harv_exp.add(Math.random() - 0.8))
                 
                 player.i.fish = player.i.fish.add(harv)
                 data.last_fish = harv
-                data.points = new Decimal(0)
+                data.points = decimalZero
 
                 player.e.fishing.cur_exp = player.e.fishing.cur_exp.add(fishing_exp)
                 layers["i"].useEquip("fishingrod", t.sqrt())
             },
-            canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.r.points.gt(0) && player.i.equips.fishingrod.equipped,
+            canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.g.points.gt(0) && player.i.equips.fishingrod.equipped,
             unlocked: () => hasUpgrade("p", 31)
         }
     },
@@ -149,7 +150,14 @@ addLayer("g", {
     infoboxes: {
         lore: {
             title: "故事",
-            body() { return "\t你被喉咙中灌入的海水呛醒。你想要呼吸，但幸运的是生存的本能阻止了你。你正身处水面之下，上方不远处有着微弱的光。海水仿佛要将你的胸腔压碎，没有时间犹豫了，你必须离开。" }
+            body() {
+                let s = "<p>你被喉咙中灌入的海水呛醒。你想要呼吸，但幸运的是生存的本能阻止了你。你正身处水面之下，上方不远处有着微弱的光。海水仿佛要将你的胸腔压碎，没有时间犹豫了，你必须离开。</p>"
+
+                if (hasAchievement("m", 12)) {
+                    s += "<p style='margin-top: 5px'>幸好你离水面不算远。你开始思考接下来该去什么地方。</p>"
+                }
+                return s
+            }
         }
     },
     tabFormat: [["display-text", function() {
@@ -203,12 +211,9 @@ addLayer("g", {
 
         let time_consume_rate = new Decimal(1)
         let air_consume_rate = new Decimal(10)
-        air_consume_rate = air_consume_rate.mul(buyableEffect("r", 12))
-        air_consume_rate = air_consume_rate.mul(buyableEffect("r", 13))
 
-        let swim_speed = new Decimal(0.1)
-        swim_speed = swim_speed.mul(buyableEffect("r", 11))
-        swim_speed = swim_speed.mul(buyableEffect("r", 12))
+        let swim_speed = new Decimal(0.8)
+        swim_speed = swim_speed.mul(tmp.e.swimmingEffect)
         let air_max = tmp.g.maxAir
         
         let exp_gain = new Decimal(10).mul(tmp.e.lvlpEffect)
@@ -223,12 +228,12 @@ addLayer("g", {
             data.air_cur_progress = data.air_cur.div(air_max)
             data.points = data.points.sub(tick_swim_time)
 
-            layers["r"].addRawScore(swim_speed.mul(tick_swim_time))
+            player.e.swimming.cur_exp = player.e.swimming.cur_exp.add(swim_speed.mul(tick_swim_time).mul(exp_gain))
 
             if (data.depth_cur.lte(0)) {
                 // Back to surface
                 data.diving_up = false
-                data.depth_cur = new Decimal(0)
+                data.depth_cur = decimalZero
                 // data.air_cur_progress = new Decimal(1)
 
                 // TODO: should add loots to item!
@@ -257,7 +262,7 @@ addLayer("g", {
             data.air_cur_progress = data.air_cur.div(air_max)
             data.points = data.points.sub(tick_swim_time)
             
-            layers["r"].addRawScore(swim_speed.mul(tick_swim_time))
+            player.e.swimming.cur_exp = player.e.swimming.cur_exp.add(swim_speed.mul(tick_swim_time).mul(exp_gain))
 
             if (data.air_cur.lte(0)) {
                 // You died

@@ -4,7 +4,7 @@ addLayer("f", {
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-		points: new Decimal(0),
+		points: decimalZero,
     }},
     canReset() {
         return (!player.r.is_dead) && player.r.number.gte(new Decimal(1e100))
