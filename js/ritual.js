@@ -55,7 +55,7 @@ addLayer("r", {
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升游泳技能初始等级
+                return `提升游泳技能额外等级
                 
                 当前效果: +${format(this.effect(cur_amount), 0)} 
                 下一级价格: ${format(this.cost(cur_amount)) } 重生点`
@@ -77,7 +77,7 @@ addLayer("r", {
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升交流技能初始等级
+                return `提升交流技能额外等级
                 
                 当前效果: +${format(this.effect(cur_amount), 0)} 
                 下一级价格: ${format(this.cost(cur_amount)) } 重生点`
@@ -99,7 +99,7 @@ addLayer("r", {
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升劳务技能初始等级
+                return `提升劳务技能额外等级
                 
                 当前效果: +${format(this.effect(cur_amount), 0)} 
                 下一级价格: ${format(this.cost(cur_amount)) } 重生点`
@@ -121,7 +121,7 @@ addLayer("r", {
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升烹饪技能初始等级
+                return `提升烹饪技能额外等级
                 
                 当前效果: +${format(this.effect(cur_amount), 0)} 
                 下一级价格: ${format(this.cost(cur_amount)) } 重生点`
@@ -143,7 +143,7 @@ addLayer("r", {
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升贸易技能初始等级
+                return `提升贸易技能额外等级
                 
                 当前效果: +${format(this.effect(cur_amount), 0)} 
                 下一级价格: ${format(this.cost(cur_amount)) } 重生点`
@@ -165,7 +165,7 @@ addLayer("r", {
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升钓鱼技能初始等级
+                return `提升钓鱼技能额外等级
                 
                 当前效果: +${format(this.effect(cur_amount), 0)} 
                 下一级价格: ${format(this.cost(cur_amount)) } 重生点`
@@ -187,7 +187,7 @@ addLayer("r", {
             cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升劳务技能初始等级
+                return `提升劳务技能额外等级
                 
                 当前效果: +${format(this.effect(cur_amount), 0)} 
                 下一级价格: ${format(this.cost(cur_amount)) } 重生点`

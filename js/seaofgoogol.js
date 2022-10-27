@@ -5,6 +5,7 @@ addLayer("g", {
     startData() { return {
         unlocked: true,
 		points: decimalZero,
+        inited: false,
         air_cur: new Decimal(100),
         air_cur_progress: decimalZero,
         depth_cur: new Decimal(10),
@@ -164,7 +165,7 @@ addLayer("g", {
             return `在古戈尔之海区域，你目前有<b> ${format(player.g.points)} </b>投入时间`
         }, {"font-size": "20px"}],
         "blank",
-        "prestige-button", "resource-display",
+        "prestige-button",
         "blank",
         ["infobox", "lore"],
         "blank",
@@ -201,6 +202,10 @@ addLayer("g", {
         return new Decimal(100)
     },
 
+    isInited() {
+        return player.g.inited
+    },
+
     update(diff) {
 
         if (player.r.is_dead) return;
@@ -232,6 +237,7 @@ addLayer("g", {
 
             if (data.depth_cur.lte(0)) {
                 // Back to surface
+                data.inited = true
                 data.diving_up = false
                 data.depth_cur = decimalZero
                 // data.air_cur_progress = new Decimal(1)

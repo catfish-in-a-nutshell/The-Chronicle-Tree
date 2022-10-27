@@ -96,7 +96,7 @@ addLayer("b", {
     },
     plAtk() {
         let weapon = player.i.equips.weapon
-        let base_atk = full_equips[weapon.name].atk
+        let base_atk = player.i.equips.weapon.equipped ? full_equips[weapon.name].atk : decimalZero
         base_atk = base_atk.mul(player.r.number.sqrt()).mul(weapon.number.sqrt())
         return base_atk
     },
@@ -220,6 +220,30 @@ addLayer("b", {
         
     },
 
+    clickables: {
+        11: {
+            "title": "逃跑！",
+            display() {
+                return `不会获得任何战利品，但也没有损失`
+            },
+            style() {
+                return {
+                    "border-radius": "1px",
+                    "background-color": "#ccc"
+                }
+            },
+            onClick() {
+                // escape
+                player.b.queued_encounters = []
+                player.b.in_battle = false
+                
+                layers["b"].pushBattleLog(`你逃跑了！`)
+            },
+
+            canClick: () => !player.r.is_dead && player.b.in_battle
+        }
+    },
+
     tabFormat: [
         ["display-text", function() {
             if (player.b.in_battle) {
@@ -259,7 +283,14 @@ addLayer("b", {
                 battle_log += `<p>${player.b.battle_logs[l]}</p>`
             }
             return battle_log
-        }]
+        }],
+        "blank",
+        "h-line",
+
+        "blank",
+
+        ["clickable", 11]
+
         // TODO: draw battle UI!
     ],
 
@@ -318,15 +349,14 @@ addLayer("b", {
 
         e.traits = new Set(ene_stat.traits)
 
-        let pl_number = player.r.number
-        pl.maxhp = tmp.b.plBaseHP.mul(pl_number.cube())
+        pl.maxhp = tmp.b.plBaseHP.mul(tmp.r.physicalEffect.cube())
         pl.hp = pl.maxhp
-        pl.maxmp = tmp.b.plBaseMP.mul(pl_number.cube())
+        pl.maxmp = tmp.b.plBaseMP.mul(tmp.r.physicalEffect.cube())
         pl.mp = pl.maxmp
         
         pl.atk = tmp.b.plAtk
         pl.def = tmp.b.plDef
-        pl.speed = tmp.b.plBaseSpeed.mul(pl_number.cbrt())
+        pl.speed = tmp.b.plBaseSpeed.mul(tmp.r.speedUp)
         pl.crit = tmp.b.plCrit
         pl.critdmg = tmp.b.plCritDmg
 
@@ -379,7 +409,6 @@ addLayer("b", {
                     dmg = dmg.mul(pl.critdmg)  
                 }
                 dmg = dmg.sub(enemy.def)
-
                 dmg = dmg.max(0)
 
                 enemy.hp = enemy.hp.sub(dmg)
@@ -393,7 +422,9 @@ addLayer("b", {
 
                     // roll drop items
                     let drop = full_enemies[enemy.name].drop
-                    layer["e"].addBattleExp(drop.exp)
+                    let drop_exp = layer["e"].addBattleExp(drop.exp)
+                    layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} 经验！`)
+                    
 
                     for (let loot in drop.loots) {
                         if (Math.random() < loot.droprate) {

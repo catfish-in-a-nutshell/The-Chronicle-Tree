@@ -7,7 +7,7 @@ addLayer("f", {
 		points: decimalZero,
     }},
     canReset() {
-        return (!player.r.is_dead) && player.r.number.gte(new Decimal(1e100))
+        return (!player.r.is_dead && tmp.g.is_inited) && player.r.number.gte(new Decimal(1e100))
     },
     color: "#fbc531",
     requires: new Decimal(1), // Can be a function that takes requirement increases into account

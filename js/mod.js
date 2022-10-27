@@ -42,6 +42,11 @@ let changelog = `<h1>Changelog:</h1><br>
 		- 不存在平衡。<br>
 		`
 
+let intro = `<h1>游戏介绍:</h1><br>
+		本树的灵感来源包括: Increlution, Your Chronicle, NGU Idle等。<br>
+		在增量游戏和放置游戏的基础上，试图讲述一个数值膨胀的RPG故事。<br>
+	`
+
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
@@ -65,6 +70,8 @@ function getPointGen() {
 
 	let gain = new Decimal(1)
 	gain = gain.mul(buyableEffect("s", 12))
+
+	gain = gain.mul(tmp.r.speedUp)
 	return gain
 }
 
@@ -75,8 +82,19 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	function() {
+		return `目前Endgame: 无，未经平衡，原型版本`
+	},
+
+	function() {
 		if (player.r.is_dead) {
-			return "<p>" + player.r.last_death_cause + "</p><p>你的身体已经死亡！在重生之前，无法进行任何操作。</p>"
+			return `<p>${player.r.last_death_cause}</p><p>你的身体已经死亡！在重生之前，无法进行任何操作。</p>`
+		}
+
+	},
+
+	function() {
+		if (hasAchievement("m", 14)) {
+			return `你当前的数字为 ${format(player.r.number)}`
 		}
 	}
 ]

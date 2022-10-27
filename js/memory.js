@@ -96,7 +96,6 @@ addLayer("m", {
 
         16: {
             name: "战斗的记忆",
-            unlocked: () => hasUpgrade("p", 35), 
             onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
             done: () => player.b.in_battle,
             tooltip() {

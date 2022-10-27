@@ -7,7 +7,7 @@ addLayer("mp", {
 		points: new Decimal(0),
     }},
     canReset() {
-        return (!player.r.is_dead) && hasUpgrade("p", 35)
+        return (!player.r.is_dead && tmp.g.isInited) && hasUpgrade("p", 35)
     },
     color: "#44bd32",
     requires: new Decimal(1), // Can be a function that takes requirement increases into account
@@ -23,8 +23,13 @@ addLayer("mp", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    tooltip: () => `幂次原野: ${format(player.mp.points)} 投入时间`,
-    tooltipLocked: () => "幂次原野 - 需要升级: 从皮亚诺村启程",
+    tooltip: function() {
+        if (hasUpgrade("p", 35)) {
+            return `幂次原野: ${format(player.mp.points)} 投入时间`
+        } else {
+            return "幂次原野 - 需要升级: 从皮亚诺村启程"
+        }
+    },
     
     row: 0, // Row the layer is in on the tree (0 is the first row)
     displayRow: 0,
@@ -344,7 +349,7 @@ addLayer("mp", {
         }, {"font-size": "20px"}],
         
         "blank",
-        "prestige-button", "resource-display",
+        "prestige-button",
         "blank",
         "upgrades",
         "blank",

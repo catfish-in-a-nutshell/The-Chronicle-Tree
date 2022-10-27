@@ -11,7 +11,7 @@ addLayer("p", {
         return hasAchievement("m", 12)
     },
     canReset() {
-        return (!player.r.is_dead)
+        return (!player.r.is_dead && tmp.g.isInited)
     },
     color: "#bdc3c7",
     requires: new Decimal(1), // Can be a function that takes requirement increases into account
@@ -113,8 +113,8 @@ addLayer("p", {
                 layers["i"].addInventory({
                     equiptype: "fishingrod",
                     name: "fishingrod0",
-                    number: 1,
-                    dur: 100
+                    number: new Decimal(1),
+                    dur: new Decimal(100)
                 })
             }
         },
@@ -131,8 +131,8 @@ addLayer("p", {
                 layers["i"].addInventory({
                     equiptype: "axe",
                     name: "axe0",
-                    number: 1,
-                    dur: 100
+                    number: new Decimal(1),
+                    dur: new Decimal(100)
                 })
             }
         },
@@ -149,8 +149,8 @@ addLayer("p", {
                 layers["i"].addInventory({
                     equiptype: "pickaxe",
                     name: "pickaxe0",
-                    number: 1,
-                    dur: 100
+                    number: new Decimal(1),
+                    dur: new Decimal(100)
                 })
             }
         },
@@ -167,8 +167,8 @@ addLayer("p", {
                 layers["i"].addInventory({
                     equiptype: "weapon",
                     name: "sword0",
-                    number: 1,
-                    dur: 100
+                    number: new Decimal(1),
+                    dur: new Decimal(100)
                 })
             }
         },
@@ -469,9 +469,10 @@ addLayer("p", {
                 }
             },
             onClick() {
+                let data = player.i
                 data.food = data.food.add(10)
                 data.gold = data.gold.sub(tmp.p.buyFoodCost)
-                player.e.trading.cur_exp = player.e.trading.cur_exp.add(f.mul(tmp.p.buyFoodExp))
+                player.e.trading.cur_exp = player.e.trading.cur_exp.add(tmp.p.buyFoodExp)
             },
             canClick: () => !player.r.is_dead && player.i.gold.gt(tmp.p.buyFoodCost),
             unlocked: () => hasUpgrade("p", 23),
@@ -545,7 +546,7 @@ addLayer("p", {
     },
     
     buyFoodExp() {
-        return new Decimal(10).mul(tmp.e.lvlpEffect)
+        return new Decimal(200).mul(tmp.e.lvlpEffect)
     },
 
     tabFormat: {
@@ -556,7 +557,7 @@ addLayer("p", {
             }, {"font-size": "20px"}],
             
             "blank",
-            "prestige-button", "resource-display",
+            "prestige-button",
             "blank",
             "upgrades",
             "blank",

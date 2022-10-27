@@ -31,18 +31,18 @@ var full_equips = {
     // shield
     "shield0": {
         dispn: "铁盾",
-        def: 3
+        def: new Decimal(3)
     },
 
     // armor
     "armor0": {
         dispn: "铁甲",
-        def: 3
+        def: new Decimal(3)
     },
     
     "cloth": {
         dispn: "布甲",
-        def: 1
+        def: new Decimal(1)
     },
 
     // ring

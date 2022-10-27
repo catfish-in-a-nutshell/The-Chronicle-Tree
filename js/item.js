@@ -175,7 +175,7 @@ addLayer("i", {
                 cur_equip.equipped = false
                 player.i.cur_invs += 1
             },
-            canClick: () => player.i.equips.weapon.equipped && player.i.cur_invs < player.i.inv_slots
+            canClick: () => player.i.equips.weapon.equipped && tmp.i.canAddInventory
         },
         12: {
             "title": "盾牌",
@@ -215,7 +215,7 @@ addLayer("i", {
                 cur_equip.equipped = false
                 player.i.cur_invs += 1
             },
-            canClick: () => player.i.equips.shield.equipped
+            canClick: () => player.i.equips.shield.equipped && tmp.i.canAddInventory
         },
         13: {
             "title": "护甲",
@@ -255,7 +255,7 @@ addLayer("i", {
                 cur_equip.equipped = false
                 player.i.cur_invs += 1
             },
-            canClick: () => player.i.equips.armor.equipped
+            canClick: () => player.i.equips.armor.equipped && tmp.i.canAddInventory
         },
         14: {
             "title": "戒指",
@@ -295,7 +295,7 @@ addLayer("i", {
                 cur_equip.equipped = false
                 player.i.cur_invs += 1
             },
-            canClick: () => player.i.equips.ring.equipped
+            canClick: () => player.i.equips.ring.equipped && tmp.i.canAddInventory
         },
         21: {
             "title": "渔具",
@@ -335,7 +335,7 @@ addLayer("i", {
                 cur_equip.equipped = false
                 player.i.cur_invs += 1
             },
-            canClick: () => player.i.equips.fishingrod.equipped
+            canClick: () => player.i.equips.fishingrod.equipped && tmp.i.canAddInventory
         },
         22: {
             "title": "伐木",
@@ -375,7 +375,7 @@ addLayer("i", {
                 cur_equip.equipped = false
                 player.i.cur_invs += 1
             },
-            canClick: () => player.i.equips.axe.equipped
+            canClick: () => player.i.equips.axe.equipped && tmp.i.canAddInventory
         },
         23: {
             "title": "挖矿",
@@ -415,7 +415,7 @@ addLayer("i", {
                 cur_equip.equipped = false
                 player.i.cur_invs += 1
             },
-            canClick: () => player.i.equips.pickaxe.equipped
+            canClick: () => player.i.equips.pickaxe.equipped && tmp.i.canAddInventory
         },
 
     },

@@ -289,6 +289,10 @@ addLayer("options-tab", {
 })
 
 addLayer("changelog-tab", {
-    tabFormat() {return ([["raw-html", modInfo.changelog]])},
+    tabFormat() {return ([
+        ["raw-html", modInfo.intro],
+        "blank",
+        ["raw-html", modInfo.changelog]
+    ])},
     row: "otherside"
 })

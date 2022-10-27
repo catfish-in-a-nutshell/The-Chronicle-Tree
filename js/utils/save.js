@@ -229,8 +229,8 @@ function loadOptions() {
 
 function setupModInfo() {
 	modInfo.changelog = changelog;
+	modInfo.intro = intro ? intro: ""
 	modInfo.winText = winText ? winText : `Congratulations! You have reached the end and beaten this game, but for now...`;
-
 }
 function fixNaNs() {
 	NaNcheck(player);
