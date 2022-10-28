@@ -250,7 +250,7 @@ addLayer("e", {
                 ["bar", "laboringBar"],
                 "blank",
                 ["display-text", function() {
-                    return `烹饪lv${format(player.e.cooking.lvl, 0)}+${buyableEffect("r", 21)}: 提升食物转化效率，目前效果 x${format(tmp.e.cookingEffect)}`
+                    return `烹饪lv${format(player.e.cooking.lvl, 0)}+${buyableEffect("r", 21)}: 提升${res_name["food"]}转化效率，目前效果 x${format(tmp.e.cookingEffect)}`
                 }],
                 ["bar", "cookingBar"],
                 "blank",

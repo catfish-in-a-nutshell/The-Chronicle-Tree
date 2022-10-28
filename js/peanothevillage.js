@@ -106,7 +106,7 @@ addLayer("p", {
             description: "可以在古戈尔之海钓鱼。钓鱼是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 23),
             cost: () => new Decimal(8).div(tmp.e.tradingEffect),
-            currencyDisplayName: "金子",
+            currencyDisplayName: () => res_name["gold"],
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
             onPurchase() {
@@ -114,7 +114,6 @@ addLayer("p", {
                     equiptype: "fishingrod",
                     name: "fishingrod0",
                     number: new Decimal(1),
-                    dur: new Decimal(100)
                 })
             }
         },
@@ -124,7 +123,7 @@ addLayer("p", {
             description: "可以在幂次原野砍树。砍树是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 25),
             cost: () => new Decimal(20).div(tmp.e.tradingEffect),
-            currencyDisplayName: "金子",
+            currencyDisplayName: () => res_name["gold"],
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
             onPurchase() {
@@ -132,7 +131,6 @@ addLayer("p", {
                     equiptype: "axe",
                     name: "axe0",
                     number: new Decimal(1),
-                    dur: new Decimal(100)
                 })
             }
         },
@@ -142,7 +140,7 @@ addLayer("p", {
             description: "可以在幂次原野挖矿。挖矿是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 25),
             cost: () => new Decimal(50).div(tmp.e.tradingEffect),
-            currencyDisplayName: "金子",
+            currencyDisplayName: () => res_name["gold"],
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
             onPurchase() {
@@ -150,7 +148,6 @@ addLayer("p", {
                     equiptype: "pickaxe",
                     name: "pickaxe0",
                     number: new Decimal(1),
-                    dur: new Decimal(100)
                 })
             }
         },
@@ -160,7 +157,7 @@ addLayer("p", {
             description: "可以在野外地图战斗。战斗是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 25),
             cost: () => new Decimal(100).div(tmp.e.tradingEffect),
-            currencyDisplayName: "金子",
+            currencyDisplayName: () => res_name["gold"],
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
             onPurchase() {
@@ -168,7 +165,6 @@ addLayer("p", {
                     equiptype: "weapon",
                     name: "sword0",
                     number: new Decimal(1),
-                    dur: new Decimal(100)
                 })
             }
         },
@@ -179,9 +175,22 @@ addLayer("p", {
             unlocked: () => hasAchievement("m", 13),
             cost: new Decimal(40),
             canAfford: () => hasUpgrade("p", 32) || hasUpgrade("p", 33) || hasUpgrade("p", 34),
-            currencyDisplayName: "食物",
+            currencyDisplayName: () => res_name["food"],
             currencyInternalName: "food",
             currencyLocation: () => player.i
+        },
+
+        36: {
+            title: "向铁匠请教",
+            description: () => `使用 ${format(new Decimal(50).div(tmp.e.tradingEffect))} ${res_name["food"]} 与 ${format(new Decimal(300).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，永久解锁功能: 物品-回炉，可以使用材料提升装备的数字。`,
+            unlocked: () => hasUpgrade("p", 35),
+            cost: new Decimal(100),
+            canAfford: () => player.i.food.gte(new Decimal(50).div(tmp.e.tradingEffect)) && player.i.gold.gte(new Decimal(300).div(tmp.e.tradingEffect)),
+            onPurchase() {
+                player.i.food = player.i.food.sub(new Decimal(50).div(tmp.e.tradingEffect))
+                player.i.gold = player.i.gold.sub(new Decimal(300).div(tmp.e.tradingEffect))
+                player.i.forge_unlocked = true
+            }
         }
     },
 
@@ -222,7 +231,7 @@ addLayer("p", {
             }
         },
         12: {
-            title: "和村长交谈 II - 数字学概论",
+            title: "和村长交谈 II - 数字学概论101",
             cost(x) {
                 c = x.mul(5).add(50)
                 c = c.div(tmp.e.communicationEffect).mul(buyableEffect("p", 13))
@@ -264,7 +273,7 @@ addLayer("p", {
                 }
                 ret += `当前效果：村中对话花费 x${format(this.effect())}\n`
                 if (cur_amount.lt(8)) {
-                    ret += `下一级价格: ${format(this.cost(cur_amount))} 金子`
+                    ret += `下一级价格: ${format(this.cost(cur_amount))} ${res_name["gold"]}`
                 }
                 return ret
             },
@@ -294,7 +303,7 @@ addLayer("p", {
                     ret += full_dialogue["p14"][format(cur_amount, 0)-1] + "\n"
                 }
                 if (cur_amount.lt(8)) {
-                    ret += "下一级价格:" + format(this.cost(cur_amount)) + " 食物"
+                    ret += `下一级价格: ${format(this.cost(cur_amount))} ${res_name["food"]}`
                 }
                 return ret
             },
@@ -320,7 +329,7 @@ addLayer("p", {
             display() {
                 let disp = `使用当前投入时间的50%，获得少量报酬，并增长交流能力。\n
                 单位时间收益:
-                ${format(tmp.p.tavernIncome)} 金子
+                ${format(tmp.p.tavernIncome)} ${res_name["gold"]}
                 ${format(tmp.p.tavernExp)} 经验`
                 return disp
             },
@@ -355,8 +364,8 @@ addLayer("p", {
             display() {
                 let disp = `使用当前投入时间的50%，获得较多报酬，并增长劳务能力。\n
                 单位时间收益:
-                ${format(tmp.p.farmGoldIncome)} 金子
-                ${format(tmp.p.farmFoodIncome)} 食物
+                ${format(tmp.p.farmGoldIncome)} ${res_name["gold"]}
+                ${format(tmp.p.farmFoodIncome)} ${res_name["food"]}
                 ${format(tmp.p.farmExp)} 经验`
                 return disp
             },
@@ -387,9 +396,9 @@ addLayer("p", {
         13: {
             "title": "卖鱼",
             display() {
-                let disp = `卖掉当前鱼的50%，获得报酬，并增长交易能力。\n
-                单位鱼收益:
-                ${format(tmp.p.sellFishIncome)} 金子
+                let disp = `卖掉当前${res_name["fish"]}的50%，获得报酬，并增长交易能力。\n
+                单位${res_name["fish"]}收益:
+                ${format(tmp.p.sellFishIncome)} ${res_name["gold"]}
                 ${format(tmp.p.sellFishExp)} 经验`
                 return disp
             },
@@ -419,9 +428,9 @@ addLayer("p", {
         14: {
             "title": "将鱼制成食物",
             display() {
-                let disp = `处理当前鱼的50%，转化为对应的食物，并增长烹饪能力。\n
-                单位鱼收益:
-                ${format(tmp.p.dealFishIncome)} 食物
+                let disp = `处理当前${res_name["fish"]}的50%，转化为对应的${res_name["food"]}，并增长烹饪能力。\n
+                单位${res_name["fish"]}收益:
+                ${format(tmp.p.dealFishIncome)} ${res_name["food"]}
                 ${format(tmp.p.dealFishExp)} 经验`
                 return disp
             },
@@ -451,9 +460,9 @@ addLayer("p", {
         15: {
             "title": "购买食物",
             display() {
-                let disp = `花金子购买食物，并增长交易能力。\n
+                let disp = `花${res_name["gold"]}购买${res_name["food"]}，并增长交易能力。\n
                 单次效益:
-                + 10 食物\n- ${format(tmp.p.buyFoodCost)} 金子
+                + 10 ${res_name["food"]}\n- ${format(tmp.p.buyFoodCost)} ${res_name["gold"]}
                 ${format(tmp.p.buyFoodExp)} 经验`
                 return disp
             },
@@ -475,7 +484,7 @@ addLayer("p", {
                 player.e.trading.cur_exp = player.e.trading.cur_exp.add(tmp.p.buyFoodExp)
             },
             canClick: () => !player.r.is_dead && player.i.gold.gt(tmp.p.buyFoodCost),
-            unlocked: () => hasUpgrade("p", 23),
+            unlocked: () => hasUpgrade("p", 26),
         }
     },
 

@@ -105,6 +105,20 @@ addLayer("m", {
                     return "未解锁"
                 }
             }
+        },
+
+        21: {
+            name: "椭圆形符号的记忆",
+            onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
+            done: () => false, // TODO implement sigil0
+            tooltip() {
+                if (hasAchievement("m", this.id)) {
+                    return "在你的掌心，镶嵌着一枚椭圆形的角质鳞片，你感受到其中寄宿着非凡而古老的力量。解锁功能：重生-数字-符号《0》"
+                } else {
+                    return "未解锁"
+                }
+            }
+
         }
     },
 
@@ -133,6 +147,6 @@ addLayer("m", {
         "achievements"],
 
     update(diff) {
-
+        
     }
 })

@@ -5,6 +5,11 @@ addLayer("mp", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
+        max_prog: {
+            mpcave: 0,
+            mphorde: 0,
+            mpannazone: 0
+        }
     }},
     canReset() {
         return (!player.r.is_dead && tmp.g.isInited) && hasUpgrade("p", 35)
@@ -52,7 +57,7 @@ addLayer("mp", {
                 let ret = `探索等级 ${format(cur_amount, 0)}/10\n\n`
                 
                 if (cur_amount.lt(10) && cur_amount.gt(0)) {
-                    ret += "<p style='color: red'> 注意: 继续探索会将区域数量级x3.6, 误入深处可能会非常危险！ </p>\n"
+                    ret += "<p style='color: red'> 注意: 继续探索会将区域数量级x3.6 (不影响副本), 误入深处可能会非常危险！ </p>\n"
                 }
 
                 if (cur_amount.gte(1)) {
@@ -83,10 +88,10 @@ addLayer("mp", {
         11: {
             "title": "伐木",
             display() {
-                let disp = `使用当前投入时间的50%以及4食物，获得木材与纤维，并增长劳务能力。\n
+                let disp = `使用当前投入时间的50%以及4${res_name["food"]}，获得${res_name["wood"]}与${res_name["fiber"]}，并增长劳务能力。\n
                 单位时间收益:
-                ${format(tmp.mp.lumberWoodIncome)} 木材
-                ${format(tmp.mp.lumberFiberIncome)} 纤维
+                ${format(tmp.mp.lumberWoodIncome)} ${res_name["wood"]}
+                ${format(tmp.mp.lumberFiberIncome)} ${res_name["fiber"]}
                 ${format(tmp.mp.lumberExp)} 经验`
                 return disp
             },
@@ -109,8 +114,6 @@ addLayer("mp", {
                 player.i.wood = player.i.wood.add(t.mul(tmp.mp.lumberWoodIncome))
                 player.i.fiber = player.i.fiber.add(t.mul(tmp.mp.lumberFiberIncome))
                 player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.mp.lumberExp))
-
-                layers["i"].useEquip("axe", t.sqrt())
             },
             canClick() {
                 return !player.r.is_dead && player.mp.points.gt(0) && player.i.food.gt(5) && player.i.equips.axe.equipped
@@ -123,9 +126,9 @@ addLayer("mp", {
         12: {
             "title": "挖矿",
             display() {
-                disp = `使用当前投入时间的50%以及4食物，获得矿物，并增长劳务能力。\n
+                disp = `使用当前投入时间的50%以及4${res_name["food"]}，获得${res_name["mineral"]}，并增长劳务能力。\n
                 单位时间收益:
-                ${format(tmp.mp.mineIncome)} 矿物
+                ${format(tmp.mp.mineIncome)} ${res_name["mineral"]}
                 ${format(tmp.mp.mineExp)} 经验`
                 return disp
             },
@@ -148,7 +151,6 @@ addLayer("mp", {
                 player.i.mineral = player.i.mineral.add(t.mul(tmp.mp.mineIncome))
                 player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.mp.mineExp))
                 
-                layers["i"].useEquip("pickaxe", t.sqrt())
             },
             canClick() {
                 return !player.r.is_dead && player.mp.points.gt(0) && player.i.food.gt(5) && player.i.equips.pickaxe.equipped
@@ -161,7 +163,7 @@ addLayer("mp", {
         13: {
             "title": "狩猎",
             display() {
-                let disp = `使用当前投入时间的50%以及4食物，有概率发现野兽，并增长索敌能力。\n
+                let disp = `使用当前投入时间的50%以及4${res_name["food"]}，有概率发现野兽，并增长索敌能力。\n
                 单位时间收益:
                 ${format(tmp.mp.huntProbability)} 几率发现猎物
                 ${format(tmp.mp.huntExp)} 经验(成功发现时x1.5)`
@@ -193,7 +195,7 @@ addLayer("mp", {
                     let {weights, targets} = areas["mphunting"]
                     target = targets[weighted_choice(weights)]
                     layers["b"].startEncounter(target, buyableEffect(this.layer, 11))
-                } 
+                }
 
                 player.e.hunting.cur_exp = player.e.hunting.cur_exp.add(exp)
             },
@@ -206,12 +208,13 @@ addLayer("mp", {
         },
 
         21: {
-            "title": "洞穴",
+            title: () => zones["mpcave"].name,
             display() {
                 let disp = `副本
-                    平均数字: 5
-                    首通奖励: 解锁技能点升级
-                    奖励: 金子、矿物、装备`
+                    长度: 3
+                    关卡数字: 2
+                    首通奖励: 解锁技能点升级和???
+                    奖励: ${res_name["gold"]}、${res_name["mineral"]}、经验`
                 return disp
             },
             style() {
@@ -226,12 +229,12 @@ addLayer("mp", {
                 }
             },
             onClick() {
-                layers["b"].startZone("mpcave")
+                layers["b"].startZone("mpcave", "mp")
             },
             canClick() {
-                return !player.r.is_dead && player.mp.points.gt(0) 
+                return !player.r.is_dead && tmp.mp.canReset
                     && player.i.equips.weapon.equipped
-                    && !player.b.in_battle
+                    && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
                 return getBuyableAmount(this.layer, 11).gt(0)
@@ -239,12 +242,13 @@ addLayer("mp", {
         },
 
         22: {
-            "title": "动物集落",
+            title: () => zones["mphorde"].name,
             display() {
                 let disp = `副本
-                    平均数字: 50
+                    长度: 4
+                    推荐数字: 40
                     首通奖励: 解锁更多重生升级
-                    奖励: 食物、装备`
+                    奖励: ${res_name["food"]}、装备、经验`
                 return disp
             },
             style() {
@@ -259,12 +263,12 @@ addLayer("mp", {
                 }
             },
             onClick() {
-                layers["b"].startZone("mphorde")
+                layers["b"].startZone("mphorde", "mp")
             },
             canClick() {
-                return !player.r.is_dead && player.mp.points.gt(0) 
+                return !player.r.is_dead && tmp.mp.canReset
                     && player.i.equips.weapon.equipped
-                    && !player.b.in_battle
+                    && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
                 return getBuyableAmount(this.layer, 11).gt(2)
@@ -272,12 +276,13 @@ addLayer("mp", {
         },
 
         23: {
-            "title": "安娜的秘密基地",
+            title: () => zones["mpannazone"].name,
             display() {
                 let disp = `副本
-                    平均数字: 1e5
-                    首通奖励: 解锁更多重生升级
-                    奖励: 装备`
+                    长度: 5
+                    推荐数字: 1e5
+                    首通奖励: 解锁升级: 向着原野的彼方
+                    奖励: 装备、经验`
                 return disp
             },
             style() {
@@ -292,17 +297,41 @@ addLayer("mp", {
                 }
             },
             onClick() {
-                layers["b"].startZone("mpannazone")
+                layers["b"].startZone("mpannazone", "mp")
             },
             canClick() {
-                return !player.r.is_dead && player.mp.points.gt(0) 
+                return !player.r.is_dead && tmp.mp.canReset
                     && player.i.equips.weapon.equipped
-                    && !player.b.in_battle
+                    && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
                 return getBuyableAmount(this.layer, 11).gt(2)
             }
         },
+    },
+
+    infoboxes: {
+        lore: {
+            title: "故事",
+            body() {
+                let disp = "<p>一片广阔的平原——还有森林，就像许多老式RPG里新手村外的区域一样。</p><p>遥远的雪山遮蔽了半片天空，在原野上投下广阔的阴影。</p>"
+                let zones = ["mpcave", "mphorde", "mpannazone"]
+
+                let prog = player.mp.max_prog
+                for (let z in zones) {
+                    if (prog[z] > 0) {
+                        disp += `<p  style='margin-top: 10px'><h2> ${zone_desc[z].name} </h2><p>`
+                    }
+                    for (let i = 0; i < prog[z]; i++) {
+                        disp += `<p style='margin-top: 5px'>${zone_desc[z].prog[i]}</p>`
+                    }
+                    disp += "<p style='margin-top: 5px'> --------------------------------------</p>"
+                }
+
+
+
+            }
+        }
     },
 
     lumberWoodIncome() {
@@ -343,22 +372,38 @@ addLayer("mp", {
 
     },
 
-    tabFormat: [
-        ["display-text", function() {
-            return `在幂次原野区域，你目前有<b> ${format(player.mp.points)} </b>投入时间`
-        }, {"font-size": "20px"}],
-        
-        "blank",
-        "prestige-button",
-        "blank",
-        "upgrades",
-        "blank",
-        "clickables",
-        "blank",
-        "buyables",
-        "blank",
-    ],
+    tabFormat: {
+        "主界面": {
+            content: [
+                ["display-text", function() {
+                    return `在幂次原野区域，你目前有<b> ${format(player.mp.points)} </b>投入时间`
+                }, {"font-size": "20px"}],
+                
+                "blank",
+                "prestige-button",
+                "blank",
+                "upgrades",
+                "blank",
+                "clickables",
+                "blank",
+                "buyables",
+                "blank",
+            ]
+        },
+        "剧情记录": {
+            content: [
+                ["infobox", "lore"]
+            ]
+        }
+    },
 
 
     branches() {return ['p']},
+    
+    doReset(resettingLayer) {
+        if (layers[resettingLayer].row > this.row || resettingLayer == "r") {
+            let keep = ["max_prog"]
+            layerDataReset(this.layer, keep)
+        }
+    }
 })

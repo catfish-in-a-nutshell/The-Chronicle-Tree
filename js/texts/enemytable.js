@@ -1,33 +1,31 @@
 var areas = {
     "mphunting": {
-        weights: [0.4,    0.2,       0.4],
+        weights: [0.5,    0.2,       0.3],
         targets: ["hare", "cheetah", "deer"]
     }
 }
 
 var zones = {
-    "mpcave": [{
-        number: 2.5,
-        weights: [0.5, 0.5],
-        targets: ["goblinworker", "slime"]
-    }, {
-        number: 3,
-        weights: [0.5, 0.5],
-        targets: ["goblinworker", "slime"]
-    }, {
-        number: 4,
-        weights: [0.33, 0.33, 0.33],
-        targets: ["goblinwarrior", "goblinassassin", "goblinberserker"]
-    },  {
-        number: 4.5,
-        weights: [0.33, 0.33, 0.33],
-        targets: ["goblinwarrior", "goblinassassin", "goblinberserker"]
-    },{
-        number: 5.5,
-        weights: [1],
-        targets: ["goblinleader"]
+    "mpcave": {
+        len: 3,
+
+        encounters: [{
+            number: 1.2,
+            weights: [0.5, 0.5],
+            targets: ["goblinworker", "goblinscout"]
+        }, {
+            number: 1.5,
+            weights: [1],
+            targets: ["goblinwarrior"]
+        }, {
+            number: 2,
+            weights: [1],
+            targets: ["goblinleader"]
+        },
+        ],
+
+        drop: []
     },
-    ],
 
     "mphorde": [],
     "mpannazone": [],

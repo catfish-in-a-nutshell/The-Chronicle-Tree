@@ -61,8 +61,13 @@ addLayer("b", {
                 buffs: ene_buffs,
                 traits: new Set()
             },
-            battle_logs: [], // TODO: add text log system
+            battle_logs: [],
             queued_encounters: [],
+            in_zone: false,
+            zone_countdown: 0,
+            zone_total: 0,
+            zone_name: "",
+            zone_area: "",
             just_defeated: "", // the last enemy defeated, useful for achievements
         }
     },
@@ -224,7 +229,7 @@ addLayer("b", {
         11: {
             "title": "逃跑！",
             display() {
-                return `不会获得任何战利品，但也没有损失`
+                return `脱离战斗或副本，不会获得任何战利品，但也没有损失`
             },
             style() {
                 return {
@@ -236,7 +241,8 @@ addLayer("b", {
                 // escape
                 player.b.queued_encounters = []
                 player.b.in_battle = false
-                
+                player.b.in_zone = false
+                player.b.zone_countdown = 0
                 layers["b"].pushBattleLog(`你逃跑了！`)
             },
 
@@ -245,6 +251,12 @@ addLayer("b", {
     },
 
     tabFormat: [
+        ["display-text", function() {
+            if (player.b.in_zone) {
+                return `你正在副本 ${player.b.zone_name} 中，剩余 ${player.b.zone_countdown}/${player.b.zone_total} 场战斗`
+            }
+        }],
+        "blank",
         ["display-text", function() {
             if (player.b.in_battle) {
                 return `你正在和 ${player.b.enemy.dispn} 战斗！`
@@ -301,10 +313,16 @@ addLayer("b", {
         }
     },
 
-    startZone(name) {
+    startZone(name, area) {
         zone = zones[name]
-        for (e in zone) {
-            encounter = zone[e]
+        player.b.zone_area = area
+        player.b.zone_total = zone.len
+        player.b.zone_countdown = zone.len
+
+        player[area].max_prog = player[area].max_prog > 0 ? player[area].max_prog : 1;
+
+        for (e in zone.encounters) {
+            encounter = zone.encounters[e]
             d = weighted_choice(encounter.weights)
 
             player.b.queued_encounters.push([encounter.targets[d], encounter.number])
@@ -385,7 +403,7 @@ addLayer("b", {
         let actionBar = tmp.b.fullActionBar
 
         let b = player.b
-        if (!b.in_battle && b.queued_encounters.length > 0) {
+        if (!b.in_battle && b.in_zone && b.queued_encounters.length > 0) {
             layers["b"].startEncounter(...b.queued_encounters.shift())
         }
 
@@ -417,12 +435,11 @@ addLayer("b", {
                 if (enemy.hp.lte(0)) {
                     // you win
                     layers["b"].pushBattleLog(`${enemy.dispn} 倒下了！`)
-                    b.just_defeated = enemy.name
-                    b.in_battle = false
+
 
                     // roll drop items
                     let drop = full_enemies[enemy.name].drop
-                    let drop_exp = layer["e"].addBattleExp(drop.exp)
+                    let drop_exp = layer["e"].addBattleExp(drop.exp.mul(enemy.number.pow(3)))
                     layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} 经验！`)
                     
 
@@ -431,8 +448,26 @@ addLayer("b", {
                             if (loot.is_equip) {
                                 // TODO: drop equipment, need further interface design
                             } else {
-                                player.i[loot.res] = player.i[loot.res].add(loot.base.mul(enemy.number.pow(3)))
+                                let loot_num = loot.base.mul(enemy.number.pow(3))
+                                layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} ${res_name[loot.res]}！`)
+                                player.i[loot.res] = player.i[loot.res].add(loot_num)
                             }
+                        }
+                    }
+                    
+                    // update battle status
+                    b.just_defeated = enemy.name
+                    b.in_battle = false
+                    if (b.in_zone) {
+                        b.zone_countdown -= 1
+                        if (b.zone_countdown == 0) {
+                            b.in_zone = false
+                            // TODO: zone clear awards!
+                        }
+
+                        let prog = 1 + b.zone_total - b.zone_countdown
+                        if (prog > player[b.zone_area].prog) {
+                            player[b.zone_area].prog = prog
                         }
                     }
 
@@ -458,6 +493,8 @@ addLayer("b", {
                 if (pl.hp.lte(0)) {
                     // you dead
                     b.in_battle = false
+                    b.in_zone = false
+                    b.zone_countdown = 0
                     layers["b"].pushBattleLog(`你死了。`)
 
                     // TODO should add death causes

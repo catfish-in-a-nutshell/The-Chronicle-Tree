@@ -63,15 +63,7 @@ addLayer("g", {
                 return `你距离水面还有 ${format(player.g.depth_cur)} 米`
             },
             style() {
-                if (player.g.diving_up) {
-                    return {
-                        "background-color": "#3498db"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return {"background-color": player.g.diving_up ? "#3498db" : "#ffffff"}
             },
             onClick() {
                 player.g.diving_up = true
@@ -86,15 +78,7 @@ addLayer("g", {
                 return ""
             },
             style() {
-                if (player.g.diving_down) {
-                    return {
-                        "background-color": "#3498db"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return {"background-color": player.g.diving_down ? "#3498db" : "#ffffff"}
             },
             onClick() {
                 player.g.air_cur = tmp.g.maxAir
@@ -129,7 +113,6 @@ addLayer("g", {
                 data.points = decimalZero
 
                 player.e.fishing.cur_exp = player.e.fishing.cur_exp.add(fishing_exp)
-                layers["i"].useEquip("fishingrod", t.sqrt())
             },
             canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.g.points.gt(0) && player.i.equips.fishingrod.equipped,
             unlocked: () => hasUpgrade("p", 31)
@@ -142,7 +125,7 @@ addLayer("g", {
             description: "本地投入时间转化效率x2.5",
             effect: () => new Decimal(2.5),
             cost: new Decimal(10),
-            currencyDisplayName: "鱼",
+            currencyDisplayName: () => res_name["fish"],
             currencyInternalName: "fish",
             currencyLocation: () => player.i
         },
@@ -178,7 +161,7 @@ addLayer("g", {
         ["display-text", function() {
             let disp = ""
             if (player.g.last_fish.gt(0)) {
-                disp += `<p>你上一次钓鱼获得了 ${format(player.g.last_fish)} 鱼</p>`
+                disp += `<p>你上一次钓鱼获得了 ${format(player.g.last_fish)} ${res_name["fish"]}</p>`
             }
             return disp
         }]
