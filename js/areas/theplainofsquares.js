@@ -4,7 +4,7 @@ addLayer("mp", {
     position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-		points: new Decimal(0),
+		points: d(0),
         max_prog: {
             mpcave: 0,
             mphorde: 0,
@@ -15,18 +15,18 @@ addLayer("mp", {
         return (!player.r.is_dead && tmp.g.isInited) && hasUpgrade("p", 35)
     },
     color: "#44bd32",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires: d(1), // Can be a function that takes requirement increases into account
     resource: "投入时间", // Name of prestige currency
     baseResource: "空余时间", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.75, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        mult = d(1)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        return d(1)
     },
     tooltip: function() {
         if (hasUpgrade("p", 35)) {
@@ -50,7 +50,7 @@ addLayer("mp", {
         11: {
             title: "向深处探索",
             cost(x) {
-                return new Decimal(1.8).pow(x).mul(20)
+                return d(1.8).pow(x).mul(20)
             },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
@@ -71,10 +71,10 @@ addLayer("mp", {
             unlocked() {
                 return hasUpgrade("p", 35)
             },
-            purchaseLimit: new Decimal(10),
+            purchaseLimit: d(10),
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount.gte(2) ? new Decimal(3.6).pow(cur_amount.sub(1)) : new Decimal(1);
+                return cur_amount.gte(2) ? d(3.6).pow(cur_amount.sub(1)) : d(1);
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -345,7 +345,7 @@ addLayer("mp", {
     },
 
     lumberExp() {
-        return new Decimal(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(tmp.e.lvlpEffect)
     },
 
     mineIncome() {
@@ -354,17 +354,17 @@ addLayer("mp", {
     },
 
     mineExp() {
-        return new Decimal(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(tmp.e.lvlpEffect)
     },
 
     huntProbability() {
         let t = player.mp.points.mul(0.5)
-        let theta = new Decimal(30).div(tmp.e.huntingEffect)
-        return new Decimal(1).sub(t.div(theta).neg().exp())
+        let theta = d(30).div(tmp.e.huntingEffect)
+        return d(1).sub(t.div(theta).neg().exp())
     },
 
     huntExp() {
-        return new Decimal(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(tmp.e.lvlpEffect)
     },
 
 

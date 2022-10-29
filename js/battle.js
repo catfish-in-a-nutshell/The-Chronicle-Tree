@@ -29,35 +29,35 @@ addLayer("b", {
 
         return {
             unlocked: true,
-            points: decimalZero,
+            points: d(0),
             in_battle: false,
-            pl_action: decimalZero,
-            ene_action: decimalZero,
+            pl_action: d(0),
+            ene_action: d(0),
             pl: {
-                hp: new Decimal(100),
-                maxhp: new Decimal(100),
-                mp: new Decimal(10),
-                maxmp: new Decimal(10),
-                speed: decimalOne,
-                crit: new Decimal(0.1),
-                critdmg: new Decimal(1.5),
-                atk: decimalOne,
-                def: decimalOne,
+                hp: d(100),
+                maxhp: d(100),
+                mp: d(10),
+                maxmp: d(10),
+                speed: d(1),
+                crit: d(0.1),
+                critdmg: d(1.5),
+                atk: d(1),
+                def: d(1),
                 buffs: pl_buffs
             },
             enemy: {
                 name: "",
                 dispn: "",
-                hp: decimalZero,
-                maxhp: decimalZero,
-                mp: decimalZero,
-                maxmp: decimalZero,
-                number: decimalOne,
-                speed: decimalZero,
-                crit: decimalZero,
-                critdmg: decimalOne,
-                atk: decimalZero,
-                def: decimalZero,
+                hp: d(0),
+                maxhp: d(0),
+                mp: d(0),
+                maxmp: d(0),
+                number: d(1),
+                speed: d(0),
+                crit: d(0),
+                critdmg: d(1),
+                atk: d(0),
+                def: d(0),
                 buffs: ene_buffs,
                 traits: new Set()
             },
@@ -72,18 +72,18 @@ addLayer("b", {
         }
     },
     color: "#d63031",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires: d(1), // Can be a function that takes requirement increases into account
     resource: "战斗积分", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on
     baseAmount() {return player.r.score}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 1, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        mult = d(1)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        return d(1)
     },
     tooltip:() => {
         return "战斗界面"
@@ -95,26 +95,26 @@ addLayer("b", {
         return player.b.in_battle
     },
 
-    plBaseHP() {return new Decimal(100)},
+    plBaseHP() {return d(100)},
     plBaseMP() {
-        return new Decimal(10)
+        return d(10)
     },
     plAtk() {
         let weapon = player.i.equips.weapon
-        let base_atk = player.i.equips.weapon.equipped ? full_equips[weapon.name].atk : decimalZero
+        let base_atk = player.i.equips.weapon.equipped ? full_equips[weapon.name].atk : d(0)
         base_atk = base_atk.mul(player.r.number.sqrt()).mul(weapon.number.sqrt())
         return base_atk
     },
     plDef() {
         let shield = player.i.equips.shield
-        let shield_def = decimalZero
+        let shield_def = d(0)
         if (shield.equipped) {
             shield_def = full_equips[shield.name].def
             shield_def = shield_def.mul(player.r.number.sqrt()).mul(shield.number.sqrt())
         }
 
         let armor = player.i.equips.armor
-        let armor_def = decimalZero
+        let armor_def = d(0)
         if (armor.equipped) {
             armor_def = full_equips[armor.name].def
             armor_def = armor_def.mul(player.r.number.sqrt()).mul(armor.number.sqrt())
@@ -123,15 +123,15 @@ addLayer("b", {
         return shield_def.add(armor_def)
     },
     plBaseSpeed() {
-        return new Decimal(1)
+        return d(1)
     },
     plCrit() {
-        return new Decimal(0.2)
+        return d(0.2)
     },
     plCritDmg() {
-        return new Decimal(1.5)
+        return d(1.5)
     },
-    fullActionBar() { return new Decimal(5) },
+    fullActionBar() { return d(5) },
 
     bars:{
         plHPBar: {
@@ -378,8 +378,8 @@ addLayer("b", {
         pl.crit = tmp.b.plCrit
         pl.critdmg = tmp.b.plCritDmg
 
-        b.pl_action = decimalZero
-        b.ene_action = decimalZero
+        b.pl_action = d(0)
+        b.ene_action = d(0)
 
         b.in_battle = true
         player.tab = "b"
@@ -474,7 +474,7 @@ addLayer("b", {
                     return
                 }
 
-                b.pl_action = decimalZero
+                b.pl_action = d(0)
             }
 
             if (b.ene_action.gte(actionBar)) {
@@ -502,7 +502,7 @@ addLayer("b", {
                     return
                 }
 
-                b.ene_action = decimalZero
+                b.ene_action = d(0)
             }
 
         }

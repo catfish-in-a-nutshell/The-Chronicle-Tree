@@ -5,11 +5,12 @@ var res_name = {
     "fish": "鱼",
     "wood": "木材",
     "fiber": "纤维",
-    "mineral": "矿物"
+    "mineral": "矿物",
+    "fur": "皮毛",
 }
 
 var res_list = [
-    "gold", "food", "fish", "wood", "fiber", "mineral"
+    "gold", "food", "fish", "wood", "fiber", "mineral", "fur"
 ]
 
 addLayer("i", {
@@ -22,60 +23,62 @@ addLayer("i", {
             inv.push({
                 exist: false, 
                 equiptype: "", 
-                number: decimalZero, 
+                number: d(0), 
                 name: ""
             })
         }
 
         return {
             unlocked: true,
-            points: decimalZero,
-            food: decimalZero,
-            bestfood: decimalZero,
-            gold: decimalZero,
-            bestgold: decimalZero,
-            fish: decimalZero,
-            bestfish: decimalZero,
-            wood: decimalZero,
-            bestwood: decimalZero,
-            fiber: decimalZero,
-            bestfiber: decimalZero,
-            mineral: decimalZero,
-            bestmineral: decimalZero,
+            points: d(0),
+            food: d(0),
+            bestfood: d(0),
+            gold: d(0),
+            bestgold: d(0),
+            fish: d(0),
+            bestfish: d(0),
+            wood: d(0),
+            bestwood: d(0),
+            fiber: d(0),
+            bestfiber: d(0),
+            mineral: d(0),
+            bestmineral: d(0),
+            fur: d(0),
+            bestfur: d(0),
 
             equips: {
                 fishingrod: {
-                    number: decimalOne,
+                    number: d(1),
                     equipped: false,
                     name: "",
                 },
                 axe: {
-                    number: decimalOne,
+                    number: d(1),
                     equipped: false,
                     name: "",
                 },
                 pickaxe: {
-                    number: decimalOne,
+                    number: d(1),
                     equipped: false,
                     name: "",
                 },
                 weapon: {
-                    number: decimalOne,
+                    number: d(1),
                     equipped: false,
                     name: "",
                 },
                 shield: {
-                    number: decimalOne,
+                    number: d(1),
                     equipped: false,
                     name: "",
                 },
                 armor: {
-                    number: decimalOne,
+                    number: d(1),
                     equipped: false,
                     name: "",
                 },
                 ring: {
-                    number: decimalOne,
+                    number: d(1),
                     equipped: false,
                     name: "",
                 }
@@ -87,22 +90,23 @@ addLayer("i", {
             discard_selected: false,
             forge_selected: false,
             selected_inv_ind: -1,
-            forge_unlocked: false
+            forge_unlocked: false,
+            making_unlocked: false
         }
     },
     color: "#2c3e50",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires: d(1), // Can be a function that takes requirement increases into account
     resource: "物品点", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on
     baseAmount() {return player.r.score}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 1, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        mult = d(1)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        return d(1)
     },
     tooltip:() => {
         if (player.i.cur_invs >= player.i.inv_slots) {
@@ -476,10 +480,8 @@ addLayer("i", {
                     }
                 }
             },
-            canClick: true
-        }
-
-
+            canClick: () => player.i.forge_unlocked
+        },
     },
 
     grid: {
@@ -545,41 +547,74 @@ addLayer("i", {
         return player.i.cur_invs >= player.i.inv_slots
     },
 
-    tabFormat: [
-        ["display-text",
-        function() {
-            let d = player.i
-            let disp = ""
-            disp += "<p>你目前拥有</p><p>——————————————————————————</p>"
-            
-            for (let res_n in res_list) {
-                res_n = res_list[res_n]
-                if (d["best"+res_n].gt(0)) {
-                    disp += `<p><b>${format(d[res_n])}</b> ${res_name[res_n]}</p>`
+    tabFormat: {
+        "背包": {
+            content: [
+            ["display-text",
+            function() {
+                let d = player.i
+                let disp = ""
+                disp += "<p>你目前拥有</p><p>——————————————————————————</p>"
+                
+                for (let res_n in res_list) {
+                    res_n = res_list[res_n]
+                    if (d["best"+res_n].gt(0)) {
+                        disp += `<p><b>${format(d[res_n])}</b> ${res_name[res_n]}</p>`
+                    }
                 }
-            }
-            return disp
+                return disp
+            },
+            {"font-size": "20px"}],
+            "blank",
+            "h-line",
+            "blank",
+            ["display-text", "装备栏"],
+            "blank",
+            ["clickables", [1]],
+            "blank",
+            ["clickables", [2]],
+            "blank",
+            "h-line",
+            "blank",
+            ["clickables", [3]],
+            "blank",
+            "grid",]
         },
-        {"font-size": "20px"}],
-        "blank",
-        "h-line",
-        "blank",
-        ["display-text", "装备栏"],
-        "blank",
-        ["clickables", [1]],
-        "blank",
-        ["clickables", [2]],
-        "blank",
-        "h-line",
-        "blank",
-        ["clickables", [3]],
-        "blank",
-        "grid",
-    ],
+        "制造": {
+            content: [    
+                ["display-text",
+                function() {
+                    let d = player.i
+                    let disp = ""
+                    disp += "<p>你目前拥有</p><p>——————————————————————————</p>"
+                    
+                    for (let res_n in res_list) {
+                        res_n = res_list[res_n]
+                        if (d["best"+res_n].gt(0)) {
+                            disp += `<p><b>${format(d[res_n])}</b> ${res_name[res_n]}</p>`
+                        }
+                    }
+                    return disp
+                },
+                {"font-size": "20px"}],
+                
+                "blank",
+
+                ["display-text", function() {
+                    return `<p>你可以在此处消耗资源，制造数字为1的装备。</p><p>拥有多个同样的装备并没有什么好处。</p>`
+                }, {"font-size": "16px"}],
+
+                "blank",
+
+                ["layer-proxy", ["mk", ["grid"]]]
+            ],
+            unlocked: () => player.i.making_unlocked
+        }
+    },
 
     doReset(resettingLayer) {
         if (layers[resettingLayer].row > this.row || resettingLayer == "r") {
-            let keep = ["inv_slots", "forge_unlocked"]
+            let keep = ["inv_slots", "forge_unlocked", "making_unlocked"]
             for (var res_n in res_list) {
                 keep.push(res_n)
             }

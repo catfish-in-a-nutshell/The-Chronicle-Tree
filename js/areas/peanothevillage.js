@@ -4,7 +4,7 @@ addLayer("p", {
     position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-		points: decimalZero,
+		points: d(0),
     }},
     row: 0,
     layerShown() {
@@ -14,14 +14,14 @@ addLayer("p", {
         return (!player.r.is_dead && tmp.g.isInited)
     },
     color: "#bdc3c7",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires: d(1), // Can be a function that takes requirement increases into account
     resource: "投入时间", // Name of prestige currency
     baseResource: "空余时间", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.75, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        let mult = new Decimal(1)
+        let mult = d(1)
         if (hasUpgrade("p", 11))
             mult = mult.mul(upgradeEffect("p", 11))
         if (hasUpgrade("p", 12))
@@ -33,7 +33,7 @@ addLayer("p", {
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        let exp = new Decimal(1)
+        let exp = d(1)
         return exp
     },
     tooltip: () => `皮亚诺村: ${format(player.p.points)} 投入时间`,
@@ -47,73 +47,74 @@ addLayer("p", {
         11: {
             title: "闲逛",
             description: "在村中散步，熟悉地形。本地投入时间转化效率x1.5",
-            effect: () => new Decimal(1.5),
-            cost: new Decimal(10),
+            effect: () => d(1.5),
+            cost: d(10),
         },
         12: {
             title: "问路",
             description: "向看上去就无所事事的村民问路。本地投入时间转化效率x1.3",
             unlocked: () => hasUpgrade("p", 11),
-            effect: () => new Decimal(1.3),
-            cost: () => new Decimal(20).div(tmp.e.communicationEffect),
+            effect: () => d(1.3),
+            cost: () => d(20).div(tmp.e.communicationEffect),
         },
         13: {
             title: "搭话",
             description: "向路过村民了解村子的情况。本地投入时间转化效率x1.2",
             unlocked: () => hasUpgrade("p", 11),
-            effect: () => new Decimal(1.2),
-            cost: () => new Decimal(100).div(tmp.e.communicationEffect),
+            effect: () => d(1.2),
+            cost: () => d(100).div(tmp.e.communicationEffect),
         },
         21: {
             title: "拜访村长家",
             description: "从村长那里也许能了解到一些重要的信息。",
             unlocked: () => hasUpgrade("p", 11),
-            cost: new Decimal(20),
+            cost: d(20),
         },
         22: {
             title: "拜访酒馆",
             description: "根据惯例，酒馆是搜集情报的好地方。",
             unlocked: () => hasUpgrade("p", 11),
-            cost: new Decimal(30),
+            cost: d(30),
         },
         23: {
             title: "拜访鱼铺",
             description: "对海边的村民来说，大海永远是重要的资源。",
             unlocked: () => hasUpgrade("p", 11),
-            cost: new Decimal(40),
+            cost: d(40),
         },
         24: {
             title: "拜访农家",
             description: "帮忙做点农活，也许可以当做第一桶金。",
             unlocked: () => hasUpgrade("p", 11),
-            cost: new Decimal(40),
+            cost: d(40),
         },
         25: {
             title: "拜访铁匠铺",
             description: "如果想出门冒险，当然得准备趁手的工具和武器。",
             unlocked: () => hasUpgrade("p", 11),
-            cost: new Decimal(40),
+            cost: d(40),
         },
         26: {
             title: "拜访商店",
             description: "虽然是村中简陋的小店，但或许会有冒险中用得上的东西。",
             unlocked: () => hasUpgrade("p", 11),
-            cost: new Decimal(100),
+            cost: d(100),
         },
 
         31: {
             title: "购买渔具",
             description: "可以在古戈尔之海钓鱼。钓鱼是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 23),
-            cost: () => new Decimal(8).div(tmp.e.tradingEffect),
+            cost: () => d(8).div(tmp.e.tradingEffect),
             currencyDisplayName: () => res_name["gold"],
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
+            canAfford: () => tmp.i.canAddInventory,
             onPurchase() {
                 layers["i"].addInventory({
                     equiptype: "fishingrod",
                     name: "fishingrod0",
-                    number: new Decimal(1),
+                    number: d(1),
                 })
             }
         },
@@ -122,15 +123,16 @@ addLayer("p", {
             title: "购买斧头",
             description: "可以在幂次原野砍树。砍树是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 25),
-            cost: () => new Decimal(20).div(tmp.e.tradingEffect),
+            cost: () => d(20).div(tmp.e.tradingEffect),
             currencyDisplayName: () => res_name["gold"],
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
+            canAfford: () => tmp.i.canAddInventory,
             onPurchase() {
                 layers["i"].addInventory({
                     equiptype: "axe",
                     name: "axe0",
-                    number: new Decimal(1),
+                    number: d(1),
                 })
             }
         },
@@ -139,15 +141,16 @@ addLayer("p", {
             title: "购买铁镐",
             description: "可以在幂次原野挖矿。挖矿是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 25),
-            cost: () => new Decimal(50).div(tmp.e.tradingEffect),
+            cost: () => d(50).div(tmp.e.tradingEffect),
             currencyDisplayName: () => res_name["gold"],
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
+            canAfford: () => tmp.i.canAddInventory,
             onPurchase() {
                 layers["i"].addInventory({
                     equiptype: "pickaxe",
                     name: "pickaxe0",
-                    number: new Decimal(1),
+                    number: d(1),
                 })
             }
         },
@@ -156,15 +159,16 @@ addLayer("p", {
             title: "购买铁剑",
             description: "可以在野外地图战斗。战斗是RPG的特色，不能不品尝",
             unlocked: () => hasUpgrade("p", 25),
-            cost: () => new Decimal(100).div(tmp.e.tradingEffect),
+            cost: () => d(100).div(tmp.e.tradingEffect),
             currencyDisplayName: () => res_name["gold"],
             currencyInternalName: "gold",
             currencyLocation: () => player.i,
+            canAfford: () => tmp.i.canAddInventory,
             onPurchase() {
                 layers["i"].addInventory({
                     equiptype: "weapon",
                     name: "sword0",
-                    number: new Decimal(1),
+                    number: d(1),
                 })
             }
         },
@@ -173,22 +177,37 @@ addLayer("p", {
             title: "从皮亚诺村启程",
             description: "需要拥有斧头、铁镐、铁剑中至少一件。解锁: 幂次原野",
             unlocked: () => hasAchievement("m", 13),
-            cost: new Decimal(40),
+            cost: d(40),
             canAfford: () => hasUpgrade("p", 32) || hasUpgrade("p", 33) || hasUpgrade("p", 34),
             currencyDisplayName: () => res_name["food"],
             currencyInternalName: "food",
             currencyLocation: () => player.i
         },
 
-        36: {
-            title: "向铁匠请教",
-            description: () => `使用 ${format(new Decimal(50).div(tmp.e.tradingEffect))} ${res_name["food"]} 与 ${format(new Decimal(300).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，永久解锁功能: 物品-回炉，可以使用材料提升装备的数字。`,
+        41: {
+            title: "向铁匠请教 I",
+            description: () => `使用 ${format(d(50).div(tmp.e.tradingEffect))} ${res_name["fur"]} 与 ${format(d(300).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，
+                永久解锁功能: 物品-制造，可以使用材料制造新的装备。`,
             unlocked: () => hasUpgrade("p", 35),
-            cost: new Decimal(100),
-            canAfford: () => player.i.food.gte(new Decimal(50).div(tmp.e.tradingEffect)) && player.i.gold.gte(new Decimal(300).div(tmp.e.tradingEffect)),
+            cost: d(100),
+            canAfford: () => player.i.fur.gte(d(50).div(tmp.e.tradingEffect)) && player.i.gold.gte(d(300).div(tmp.e.tradingEffect)),
             onPurchase() {
-                player.i.food = player.i.food.sub(new Decimal(50).div(tmp.e.tradingEffect))
-                player.i.gold = player.i.gold.sub(new Decimal(300).div(tmp.e.tradingEffect))
+                player.i.fur = player.i.fur.sub(d(50).div(tmp.e.tradingEffect))
+                player.i.gold = player.i.gold.sub(d(300).div(tmp.e.tradingEffect))
+                player.i.making_unlocked = true
+            }
+        },
+        
+        42: {
+            title: "向铁匠请教 II",
+            description: () => `使用 ${format(d(50).div(tmp.e.tradingEffect))} ${res_name["fur"]} 与 ${format(d(300).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，
+                永久解锁功能: 物品-回炉，可以使用材料提升装备的数字。`,
+            unlocked: () => hasUpgrade("p", 35),
+            cost: d(100),
+            canAfford: () => player.i.fur.gte(d(50).div(tmp.e.tradingEffect)) && player.i.gold.gte(d(300).div(tmp.e.tradingEffect)),
+            onPurchase() {
+                player.i.fur = player.i.fur.sub(d(50).div(tmp.e.tradingEffect))
+                player.i.gold = player.i.gold.sub(d(300).div(tmp.e.tradingEffect))
                 player.i.forge_unlocked = true
             }
         }
@@ -219,10 +238,10 @@ addLayer("p", {
             unlocked() {
                 return hasUpgrade(this.layer, 21)
             },
-            purchaseLimit: new Decimal(7),
+            purchaseLimit: d(7),
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount.gte(3) ? new Decimal(1.2).pow(cur_amount.sub(2).sqrt()) : new Decimal(1);
+                return cur_amount.gte(3) ? d(1.2).pow(cur_amount.sub(2).sqrt()) : d(1);
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -251,7 +270,7 @@ addLayer("p", {
             unlocked() {
                 return getBuyableAmount(this.layer, 11).gte(7)
             },
-            purchaseLimit: new Decimal(14),
+            purchaseLimit: d(14),
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
@@ -280,10 +299,10 @@ addLayer("p", {
             unlocked() {
                 return hasUpgrade(this.layer, 22)
             },
-            purchaseLimit: new Decimal(8),
+            purchaseLimit: d(8),
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return new Decimal(1).sub(cur_amount.mul(0.05))
+                return d(1).sub(cur_amount.mul(0.05))
             },
             canAfford() { return player.i.gold.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -294,7 +313,7 @@ addLayer("p", {
         14: {
             title: "给路边的流浪汉一点吃的",
             cost(x) { 
-                return new Decimal(2).add(new Decimal(1).mul(x)) // TODO
+                return d(2).add(d(1).mul(x)) // TODO
             },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
@@ -310,10 +329,10 @@ addLayer("p", {
             unlocked() {
                 return hasUpgrade(this.layer, 13)
             },
-            purchaseLimit: new Decimal(8),
+            purchaseLimit: d(8),
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return new Decimal(1).sub(cur_amount.mul(0.05))
+                return d(1).sub(cur_amount.mul(0.05))
             },
             canAfford() { return player.i.food.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
@@ -515,47 +534,47 @@ addLayer("p", {
     },
 
     tavernIncome() {
-        return new Decimal(0.05)
+        return d(0.05)
     },
 
     tavernExp() {
-        return new Decimal(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(tmp.e.lvlpEffect)
     },
 
     farmGoldIncome() {
-        return new Decimal(0.05).mul(tmp.e.laboringEffect)
+        return d(0.05).mul(tmp.e.laboringEffect)
     },
 
     farmFoodIncome() {
-        return new Decimal(0.02).mul(tmp.e.laboringEffect)
+        return d(0.02).mul(tmp.e.laboringEffect)
     },
     
     farmExp() {
-        return new Decimal(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(tmp.e.lvlpEffect)
     },
 
     sellFishIncome() {
-        return new Decimal(0.1).mul(tmp.e.tradingEffect)
+        return d(0.1).mul(tmp.e.tradingEffect)
     },
     
     sellFishExp() {
-        return new Decimal(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(tmp.e.lvlpEffect)
     },
 
     dealFishIncome() {
-        return new Decimal(0.05).mul(tmp.e.cookingEffect)
+        return d(0.05).mul(tmp.e.cookingEffect)
     },
     
     dealFishExp() {
-        return new Decimal(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(tmp.e.lvlpEffect)
     },
 
     buyFoodCost() {
-        return new Decimal(20).div(tmp.e.tradingEffect)
+        return d(20).div(tmp.e.tradingEffect)
     },
     
     buyFoodExp() {
-        return new Decimal(200).mul(tmp.e.lvlpEffect)
+        return d(200).mul(tmp.e.lvlpEffect)
     },
 
     tabFormat: {

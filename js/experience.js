@@ -2,9 +2,9 @@
 
 var prices = {
     "swimming": {
-        priceStart: new Decimal(10),
-        priceAdd: new Decimal(20),
-        lvlDivider: new Decimal(5)
+        priceStart: d(10),
+        priceAdd: d(20),
+        lvlDivider: d(5)
     }
 }
 
@@ -14,80 +14,80 @@ addLayer("e", {
     position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-        points: decimalZero,
-        lvlpoints: decimalZero,
+        points: d(0),
+        lvlpoints: d(0),
         communication: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100),
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100),
         },
         swimming: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         laboring: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         cooking: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         trading: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         fishing: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         hunting: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
 
 
         atk: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         def: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         speed: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         hp: {
-            cur_exp: decimalZero,
-            lvl: decimalZero,
-            nxt_exp: new Decimal(100)
+            cur_exp: d(0),
+            lvl: d(0),
+            nxt_exp: d(100)
         },
         battle_exp_strat: "hp"
     }},
     color: "#27ae60",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires: d(1), // Can be a function that takes requirement increases into account
     resource: "重生点", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on
     baseAmount() {return player.r.score}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 1, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        mult = d(1)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        return d(1)
     },
     tooltip:() => "能力栏",
     tooltipLocked:() => "能力栏",
@@ -102,7 +102,7 @@ addLayer("e", {
     // },
 
     battleExpGainMult() {
-        return new Decimal(1)
+        return d(1)
     },
 
     addBattleExp(exp) {
@@ -129,31 +129,31 @@ addLayer("e", {
     },
 
     communicationGainMult() {
-        return new Decimal(1)
+        return d(1)
     },
 
     swimmingGainMult() {
-        return new Decimal(1)
+        return d(1)
     },
 
     laboringGainMult() {
-        return new Decimal(1)
+        return d(1)
     }, 
 
     cookingGainMult() {
-        return new Decimal(1)
+        return d(1)
     }, 
 
     tradingGainMult() {
-        return new Decimal(1)
+        return d(1)
     }, 
 
     fishingGainMult() {
-        return new Decimal(1)
+        return d(1)
     }, 
 
     huntingGainMult() {
-        return new Decimal(1)
+        return d(1)
     }, 
 
     communicationEffect() {
@@ -514,9 +514,9 @@ addLayer("e", {
             let data = player.e[skill]
             if (data.cur_exp.gte(data.nxt_exp)) {
 
-                let priceStart = new Decimal(100)
-                let priceAdd = new Decimal(100)
-                let lvlDivider = new Decimal(1)
+                let priceStart = d(100)
+                let priceAdd = d(100)
+                let lvlDivider = d(1)
 
                 if (prices[skill]) {
                     priceStart = prices[skill].priceStart

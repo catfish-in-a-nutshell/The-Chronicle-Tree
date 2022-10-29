@@ -4,6 +4,10 @@ const decimalZero = new Decimal(0)
 const decimalOne = new Decimal(1)
 const decimalNaN = new Decimal(NaN)
 
+function d(e) {
+    return new Decimal(e)
+}
+
 const defaultGlow = "#ff0000"
 
 

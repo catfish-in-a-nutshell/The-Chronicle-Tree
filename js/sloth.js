@@ -6,24 +6,24 @@ addLayer("s", {
     position: 4, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-        points: decimalZero,
-        sloth: decimalZero,
-        limit: new Decimal(120),
-        speed: new Decimal(1)
+        points: d(0),
+        sloth: d(0),
+        limit: d(120),
+        speed: d(1)
     }},
     color: "#f1c40f",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires: d(1), // Can be a function that takes requirement increases into account
     resource: "重生点", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 1, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        mult = d(1)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        return d(1)
     },
     tooltip:() => "怠惰: " + format(player.s.sloth),
     tooltipLocked:() => "怠惰: " + format(player.s.sloth),
@@ -32,7 +32,7 @@ addLayer("s", {
     buyables: {
         11: {
             title: "感受怠惰",
-            cost(x) { return new Decimal(2).pow(x).mul(120) },
+            cost(x) { return d(2).pow(x).mul(120) },
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `怠惰上限x2\n
@@ -46,12 +46,12 @@ addLayer("s", {
             },
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return new Decimal(2).pow(cur_amount).mul(120)
+                return d(2).pow(cur_amount).mul(120)
             }
         },
         12: {
             title: "感受时光流逝",
-            cost(x) { return new Decimal(3).pow(x).mul(40) },
+            cost(x) { return d(3).pow(x).mul(40) },
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `让全局时间加快x1.1 \n
@@ -67,12 +67,12 @@ addLayer("s", {
             },
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return new Decimal(1.1).pow(cur_amount)
+                return d(1.1).pow(cur_amount)
             }
         },
         13: {
             title: "更多怠惰",
-            cost(x) { return new Decimal(2.5).pow(x).mul(80) },
+            cost(x) { return d(2.5).pow(x).mul(80) },
             display() { 
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `怠惰增长速率x1.5 \n
@@ -86,7 +86,7 @@ addLayer("s", {
             },
             effect() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return new Decimal(1.5).pow(cur_amount)
+                return d(1.5).pow(cur_amount)
             }
         }
     },

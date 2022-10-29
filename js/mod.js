@@ -7,12 +7,13 @@ let modInfo = {
 		"utils/funcutils.js",
 		"tree.js", 
 		// Area layers
-		"seaofgoogol.js", 
-		"peanothevillage.js", 
-		"theplainofsquares.js",
-		"everfortoftheeternity.js",
+		"areas/seaofgoogol.js", 
+		"areas/peanothevillage.js", 
+		"areas/theplainofsquares.js",
+		"areas/everfortoftheeternity.js",
 		// System layers
 		"item.js", 
+		"making.js",
 		"ritual.js", 
 		"memory.js", 
 		"experience.js", 

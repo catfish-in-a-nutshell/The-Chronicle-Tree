@@ -4,35 +4,35 @@ addLayer("g", {
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-		points: decimalZero,
+		points: d(0),
         inited: false,
-        air_cur: new Decimal(100),
-        air_cur_progress: decimalZero,
-        depth_cur: new Decimal(10),
-        depth_best: new Decimal(10),
+        air_cur: d(100),
+        air_cur_progress: d(0),
+        depth_cur: d(10),
+        depth_best: d(10),
         diving_up: false,
         diving_down: false,
-        tot_time: decimalZero,
-        last_fish: new Decimal(-1)
+        tot_time: d(0),
+        last_fish: d(-1)
     }},
     canReset() {
         return (!player.r.is_dead)
     },
     color: "#3498db",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires: d(1), // Can be a function that takes requirement increases into account
     resource: "投入时间", // Name of prestige currency
     baseResource: "空余时间", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.75, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        let mult = new Decimal(1)
+        let mult = d(1)
         if (hasUpgrade("g", 11))
             mult = mult.mul(upgradeEffect("g", 11))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        return d(1)
     },
     tooltip: () => "古戈尔之海: " + format(player.g.points) + " 投入时间",
     tooltipLocked: () => "古戈尔之海",
@@ -50,7 +50,7 @@ addLayer("g", {
             fillStyle: {'background-color' : "#3498db"},
             baseStyle: {'background-color' : "#000000"},
             borderStyle() {return {}},
-            progress: () => player.g.depth_cur.gt(0) ? player.g.air_cur_progress : new Decimal(1),
+            progress: () => player.g.depth_cur.gt(0) ? player.g.air_cur_progress : d(1),
             display() { return player.g.depth_cur.gt(0) ? `剩余氧气: ${format(player.g.air_cur)}/${format(tmp.g.maxAir)}` : ""},
             unlocked: true
         }
@@ -101,16 +101,16 @@ addLayer("g", {
                 let data = player.g
                 let t = data.points
                 
-                let harv = new Decimal(0.5).mul(t).mul(player.i.equips.fishingrod.number)
+                let harv = d(0.5).mul(t).mul(player.i.equips.fishingrod.number)
                 let fishing_exp = harv.mul(20).mul(tmp.e.lvlpEffect)
 
                 harv = harv.mul(tmp.e.fishingEffect)
                 let harv_exp = harv.log10()
-                harv = new Decimal(10).pow(harv_exp.add(Math.random() - 0.8))
+                harv = d(10).pow(harv_exp.add(Math.random() - 0.8))
                 
                 player.i.fish = player.i.fish.add(harv)
                 data.last_fish = harv
-                data.points = decimalZero
+                data.points = d(0)
 
                 player.e.fishing.cur_exp = player.e.fishing.cur_exp.add(fishing_exp)
             },
@@ -123,8 +123,8 @@ addLayer("g", {
         11: {
             title: "熟悉水性",
             description: "本地投入时间转化效率x2.5",
-            effect: () => new Decimal(2.5),
-            cost: new Decimal(10),
+            effect: () => d(2.5),
+            cost: d(10),
             currencyDisplayName: () => res_name["fish"],
             currencyInternalName: "fish",
             currencyLocation: () => player.i
@@ -177,12 +177,12 @@ addLayer("g", {
         if (layers[resettingLayer].row > this.row || resettingLayer == "r") {
             let keep = ["depth_best"]
             layerDataReset(this.layer, keep)
-            player.g.air_cur = new Decimal(100)
+            player.g.air_cur = d(100)
         }
     },
     layerShown() {return true},
     maxAir() {
-        return new Decimal(100)
+        return d(100)
     },
 
     isInited() {
@@ -197,16 +197,16 @@ addLayer("g", {
 
         // console.log(format(data.tot_time))
 
-        let time_consume_rate = new Decimal(1)
-        let air_consume_rate = new Decimal(10)
+        let time_consume_rate = d(1)
+        let air_consume_rate = d(10)
 
-        let swim_speed = new Decimal(0.8)
+        let swim_speed = d(0.8)
         swim_speed = swim_speed.mul(tmp.e.swimmingEffect)
         let air_max = tmp.g.maxAir
         
-        let exp_gain = new Decimal(10).mul(tmp.e.lvlpEffect)
+        let exp_gain = d(10).mul(tmp.e.lvlpEffect)
         if (data.diving_up) {
-            let tick_swim_time = new Decimal(diff)
+            let tick_swim_time = d(diff)
             tick_swim_time = tick_swim_time.min(data.air_cur.div(air_consume_rate))
             tick_swim_time = tick_swim_time.min(data.depth_cur.div(swim_speed))
             tick_swim_time = tick_swim_time.min(data.points)
@@ -222,8 +222,8 @@ addLayer("g", {
                 // Back to surface
                 data.inited = true
                 data.diving_up = false
-                data.depth_cur = decimalZero
-                // data.air_cur_progress = new Decimal(1)
+                data.depth_cur = d(0)
+                // data.air_cur_progress = d(1)
 
                 // TODO: should add loots to item!
                 return
@@ -242,7 +242,7 @@ addLayer("g", {
             }
 
         } else if (data.diving_down) {
-            let tick_swim_time = new Decimal(diff)
+            let tick_swim_time = d(diff)
             tick_swim_time = tick_swim_time.min(data.air_cur.div(air_consume_rate))
             tick_swim_time = tick_swim_time.min(data.points)
 

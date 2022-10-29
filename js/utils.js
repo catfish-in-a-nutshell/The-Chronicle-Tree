@@ -119,6 +119,7 @@ function clickClickable(layer, id) {
 }
 
 function clickGrid(layer, id) {
+	console.log(layer, id)
 	if (!player[layer].unlocked  || tmp[layer].deactivated) return
 	if (!run(layers[layer].grid.getUnlocked, layers[layer].grid, id)) return
 	if (!gridRun(layer, 'getCanClick', player[layer].grid[id], id)) return

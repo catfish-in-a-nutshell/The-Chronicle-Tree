@@ -15,32 +15,32 @@ addLayer("r", {
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-        points: decimalZero,
-        score: decimalZero,
-        deaths: decimalZero,
-        number: new Decimal(1),
+        points: d(0),
+        score: d(0),
+        deaths: d(0),
+        number: d(1),
         is_dead: false
     }},
     color: "#3498db",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires: d(1), // Can be a function that takes requirement increases into account
     resource: "重生点", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on
     baseAmount() {return player.r.score.add(1)}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.8, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        let mult = new Decimal(1)
+        let mult = d(1)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        return d(1)
     },
     scoreGainMult() {
-        let mult = new Decimal(10)
+        let mult = d(10)
         return mult
     },
     scoreGainExp() {
-        let score_exp = new Decimal(1)
+        let score_exp = d(1)
         return score_exp
     },
     // upgrades: {
@@ -52,7 +52,7 @@ addLayer("r", {
     buyables: {
         11: {
             title: "游泳",
-            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) },
+            cost(x) { return d(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `提升游泳技能额外等级
@@ -74,7 +74,7 @@ addLayer("r", {
         
         12: {
             title: "交流", 
-            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `提升交流技能额外等级
@@ -96,7 +96,7 @@ addLayer("r", {
         
         13: {
             title: "劳务",
-            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `提升劳务技能额外等级
@@ -118,7 +118,7 @@ addLayer("r", {
         
         21: {
             title: "烹饪",
-            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `提升烹饪技能额外等级
@@ -140,7 +140,7 @@ addLayer("r", {
 
         22: {
             title: "贸易",
-            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `提升贸易技能额外等级
@@ -162,7 +162,7 @@ addLayer("r", {
 
         23: {
             title: "钓鱼",
-            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `提升钓鱼技能额外等级
@@ -184,7 +184,7 @@ addLayer("r", {
         
         31: {
             title: "索敌",
-            cost(x) { return new Decimal(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return `提升劳务技能额外等级
@@ -233,7 +233,7 @@ addLayer("r", {
         if (resettingLayer == "r") {
             player.r.is_dead = false
             player.r.last_death_cause = ""
-            player.r.score = decimalZero
+            player.r.score = d(0)
         }
     },
     layerShown() {
