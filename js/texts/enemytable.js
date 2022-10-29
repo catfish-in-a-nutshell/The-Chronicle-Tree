@@ -1,6 +1,12 @@
+// var areas = {
+//     "mphunting": {
+//         weights: [0.5,    0.2,       0.3],
+//         targets: ["hare", "cheetah", "deer"]
+//     }
+// }
 var areas = {
     "mphunting": {
-        weights: [0.5,    0.2,       0.3],
+        weights: [0,    1,       0],
         targets: ["hare", "cheetah", "deer"]
     }
 }
@@ -117,13 +123,13 @@ var full_enemies = {
             rel_number: d(1),
             hp: d(50),
             mp: d(0),
-            speed: d(1.4),
+            speed: d(1.8),
             crit: d(0.2),
             critdmg: d(1.5),
             atk: d(10),
-            def: d(0),
+            def: d(3),
             init_buffs: [
-                {name: "comboatk", moves: 5, times: 3, discnt: 0.6}
+                {name: "comboatk", moves: 5, times: 3, discnt: 0.8}
             ]
         },
         traits: []

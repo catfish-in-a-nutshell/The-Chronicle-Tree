@@ -10,7 +10,7 @@ addLayer("b", {
             var buff = full_buffs[i]
             pl_buffs[i] = {exist: false}
             
-            for (var s = 0; s < buff.params.length; s++) {
+            for (let s in buff.params) {
                 var p = buff.params[s]
                 pl_buffs[i][p] = 0
             }
@@ -21,7 +21,7 @@ addLayer("b", {
             let buff = full_buffs[i]
             ene_buffs[i] = {exist: false}
             
-            for (let s = 0; s < buff.params.length; s++) {
+            for (let s in buff.params) {
                 let p = buff.params[s]
                 ene_buffs[i][p] = 0
             }
@@ -31,9 +31,11 @@ addLayer("b", {
             unlocked: true,
             points: d(0),
             in_battle: false,
+            battle_unlocked: false,
             pl_action: d(0),
             ene_action: d(0),
             pl: {
+                dispn: "你",
                 hp: d(100),
                 maxhp: d(100),
                 mp: d(10),
@@ -43,7 +45,8 @@ addLayer("b", {
                 critdmg: d(1.5),
                 atk: d(1),
                 def: d(1),
-                buffs: pl_buffs
+                buffs: pl_buffs,
+                traits: new Set()
             },
             enemy: {
                 name: "",
@@ -146,7 +149,7 @@ addLayer("b", {
             },
             progress: () => player.b.pl.hp.div(player.b.pl.maxhp),
             display() { return `HP ${format(player.b.pl.hp)} / ${format(player.b.pl.maxhp)}` },
-            unlocked: () => player.b.in_battle || true
+            unlocked: () => player.b.in_battle,
         },
 
         plMPBar: {
@@ -161,7 +164,7 @@ addLayer("b", {
             },
             progress: () => player.b.pl.mp.div(player.b.pl.maxmp),
             display() { return `MP ${format(player.b.pl.mp)} / ${format(player.b.pl.maxmp)}` },
-            unlocked: () => player.b.in_battle || true // TODO: also check magic unlocked (in future)
+            unlocked: () => player.b.in_battle // TODO: also check magic unlocked (in future)
         },
         
         
@@ -177,7 +180,7 @@ addLayer("b", {
             },
             progress: () => player.b.enemy.hp.div(player.b.enemy.maxhp),
             display() { return `HP ${format(player.b.enemy.hp)} / ${format(player.b.enemy.maxhp)}` },
-            unlocked: () => player.b.in_battle || true
+            unlocked: () => player.b.in_battle
         },
 
         enemyMPBar: {
@@ -192,7 +195,7 @@ addLayer("b", {
             },
             progress: () => player.b.enemy.mp.div(player.b.enemy.maxmp),
             display() { return `MP ${format(player.b.enemy.mp)} / ${format(player.b.enemy.maxmp)}` },
-            unlocked: () => player.b.in_battle || true // TODO: also check magic unlocked (in future)
+            unlocked: () => player.b.in_battle // TODO: also check magic unlocked (in future)
         },
         
         plActionBar: {
@@ -206,7 +209,7 @@ addLayer("b", {
                 'margin-top': "-2px"
             },
             progress: () => player.b.pl_action.div(tmp.b.fullActionBar),
-            unlocked: () => player.b.in_battle || true
+            unlocked: () => player.b.in_battle
         },
 
         enemyActionBar: {
@@ -220,7 +223,7 @@ addLayer("b", {
                 'margin-top': "-2px"
             },
             progress: () => player.b.ene_action.div(tmp.b.fullActionBar),
-            unlocked: () => player.b.in_battle || true
+            unlocked: () => player.b.in_battle
         },
         
     },
@@ -260,6 +263,8 @@ addLayer("b", {
         ["display-text", function() {
             if (player.b.in_battle) {
                 return `你正在和 ${player.b.enemy.dispn} 战斗！`
+            } else {
+                return `目前没有发生战斗。`
             }
         }],
         "blank",
@@ -267,6 +272,7 @@ addLayer("b", {
         "blank",
 
         ["display-text", function() {
+            if (!player.b.in_battle) return ""
             let ene = player.b.enemy
             return `<p><b style='font-size: 20px'>${ene.dispn}</b> 数字 ${format(ene.number)}</p>
             ATK ${format(ene.atk)}, DEF ${format(ene.def)}`
@@ -274,9 +280,15 @@ addLayer("b", {
         ["bar", "enemyHPBar"],
         ["bar", "enemyMPBar"],
         ["bar", "enemyActionBar"],
+        "blank",
+        ["display-text", function() {
+            if (!player.b.in_battle) return ""
+            return tmp.b.enemyBuffText
+        }],
 
         ["blank", "150px"],
         ["display-text", function() {
+            if (!player.b.in_battle) return ""
             let pl = player.b.pl
             return `<p><b style='font-size: 20px'>你</b> 数字 ${format(player.r.number)}</p>
             ATK ${format(pl.atk)}, DEF ${format(pl.def)}`
@@ -284,6 +296,11 @@ addLayer("b", {
         ["bar", "plHPBar"],
         ["bar", "plMPBar"],
         ["bar", "plActionBar"],
+        "blank",
+        ["display-text", function() {
+            if (!player.b.in_battle) return ""
+            return tmp.b.plBuffText
+        }],
 
         "blank",
         "h-line",
@@ -308,7 +325,7 @@ addLayer("b", {
 
     doReset(resettingLayer) {
         if (layers[resettingLayer].row > this.row || resettingLayer == "r") {
-            let keep = ["inv_slots"]
+            let keep = ["battle_unlocked"]
             layerDataReset(this.layer, keep)
         }
     },
@@ -328,6 +345,92 @@ addLayer("b", {
             player.b.queued_encounters.push([encounter.targets[d], encounter.number])
         }
     },
+
+    prevBattleBuff() {
+        layers["i"].applyEquipmentBuffs()
+    },
+
+    OTBuffs(side, diff) {
+        let p = player.b[side]
+
+        // DOT
+        if (p.buffs.burning.exist) {
+            p.hp = p.hp.sub(p.buffs.burning.dot)
+            p.buffs.burning.time = p.buffs.burning.time.sub(diff)
+            if (p.buffs.burning.time.lte(0)) {
+                p.buffs.burning.exist = false
+            }
+        }
+    },
+
+    subBuffMoves(side, buff_name) {
+        let p = player.b[side]
+        p.buffs[buff_name].moves -= 1
+        if (p.buffs[buff_name].moves <= 0) {
+            p.buffs[buff_name].exist = false
+        }
+    },
+
+    attack(attacker, attacked) {
+        let atker = player.b[attacker]
+        let atked = player.b[attacked]
+
+        let atk = atker.atk
+
+        console.log(attacker, atker.buffs.comboatk.exist, atker.buffs.comboatk.moves, atker.buffs.comboatk.times)
+        if (atker.buffs["stunned"].exist) {
+            layers.b.subBuffMoves(attacker, "stunned")
+            return
+        }
+
+        let repeat = 1
+        if (atker.buffs["comboatk"].exist) {
+            repeat = atker.buffs["comboatk"].times
+            atk = atk.mul(atker.buffs["comboatk"].discnt)
+            layers.b.subBuffMoves(attacker, "comboatk")
+        }
+        
+        if (atker.buffs["weakened"].exist) {
+            atk = atk.mul(atker.buffs["weakened"].atkrate)
+            layers.b.subBuffMoves(attacker, "weakened")
+        }
+        
+        let atked_def = atked.def
+        if (atker.buffs["pierce"].exist) {
+            atked_def = atked_def.mul(atker.buffs["pierce"].piercerate)
+            layers.b.subBuffMoves(attacker, "pierce")
+        }
+
+        for (let i = 0; i < repeat; i++) {
+    
+            let dmg = atk
+
+            let is_crit = atker.crit.gte(Math.random())
+            if (atker.buffs["raging"].exist) {
+                is_crit = true
+                layers.b.subBuffMoves(attacker, "raging")
+            }
+    
+            if (is_crit) {
+                dmg = dmg.mul(atker.critdmg)  
+            }
+    
+            dmg = dmg.sub(atked.def) // TODO: better damage calc formula
+            dmg = dmg.max(0)
+    
+            atked.hp = atked.hp.sub(dmg)
+            layers["b"].pushBattleLog(`${atker.dispn} 对 ${atked.dispn} 造成了 ${format(dmg)}点伤害！`)
+
+            if (atker.buffs["bleeding"].exist) {
+                atker.hp = atker.hp.sub(atker.maxhp.mul(atker.buffs["bleeding"].dmgrate))
+                if (atker.hp.lte(0)) return
+                layers.b.subBuffMoves(attacker, "bleeding")
+            }
+        }
+
+
+    },
+
 
     startEncounter(enemy, base_number) {
         let b = player.b
@@ -360,6 +463,7 @@ addLayer("b", {
             let init_buff = ene_stat.init_buffs[buff]
             let buff_name = init_buff.name
             for (let param in full_buffs[buff_name].params) {
+                param = full_buffs[buff_name].params[param]
                 e.buffs[buff_name][param] = init_buff[param]
             }
             e.buffs[buff_name].exist = true
@@ -378,12 +482,31 @@ addLayer("b", {
         pl.crit = tmp.b.plCrit
         pl.critdmg = tmp.b.plCritDmg
 
+        pl.traits = new Set()
+
         b.pl_action = d(0)
         b.ene_action = d(0)
+
+        layers["b"].prevBattleBuff()
 
         b.in_battle = true
         player.tab = "b"
     },
+
+    buffText(side) {
+        let side_buffs = player.b[side].buffs
+        let buff_text = ""
+        for (let b in full_buffs) {
+            if (side_buffs[b].exist) {
+                buff_text += full_buffs[b].desc(side_buffs[b]) + "\n"
+            }
+        }
+        return buff_text
+    },
+
+    plBuffText() { return layers.b.buffText("pl") },
+
+    enemyBuffText() { return layers.b.buffText("enemy") },
 
     pushBattleLog(log_line) {
         player.b.battle_logs.push(log_line)
@@ -399,7 +522,6 @@ addLayer("b", {
 
     update(diff) {
         // TODO: implement battle details!
-
         let actionBar = tmp.b.fullActionBar
 
         let b = player.b
@@ -417,92 +539,77 @@ addLayer("b", {
             let real_diff = pl_action_time.min(ene_action_time).min(diff)
 
             b.pl_action = b.pl_action.add(real_diff.mul(1))
-            b.ene_action = b.ene_action.add(real_diff.mul(1))
+            b.ene_action = b.ene_action.add(real_diff.mul(rel_speed))
+
+            // console.log(format(b.pl_action), format(b.ene_action))
 
             if (b.pl_action.gte(actionBar)) {
                 // PL act first if same speed. Useful for a tied battle
-                
-                let dmg = pl.atk
-                if (pl.crit.gte(Math.random())) {
-                    dmg = dmg.mul(pl.critdmg)  
-                }
-                dmg = dmg.sub(enemy.def)
-                dmg = dmg.max(0)
-
-                enemy.hp = enemy.hp.sub(dmg)
-                layers["b"].pushBattleLog(`你对 ${enemy.dispn} 造成了 ${format(dmg)}点伤害！`)
-
-                if (enemy.hp.lte(0)) {
-                    // you win
-                    layers["b"].pushBattleLog(`${enemy.dispn} 倒下了！`)
-
-
-                    // roll drop items
-                    let drop = full_enemies[enemy.name].drop
-                    let drop_exp = layer["e"].addBattleExp(drop.exp.mul(enemy.number.pow(3)))
-                    layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} 经验！`)
-                    
-
-                    for (let loot in drop.loots) {
-                        if (Math.random() < loot.droprate) {
-                            if (loot.is_equip) {
-                                // TODO: drop equipment, need further interface design
-                            } else {
-                                let loot_num = loot.base.mul(enemy.number.pow(3))
-                                layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} ${res_name[loot.res]}！`)
-                                player.i[loot.res] = player.i[loot.res].add(loot_num)
-                            }
-                        }
-                    }
-                    
-                    // update battle status
-                    b.just_defeated = enemy.name
-                    b.in_battle = false
-                    if (b.in_zone) {
-                        b.zone_countdown -= 1
-                        if (b.zone_countdown == 0) {
-                            b.in_zone = false
-                            // TODO: zone clear awards!
-                        }
-
-                        let prog = 1 + b.zone_total - b.zone_countdown
-                        if (prog > player[b.zone_area].prog) {
-                            player[b.zone_area].prog = prog
-                        }
-                    }
-
-                    return
-                }
-
+                layers["b"].attack("pl", "enemy")
                 b.pl_action = d(0)
+            }
+            
+            layers["b"].OTBuffs("enemy", diff)
+
+            if (enemy.hp.lte(0)) {
+                // you win
+                layers["b"].pushBattleLog(`${enemy.dispn} 倒下了！`)
+
+                // roll drop items
+                let drop = full_enemies[enemy.name].drop
+                let drop_exp = layers["e"].addBattleExp(drop.exp.mul(enemy.number.pow(3)))
+                layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} 经验！`)
+                
+
+                for (let loot in drop.loots) {
+                    loot = drop.loots[loot]
+                    if (Math.random() < loot.droprate) {
+                        if (loot.is_equip) {
+                            // TODO: drop equipment, need further interface design
+                            // there is no equip drop so far, later
+                        } else {
+                            let loot_num = loot.base.mul(enemy.number.pow(3))
+                            layers["b"].pushBattleLog(`获得了 ${format(loot_num)} ${res_name[loot.res]}！`)
+                            player.i[loot.res] = player.i[loot.res].add(loot_num)
+                        }
+                    }
+                }
+                
+                // update battle status
+                b.just_defeated = enemy.name
+                b.in_battle = false
+                if (b.in_zone) {
+                    b.zone_countdown -= 1
+                    if (b.zone_countdown == 0) {
+                        b.in_zone = false
+                        // TODO: zone clear awards!
+                    }
+
+                    let prog = 1 + b.zone_total - b.zone_countdown
+                    if (prog > player[b.zone_area].prog) {
+                        player[b.zone_area].prog = prog
+                    }
+                }
+
+                return
             }
 
             if (b.ene_action.gte(actionBar)) {
-
-                let dmg = enemy.atk
-                if (enemy.crit.gte(Math.random())) {
-                    dmg = dmg.mul(enemy.critdmg)  
-                }
-                dmg = dmg.sub(pl.def)
-
-                dmg = dmg.max(0)
-
-                pl.hp = pl.hp.sub(dmg)
-                
-                layers["b"].pushBattleLog(`${enemy.dispn} 对你造成了 ${format(dmg)}点伤害！`)
-                if (pl.hp.lte(0)) {
-                    // you dead
-                    b.in_battle = false
-                    b.in_zone = false
-                    b.zone_countdown = 0
-                    layers["b"].pushBattleLog(`你死了。`)
-
-                    // TODO should add death causes
-                    layers["r"].youDied(`你在战斗中身亡。凶手是${enemy.dispn}`)
-                    return
-                }
-
+                layers["b"].attack("enemy", "pl")
                 b.ene_action = d(0)
+            }            
+
+            layers["b"].OTBuffs("pl", diff)
+
+            if (pl.hp.lte(0)) {
+                // you dead
+                b.in_battle = false
+                b.in_zone = false
+                b.zone_countdown = 0
+                layers["b"].pushBattleLog(`你死了。`)
+
+                layers["r"].youDied(`你在战斗中身亡。凶手是${enemy.dispn}`)
+                return
             }
 
         }

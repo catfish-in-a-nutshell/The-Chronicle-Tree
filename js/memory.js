@@ -96,7 +96,11 @@ addLayer("m", {
 
         16: {
             name: "战斗的记忆",
-            onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
+            unlocked: () => player.b.battle_unlocked || hasUpgrade("p", 34),
+            onComplete() {
+                player.m.milestone_cnt = player.m.milestone_cnt.add(1)
+                player.b.battle_unlocked = true
+            },
             done: () => player.b.in_battle,
             tooltip() {
                 if (hasAchievement("m", this.id)) {
@@ -109,6 +113,7 @@ addLayer("m", {
 
         21: {
             name: "椭圆形符号的记忆",
+            unlocked: () => false,
             onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
             done: () => false, // TODO implement sigil0
             tooltip() {

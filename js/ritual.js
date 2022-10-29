@@ -91,6 +91,7 @@ addLayer("r", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return cur_amount
             },
+            unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
         
@@ -113,6 +114,7 @@ addLayer("r", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return cur_amount
             },
+            unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
         
@@ -135,6 +137,7 @@ addLayer("r", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return cur_amount
             },
+            unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
 
@@ -157,6 +160,7 @@ addLayer("r", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return cur_amount
             },
+            unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
 
@@ -179,6 +183,7 @@ addLayer("r", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return cur_amount
             },
+            unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
         
@@ -201,6 +206,7 @@ addLayer("r", {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return cur_amount
             },
+            unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
     },

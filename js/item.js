@@ -241,6 +241,10 @@ addLayer("i", {
         }
     },
 
+    applyEquipmentBuffs() {
+
+    },
+
     clickables: {
         11: {
             title: "武器",

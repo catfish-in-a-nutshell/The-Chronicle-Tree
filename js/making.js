@@ -28,7 +28,7 @@ addLayer("mk", {
     
     row: "side", // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return true
+        return false
     },
     unlocked() {
         return true

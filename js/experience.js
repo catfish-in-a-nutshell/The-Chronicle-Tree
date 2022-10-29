@@ -226,7 +226,6 @@ addLayer("e", {
 
     tabFormat: {
         "生存技能": {
-             
             content: [
                 ["display-text", "</b>你的躯体会随着冒险变强，但如果死去，此页面的内容将被重置！</b>", {"font-size": "20px"}],
                 "blank",
