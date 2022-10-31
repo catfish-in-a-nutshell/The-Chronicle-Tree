@@ -59,7 +59,7 @@ var zone_desc = {
             "战斗结束，你握紧手中的武器，突然感受到掌心多出了某种坚硬的物体——是何时出现的呢？"
         ]
     },
-    "mpcave": {
+    "mphorde": {
         name: "动物集落",
         prog: [
             "",
@@ -69,7 +69,7 @@ var zone_desc = {
             ""
         ]
     },
-    "mpcave": {
+    "mpannazone": {
         name: "安娜的秘密基地",
         prog: [
             "",

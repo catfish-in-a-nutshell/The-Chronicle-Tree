@@ -111,6 +111,7 @@ addLayer("p", {
             currencyLocation: () => player.i,
             canAfford: () => tmp.i.canAddInventory,
             onPurchase() {
+                player.g.fishing_unlocked = true
                 layers["i"].addInventory({
                     equiptype: "fishingrod",
                     name: "fishingrod0",
@@ -189,7 +190,7 @@ addLayer("p", {
             description: () => `使用 ${format(d(50).div(tmp.e.tradingEffect))} ${res_name["fur"]} 与 ${format(d(300).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，
                 永久解锁功能: 物品-制造，可以使用材料制造新的装备。`,
             unlocked: () => hasUpgrade("p", 35),
-            cost: d(100),
+            cost: () => d(300).div(tmp.e.communicationEffect),
             canAfford: () => player.i.fur.gte(d(50).div(tmp.e.tradingEffect)) && player.i.gold.gte(d(300).div(tmp.e.tradingEffect)),
             onPurchase() {
                 player.i.fur = player.i.fur.sub(d(50).div(tmp.e.tradingEffect))
@@ -203,7 +204,7 @@ addLayer("p", {
             description: () => `使用 ${format(d(50).div(tmp.e.tradingEffect))} ${res_name["fur"]} 与 ${format(d(300).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，
                 永久解锁功能: 物品-回炉，可以使用材料提升装备的数字。`,
             unlocked: () => hasUpgrade("p", 35),
-            cost: d(100),
+            cost: () => d(300).div(tmp.e.communicationEffect),
             canAfford: () => player.i.fur.gte(d(50).div(tmp.e.tradingEffect)) && player.i.gold.gte(d(300).div(tmp.e.tradingEffect)),
             onPurchase() {
                 player.i.fur = player.i.fur.sub(d(50).div(tmp.e.tradingEffect))
@@ -347,9 +348,9 @@ addLayer("p", {
             "title": "在酒馆帮忙",
             display() {
                 let disp = `使用当前投入时间的50%，获得少量报酬，并增长交流能力。\n
-                单位时间收益:
-                ${format(tmp.p.tavernIncome)} ${res_name["gold"]}
-                ${format(tmp.p.tavernExp)} 经验`
+                收益:
+                ${format(player.p.points.mul(0.5).mul(tmp.p.tavernIncome))} ${res_name["gold"]}
+                ${format(player.p.points.mul(0.5).mul(tmp.p.tavernExp))} 经验`
                 return disp
             },
             style() {
@@ -382,9 +383,9 @@ addLayer("p", {
             "title": "在农家帮忙",
             display() {
                 let disp = `使用当前投入时间的50%，获得较多报酬，并增长劳务能力。\n
-                单位时间收益:
-                ${format(tmp.p.farmGoldIncome)} ${res_name["gold"]}
-                ${format(tmp.p.farmFoodIncome)} ${res_name["food"]}
+                收益:
+                ${format(player.p.points.mul(0.5).mul(tmp.p.farmGoldIncome))} ${res_name["gold"]}
+                ${format(player.p.points.mul(0.5).mul(tmp.p.farmFoodIncome))} ${res_name["food"]}
                 ${format(tmp.p.farmExp)} 经验`
                 return disp
             },
@@ -416,9 +417,9 @@ addLayer("p", {
             "title": "卖鱼",
             display() {
                 let disp = `卖掉当前${res_name["fish"]}的50%，获得报酬，并增长交易能力。\n
-                单位${res_name["fish"]}收益:
-                ${format(tmp.p.sellFishIncome)} ${res_name["gold"]}
-                ${format(tmp.p.sellFishExp)} 经验`
+                将${format(player.i.fish.mul(0.5))}${res_name["fish"]}换为:
+                ${format(player.i.fish.mul(0.5).mul(tmp.p.sellFishIncome))} ${res_name["gold"]}
+                ${format(player.i.fish.mul(0.5).mul(tmp.p.sellFishExp))} 经验`
                 return disp
             },
             style() {
@@ -448,9 +449,9 @@ addLayer("p", {
             "title": "将鱼制成食物",
             display() {
                 let disp = `处理当前${res_name["fish"]}的50%，转化为对应的${res_name["food"]}，并增长烹饪能力。\n
-                单位${res_name["fish"]}收益:
-                ${format(tmp.p.dealFishIncome)} ${res_name["food"]}
-                ${format(tmp.p.dealFishExp)} 经验`
+                将${format(player.i.fish.mul(0.5))}${res_name["fish"]}换为:
+                ${format(player.i.fish.mul(0.5).mul(tmp.p.dealFishIncome))} ${res_name["food"]}
+                ${format(player.i.fish.mul(0.5).mul(tmp.p.dealFishExp))} 经验`
                 return disp
             },
             style() {
@@ -520,8 +521,9 @@ addLayer("p", {
                 for (let i = 0; i < keys.length; i++) {       
                     if (tmp.p.buyables[keys[i]].unlocked) {
                         disp += `<p  style='margin-top: 10px'><h2> ${titles[i]} </h2><p>`
+                        let amount = getBuyableAmount("p", keys[i])
                         for (j = 0; j < full_dialogue[dkeys[i]].length; j++) {
-                            if (getBuyableAmount("p", keys[i]).gt(j)) {
+                            if (amount.gt(j)) {
                                 disp += `<p style='margin-top: 5px'>${full_dialogue[dkeys[i]][j]}</p>`
                             }
                         }
@@ -533,12 +535,24 @@ addLayer("p", {
         }
     },
 
+    layerFinished() {
+        let need_upgrade_list = [11, 12, 13, 21, 22, 23, 24, 25, 26, 31, 32, 33, 34, 35, 41, 42]
+        let buyable_finish_list = {11: 7, 12: 14, 13: 8, 14: 8}
+        for (let d of need_upgrade_list) {
+            if (!hasUpgrade("p", d)) return false
+        }
+        for (let b in buyable_finish_list) {
+            if (getBuyableAmount("p", b).lt(buyable_finish_list[b])) return false
+        }
+        return true
+    },
+
     tavernIncome() {
         return d(0.05)
     },
 
     tavernExp() {
-        return d(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(layers.e.survivalSkillExpMult("communication"))
     },
 
     farmGoldIncome() {
@@ -550,7 +564,7 @@ addLayer("p", {
     },
     
     farmExp() {
-        return d(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(layers.e.survivalSkillExpMult("laboring"))
     },
 
     sellFishIncome() {
@@ -558,7 +572,7 @@ addLayer("p", {
     },
     
     sellFishExp() {
-        return d(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(layers.e.survivalSkillExpMult("trading"))
     },
 
     dealFishIncome() {
@@ -566,7 +580,7 @@ addLayer("p", {
     },
     
     dealFishExp() {
-        return d(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(layers.e.survivalSkillExpMult("cooking"))
     },
 
     buyFoodCost() {
@@ -574,7 +588,7 @@ addLayer("p", {
     },
     
     buyFoodExp() {
-        return d(200).mul(tmp.e.lvlpEffect)
+        return d(10).mul(layers.e.survivalSkillExpMult("trading"))
     },
 
     tabFormat: {

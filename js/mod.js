@@ -38,6 +38,10 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.01+ 第一步</h3><br>
+		- 增加了半个地区层，重写大部分机制，完成了数字系统前的导入。
+		- 节奏可能存在一点问题。
+
 	<h3>v0.01 旅途的起始</h3><br>
 		- 增加了5个功能层+2个地区层，实现了最初区域的导入和基本玩法.<br>
 		- 不存在平衡。<br>
@@ -53,8 +57,8 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "youDied", "addRawScore", "addInventory", "discardInventory", "forgeEquipment", "removeEquip",
-	"startEncounter", "startZone", "pushBattleLog", "addBattleExp", "prevBattleBuff", "OTBuffs", "attack", "subBuffMoves", "applyEquipmentBuffs",
-	"buffText"]
+	"startEncounter", "startZone", "pushBattleLog", "addBattleExp", "prevBattleBuff", "OTBuffs", "attack", "subBuffMoves", "applyEquipmentBuffs", "possibleEffect",
+	"buffText", "traitsText", "equipDisplay", "extraExpEffect", "getExtraExpEffect", "survivalSkillExpMult", "addRawExpSurvival", "extraExpDisplay"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -84,7 +88,7 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	function() {
-		return `目前Endgame: 无，未经平衡，原型版本`
+		return `目前Endgame: 通过第一个副本`
 	},
 
 	function() {
@@ -103,7 +107,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return hasAchievement("m", 22)
 }
 
 

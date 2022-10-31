@@ -8,7 +8,8 @@ addLayer("m", {
     startData() { return {
         unlocked: false,
         points: d(0),
-        milestone_cnt: d(0)
+        milestone_cnt: d(0),
+        sigil0_unlocked: false,
     }},
     color: "#8e44ad",
     requires: d(1), // Can be a function that takes requirement increases into account
@@ -112,18 +113,32 @@ addLayer("m", {
         },
 
         21: {
-            name: "椭圆形符号的记忆",
-            unlocked: () => false,
+            name: "村庄的记忆",
+            unlocked: () => hasAchievement("m", 16),
             onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
-            done: () => false, // TODO implement sigil0
+            done: () => tmp.p.layerFinished,
             tooltip() {
                 if (hasAchievement("m", this.id)) {
-                    return "在你的掌心，镶嵌着一枚椭圆形的角质鳞片，你感受到其中寄宿着非凡而古老的力量。解锁功能：重生-数字-符号《0》"
+                    return "你已经了解了皮亚诺村的一切——如果之后再回到这里，你的一切都会更有效率。皮亚诺村投入时间x2"
                 } else {
                     return "未解锁"
                 }
             }
+        },
 
+        22: {
+            name: "椭圆形符号的记忆",
+            unlocked: () => hasAchievement("m", 16),
+            onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
+            done: () => player.m.sigil0_unlocked,
+            tooltip() {
+                if (hasAchievement("m", this.id)) {
+                    // return "在你的掌心，镶嵌着一枚椭圆形的角质鳞片，你感受到其中寄宿着非凡而古老的力量。解锁功能：重生-数字-符号《0》"
+                    return "在你的掌心，镶嵌着一枚椭圆形的角质鳞片，你感受到其中寄宿着非凡而古老的力量……暂未实现"
+                } else {
+                    return "未解锁"
+                }
+            }
         }
     },
 

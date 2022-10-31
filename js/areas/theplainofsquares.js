@@ -22,7 +22,9 @@ addLayer("mp", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.75, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = d(1)
+        let mult = d(1)
+
+        mult = mult.mul(layers.i.possibleEffect("ring", "grassring", d(1)))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -88,7 +90,7 @@ addLayer("mp", {
         11: {
             "title": "伐木",
             display() {
-                let disp = `使用当前投入时间的50%以及4${res_name["food"]}，获得${res_name["wood"]}与${res_name["fiber"]}，并增长劳务能力。\n
+                let disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)} ${res_name["food"]}，获得${res_name["wood"]}与${res_name["fiber"]}，并增长劳务能力。\n
                 单位时间收益:
                 ${format(tmp.mp.lumberWoodIncome)} ${res_name["wood"]}
                 ${format(tmp.mp.lumberFiberIncome)} ${res_name["fiber"]}
@@ -110,7 +112,7 @@ addLayer("mp", {
                 let data = player.mp
                 let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
-                player.i.food = player.i.food.sub(4) 
+                player.i.food = player.i.food.sub(tmp.mp.foodConsumption) 
                 player.i.wood = player.i.wood.add(t.mul(tmp.mp.lumberWoodIncome))
                 player.i.fiber = player.i.fiber.add(t.mul(tmp.mp.lumberFiberIncome))
                 player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.mp.lumberExp))
@@ -126,7 +128,7 @@ addLayer("mp", {
         12: {
             "title": "挖矿",
             display() {
-                disp = `使用当前投入时间的50%以及4${res_name["food"]}，获得${res_name["mineral"]}，并增长劳务能力。\n
+                disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)} ${res_name["food"]}，获得${res_name["mineral"]}，并增长劳务能力。\n
                 单位时间收益:
                 ${format(tmp.mp.mineIncome)} ${res_name["mineral"]}
                 ${format(tmp.mp.mineExp)} 经验`
@@ -147,7 +149,7 @@ addLayer("mp", {
                 let data = player.mp
                 let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
-                player.i.food = player.i.food.sub(4)
+                player.i.food = player.i.food.sub(tmp.mp.foodConsumption)
                 player.i.mineral = player.i.mineral.add(t.mul(tmp.mp.mineIncome))
                 player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.mp.mineExp))
                 
@@ -163,7 +165,7 @@ addLayer("mp", {
         13: {
             "title": "狩猎",
             display() {
-                let disp = `使用当前投入时间的50%以及4${res_name["food"]}，有概率发现野兽，并增长索敌能力。\n
+                let disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)} ${res_name["food"]}，有概率发现野兽(掉落皮毛)，并增长索敌能力。\n
                 单位时间收益:
                 ${format(tmp.mp.huntProbability)} 几率发现猎物
                 ${format(tmp.mp.huntExp)} 经验(成功发现时x1.5)`
@@ -184,7 +186,7 @@ addLayer("mp", {
                 let data = player.mp
                 let t = data.points.mul(0.5)
                 data.points = data.points.sub(t)
-                player.i.food = player.i.food.sub(4)
+                player.i.food = player.i.food.sub(tmp.mp.foodConsumption)
 
                 let r = Math.random()
                 let exp = t.mul(tmp.mp.huntExp)
@@ -208,13 +210,12 @@ addLayer("mp", {
         },
 
         21: {
-            title: () => zones["mpcave"].name,
+            title: () => zones["mpcave"].dispn,
             display() {
-                let disp = `副本
-                    长度: 3
-                    关卡数字: 2
-                    首通奖励: 解锁技能点升级和???
-                    奖励: ${res_name["gold"]}、${res_name["mineral"]}、经验`
+                let disp = `副本长度: 3
+                    关卡数字: 1.2-1.8
+                    首通: 解锁技能点升级、新装备以及???
+                    奖励: ${res_name["mineral"]}、${res_name["gold"]}、经验`
                 return disp
             },
             style() {
@@ -315,46 +316,46 @@ addLayer("mp", {
             title: "故事",
             body() {
                 let disp = "<p>一片广阔的平原——还有森林，就像许多老式RPG里新手村外的区域一样。</p><p>遥远的雪山遮蔽了半片天空，在原野上投下广阔的阴影。</p>"
-                let zones = ["mpcave", "mphorde", "mpannazone"]
+                let area_zones = ["mpcave", "mphorde", "mpannazone"]
 
                 let prog = player.mp.max_prog
-                for (let z in zones) {
+                for (let z of area_zones) {
                     if (prog[z] > 0) {
                         disp += `<p  style='margin-top: 10px'><h2> ${zone_desc[z].name} </h2><p>`
+                        for (let i = 0; i < prog[z]; i++) {
+                            disp += `<p style='margin-top: 5px'>${zone_desc[z].prog[i]}</p>`
+                        }
+                        disp += "<p style='margin-top: 5px'> --------------------------------------</p>"
                     }
-                    for (let i = 0; i < prog[z]; i++) {
-                        disp += `<p style='margin-top: 5px'>${zone_desc[z].prog[i]}</p>`
-                    }
-                    disp += "<p style='margin-top: 5px'> --------------------------------------</p>"
                 }
 
-
+                return disp
 
             }
         }
     },
 
     lumberWoodIncome() {
-        let number_eff = player.r.number.sqrt().mul(player.i.equips.axe.number.sqrt())
+        let number_eff = player.r.number.pow(1.5).mul(player.i.equips.axe.number.pow(1.5))
         return number_eff.mul(tmp.e.laboringEffect).mul(0.1)
     },
 
     lumberFiberIncome() {
-        let number_eff = player.r.number.sqrt().mul(player.i.equips.axe.number.sqrt())
+        let number_eff = player.r.number.pow(1.5).mul(player.i.equips.axe.number.pow(1.5))
         return number_eff.mul(tmp.e.laboringEffect).mul(0.04)
     },
 
     lumberExp() {
-        return d(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(layers.e.survivalSkillExpMult("laboring"))
     },
 
     mineIncome() {
-        let number_eff = player.r.number.sqrt().mul(player.i.equips.pickaxe.number.sqrt())
-        return number_eff.mul(tmp.e.laboringEffect).mul(0.01)
+        let number_eff = player.r.number.pow(1.5).mul(player.i.equips.pickaxe.number.pow(1.5))
+        return number_eff.mul(tmp.e.laboringEffect).mul(0.02)
     },
 
     mineExp() {
-        return d(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(layers.e.survivalSkillExpMult("laboring"))
     },
 
     huntProbability() {
@@ -364,9 +365,12 @@ addLayer("mp", {
     },
 
     huntExp() {
-        return d(10).mul(tmp.e.lvlpEffect)
+        return d(10).mul(layers.e.survivalSkillExpMult("hunting"))
     },
 
+    foodConsumption() {
+        return d(4).mul(tmp.r.consumptionEffect)
+    },
 
     update(diff) {
 

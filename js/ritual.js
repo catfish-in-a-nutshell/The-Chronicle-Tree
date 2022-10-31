@@ -1,5 +1,9 @@
 // Ritual, a.k.a Reincarnation, Rebirth, Abdicate, Prestige...
 
+var skill2id = {"swimming": 11, "communication": 12, "laboring": 13, "cooking": 21, "trading": 22, "fishing": 23, "hunting": 31}
+
+var id2skill = {11: "swimming", 12: "communication", 13: "laboring", 21: "cooking", 22: "trading", 23: "fishing", 31: "hunting"}
+
 let ritual_buyable_style = {
     "width": "200px",
     "height": "120px",
@@ -27,7 +31,7 @@ addLayer("r", {
     baseResource: "重生分数", // Name of resource prestige is based on
     baseAmount() {return player.r.score.add(1)}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.8, // Prestige currency exponent
+    exponent: 0.75, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = d(1)
         return mult
@@ -49,26 +53,44 @@ addLayer("r", {
     //         description: "",
     //     }
     // },
+
+
+    // effect 0: add extra levels to skill;
+    // effect 1: multiplies skill exp gain
+    extraExpEffect(id) {
+        let cur_amount = getBuyableAmount("r", id)
+        let mult_gain = cur_amount.add(1).log(5).add(1)
+        return [cur_amount, mult_gain]
+    },
+
+    // get effect by skill name
+    getExtraExpEffect(skill) {
+        return layers.r.extraExpEffect(skill2id[skill])
+    },
+
+    extraExpDisplay(id, cost) {
+        let skill = id2skill[id]
+        let effect = buyableEffect("r", id)
+        return `提升${skill_dispn[skill]}技能额外等级 +${format(effect[0], 0)},
+        提升${skill_dispn[skill]}技能经验获取 x${format(effect[1])}
+
+        下一级价格: ${format(cost)} 重生点`
+    },
+
     buyables: {
         11: {
             title: "游泳",
             cost(x) { return d(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升游泳技能额外等级
-                
-                当前效果: +${format(this.effect(cur_amount), 0)} 
-                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+                return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            effect() {
-                let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount
-            },
+            effect() { return layers.r.extraExpEffect(this.id) },
             style: ritual_buyable_style
         },
         
@@ -77,20 +99,14 @@ addLayer("r", {
             cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升交流技能额外等级
-                
-                当前效果: +${format(this.effect(cur_amount), 0)} 
-                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+                return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            effect() {
-                let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount
-            },
+            effect() { return layers.r.extraExpEffect(this.id) },
             unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
@@ -100,20 +116,14 @@ addLayer("r", {
             cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升劳务技能额外等级
-                
-                当前效果: +${format(this.effect(cur_amount), 0)} 
-                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+                return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            effect() {
-                let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount
-            },
+            effect() { return layers.r.extraExpEffect(this.id) },
             unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
@@ -123,20 +133,14 @@ addLayer("r", {
             cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升烹饪技能额外等级
-                
-                当前效果: +${format(this.effect(cur_amount), 0)} 
-                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+                return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            effect() {
-                let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount
-            },
+            effect() { return layers.r.extraExpEffect(this.id) },
             unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
@@ -146,20 +150,14 @@ addLayer("r", {
             cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升贸易技能额外等级
-                
-                当前效果: +${format(this.effect(cur_amount), 0)} 
-                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+                return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            effect() {
-                let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount
-            },
+            effect() { return layers.r.extraExpEffect(this.id) },
             unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
@@ -169,20 +167,14 @@ addLayer("r", {
             cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升钓鱼技能额外等级
-                
-                当前效果: +${format(this.effect(cur_amount), 0)} 
-                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+                return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            effect() {
-                let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount
-            },
+            effect() { return layers.r.extraExpEffect(this.id) },
             unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
@@ -192,20 +184,14 @@ addLayer("r", {
             cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
-                return `提升劳务技能额外等级
-                
-                当前效果: +${format(this.effect(cur_amount), 0)} 
-                下一级价格: ${format(this.cost(cur_amount)) } 重生点`
+                return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
             },
             canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-            effect() {
-                let cur_amount = getBuyableAmount(this.layer, this.id)
-                return cur_amount
-            },
+            effect() { return layers.r.extraExpEffect(this.id) },
             unlocked: () => hasAchievement("m", 12), 
             style: ritual_buyable_style
         },
@@ -216,6 +202,36 @@ addLayer("r", {
         lore: {
             title: "故事",
             body() { return "\t在死亡的一刻，双眼被黑暗笼罩，你的意识逐渐变得模糊。一切感知都离你远去，你觉得仿佛身处现实与梦境的边界。\n你很快意识到，自己并没有真的死亡。" }
+        },
+        systemintro: {
+            title: "数字",
+            body() {
+                return `
+                    <p style='font-size:20px'>数字是世界的核心系统。</p>
+                    <br>
+                    数字直接影响你作为一个生物的物理尺寸，也即长宽高的倍率。<br>
+                    你的质量和数字的立方成正比，使战斗中的HP, ATK, DEF全部等比例提升。<br>
+                    你的一些行动消耗也会相应上升。<br>
+                    最后，你的时间速度受到数字的立方根加成。包括战斗时的行动速度。<br>
+                    不过别忘了，这一切对你的敌人同样适用。小心高数字的敌人！<br>
+                    <br>
+
+                    <p style='font-size:20px'>装备中的数字</p>
+                    <br>
+                    武器装备也拥有各自的数字，代表其各自的尺寸。<br>
+                    你在战斗中的攻防数字，可以看作你与装备两者数字的几何平均。<br>
+                    <br>
+                    实际HP = 基础HP * 角色数字<sup>3</sup><br>
+                    实际ATK = 武器基础ATK * (武器数字 * 角色数字)<sup>1.5</sup><br>
+                    实际DEF = 盾牌DEF + 护甲DEF<br>
+                    盾牌DEF = 盾牌基础DEF * (盾牌数字 * 角色数字)<sup>1.5</sup><br>
+                    护甲DEF = 护甲基础DEF * (护甲数字 * 角色数字)<sup>1.5</sup><br>
+
+                    <br>
+                    戒指虽不提供战斗数值，但其特殊效果受到自身数字影响。<br>
+                    生产工具的数字，同样直接提升相关行动的产出。<br>
+                `
+            }
         }
     },
     youDied(death_cause) {
@@ -275,7 +291,8 @@ addLayer("r", {
                 ret += `<p>你的时间速度提升 x${format(tmp.r.speedUp)}</p>`
 
                 return ret
-            }]],
+            }],
+            ["infobox", "systemintro"]],
             unlocked() {
                 return hasAchievement("m", 14)
             }

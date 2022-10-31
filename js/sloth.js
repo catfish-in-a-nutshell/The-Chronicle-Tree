@@ -97,6 +97,9 @@ addLayer("s", {
     unlocked: () => hasAchievement("m", 15),
 
     shouldNotify: () => {
+        for (let id of [11, 12, 13]) {
+            if (tmp.s.buyables[id].canAfford) return true
+        }
         return player.s.sloth.gte(player.s.limit)
     },
 

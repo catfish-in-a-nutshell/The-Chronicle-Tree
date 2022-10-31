@@ -8,6 +8,20 @@ var prices = {
     }
 }
 
+var skill_dispn = {
+    "communication": "交流",
+    "swimming": "游泳",
+    "laboring": "劳务",
+    "cooking": "烹饪",
+    "trading": "交易",
+    "fishing": "钓鱼",
+    "hunting": "索敌",
+    "atk": "攻击",
+    "def": "防御",
+    "speed": "速度",
+    "hp": "耐力",
+}
+
 addLayer("e", {
     name: "经验", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "E", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -73,7 +87,7 @@ addLayer("e", {
             lvl: d(0),
             nxt_exp: d(100)
         },
-        battle_exp_strat: "hp"
+        battle_exp_strat: "avg"
     }},
     color: "#27ae60",
     requires: d(1), // Can be a function that takes requirement increases into account
@@ -128,66 +142,43 @@ addLayer("e", {
         return exp
     },
 
-    communicationGainMult() {
-        return d(1)
+    addRawExpSurvival(skill, raw_exp) {
+        let exp = raw_exp.mul(layers.e.survivalSkillExpMult(skill))
+        player.e[skill].cur_exp = player.e[skill].cur_exp.add(exp)
     },
-
-    swimmingGainMult() {
-        return d(1)
-    },
-
-    laboringGainMult() {
-        return d(1)
-    }, 
-
-    cookingGainMult() {
-        return d(1)
-    }, 
-
-    tradingGainMult() {
-        return d(1)
-    }, 
-
-    fishingGainMult() {
-        return d(1)
-    }, 
-
-    huntingGainMult() {
-        return d(1)
-    }, 
 
     communicationEffect() {
-        let lvl = player.e.communication.lvl.add(buyableEffect("r", 12))
+        let lvl = player.e.communication.lvl.add(buyableEffect("r", 12)[0])
         return lvl.mul(0.2).add(1)
     },
 
     swimmingEffect() {
-        let lvl = player.e.swimming.lvl.add(buyableEffect("r", 11))
+        let lvl = player.e.swimming.lvl.add(buyableEffect("r", 11)[0])
         return lvl.mul(0.5).add(1)
     },
 
     laboringEffect() {
-        let lvl = player.e.laboring.lvl.add(buyableEffect("r", 13))
+        let lvl = player.e.laboring.lvl.add(buyableEffect("r", 13)[0])
         return lvl.mul(0.2).add(1)
     }, 
 
     cookingEffect() {
-        let lvl = player.e.cooking.lvl.add(buyableEffect("r", 21))
+        let lvl = player.e.cooking.lvl.add(buyableEffect("r", 21)[0])
         return lvl.mul(0.3).add(1)
     },
 
     tradingEffect() {
-        let lvl = player.e.trading.lvl.add(buyableEffect("r", 22))
+        let lvl = player.e.trading.lvl.add(buyableEffect("r", 22)[0])
         return lvl.mul(0.15).add(1)
     },
 
     fishingEffect() {
-        let lvl = player.e.fishing.lvl.add(buyableEffect("r", 23))
+        let lvl = player.e.fishing.lvl.add(buyableEffect("r", 23)[0])
         return lvl.mul(0.5).add(1)
     }, 
 
     huntingEffect() {
-        let lvl = player.e.hunting.lvl.add(buyableEffect("r", 31))
+        let lvl = player.e.hunting.lvl.add(buyableEffect("r", 31)[0])
         return lvl.sqrt().mul(0.1).add(1)
     },
 
@@ -209,7 +200,7 @@ addLayer("e", {
 
     speedEffect() {
         let lvl = player.e.speed.lvl
-        return lvl.sqrt().mul(0.2).add(1)
+        return lvl.cbrt().mul(0.15).add(1)
     },
 
 
@@ -221,7 +212,11 @@ addLayer("e", {
     },
 
     lvlpEffect() {
-        return player.e.lvlpoints.add(1).pow(0.20)
+        return player.e.lvlpoints.add(1).pow(0.25)
+    },
+
+    survivalSkillExpMult(skill) {
+        return tmp.e.lvlpEffect.mul(layers.r.getExtraExpEffect(skill)[1])
     },
 
     tabFormat: {
@@ -234,37 +229,37 @@ addLayer("e", {
                 }, {"font-size": "20px"}],
                 "blank",
                 ["display-text", function() {
-                    return `交流lv${format(player.e.communication.lvl, 0)}+${buyableEffect("r", 12)}: 降低一切与人交流的时间花费，目前效果 x${format(tmp.e.communicationEffect)}`
+                    return `交流lv${format(player.e.communication.lvl, 0)}+${buyableEffect("r", 12)[0]}: 降低一切与人交流的时间花费，目前效果 x${format(tmp.e.communicationEffect)}`
                 }],
                 ["bar", "communicationBar"],
                 "blank",
                 ["display-text", function() {
-                    return `游泳lv${format(player.e.swimming.lvl, 0)}+${buyableEffect("r", 11)}: 加快游泳速度，目前效果 x${format(tmp.e.swimmingEffect)}`
+                    return `游泳lv${format(player.e.swimming.lvl, 0)}+${buyableEffect("r", 11)[0]}: 加快游泳速度，目前效果 x${format(tmp.e.swimmingEffect)}`
                 }],
                 ["bar", "swimmingBar"],
                 "blank",
                 ["display-text", function() {
-                    return `劳务lv${format(player.e.laboring.lvl, 0)}+${buyableEffect("r", 13)}: 提升体力劳动的产出，目前效果 x${format(tmp.e.laboringEffect)}`
+                    return `劳务lv${format(player.e.laboring.lvl, 0)}+${buyableEffect("r", 13)[0]}: 提升体力劳动的产出，目前效果 x${format(tmp.e.laboringEffect)}`
                 }],
                 ["bar", "laboringBar"],
                 "blank",
                 ["display-text", function() {
-                    return `烹饪lv${format(player.e.cooking.lvl, 0)}+${buyableEffect("r", 21)}: 提升${res_name["food"]}转化效率，目前效果 x${format(tmp.e.cookingEffect)}`
+                    return `烹饪lv${format(player.e.cooking.lvl, 0)}+${buyableEffect("r", 21)[0]}: 提升${res_name["food"]}转化效率，目前效果 x${format(tmp.e.cookingEffect)}`
                 }],
                 ["bar", "cookingBar"],
                 "blank",
                 ["display-text", function() {
-                    return `贸易lv${format(player.e.trading.lvl, 0)}+${buyableEffect("r", 22)}: 降低购买时的成本、提升卖出时的收益，目前效果 x${format(tmp.e.tradingEffect)}`
+                    return `贸易lv${format(player.e.trading.lvl, 0)}+${buyableEffect("r", 22)[0]}: 降低购买时的成本、提升卖出时的收益，目前效果 x${format(tmp.e.tradingEffect)}`
                 }],
                 ["bar", "tradingBar"],
                 "blank",
                 ["display-text", function() {
-                    return `钓鱼lv${format(player.e.fishing.lvl, 0)}+${buyableEffect("r", 23)}: 提升水中资源的产出，目前效果 x${format(tmp.e.fishingEffect)}`
+                    return `钓鱼lv${format(player.e.fishing.lvl, 0)}+${buyableEffect("r", 23)[0]}: 提升水中资源的产出，目前效果 x${format(tmp.e.fishingEffect)}`
                 }],
                 ["bar", "fishingBar"],
                 "blank",
                 ["display-text", function() {
-                    return `索敌lv${format(player.e.hunting.lvl, 0)}+${buyableEffect("r", 31)}: 提升发现敌人的概率，目前效果 x${format(tmp.e.huntingEffect)}`
+                    return `索敌lv${format(player.e.hunting.lvl, 0)}+${buyableEffect("r", 31)[0]}: 提升发现敌人的概率，目前效果 x${format(tmp.e.huntingEffect)}`
                 }],
                 ["bar", "huntingBar"]]
         },
@@ -279,17 +274,17 @@ addLayer("e", {
                 }, {"font-size": "16px"}],
                 "blank",
                 ["display-text", function() {
-                    return `耐力lv${format(player.e.hp.lvl, 0)}: 提升生命值上限，目前效果 x${format(tmp.e.hpEffect)}`
+                    return `耐力lv${format(player.e.hp.lvl, 0)}: 提升HP上限，目前效果 x${format(tmp.e.hpEffect)}`
                 }],
                 ["row", [["bar", "hpBar"], ["clickable", 11]]],
                 "blank",
                 ["display-text", function() {
-                    return `攻击lv${format(player.e.atk.lvl, 0)}: 提升攻击力，目前效果 x${format(tmp.e.atkEffect)}`
+                    return `攻击lv${format(player.e.atk.lvl, 0)}: 提升ATK，目前效果 x${format(tmp.e.atkEffect)}`
                 }],
                 ["row", [["bar", "atkBar"], ["clickable", 12]]],
                 "blank",
                 ["display-text", function() {
-                    return `防御lv${format(player.e.def.lvl, 0)}: 提升防御力，目前效果 x${format(tmp.e.defEffect)}`
+                    return `防御lv${format(player.e.def.lvl, 0)}: 提升DEF，目前效果 x${format(tmp.e.defEffect)}`
                 }],
                 ["row", [["bar", "defBar"], ["clickable", 13]]],
                 "blank",
@@ -507,9 +502,10 @@ addLayer("e", {
 
     update(diff) {
         let skill_list = ["communication", "swimming", "laboring", "cooking", "trading", "fishing", "hunting"]
+
+        let battle_skills = new Set(["hp", "atk", "def", "speed"])
         skill_list = skill_list.concat(["hp", "atk", "def", "speed"])
-        for (let i = 0; i < skill_list.length; i++) {
-            let skill = skill_list[i]
+        for (let skill of skill_list) {
             let data = player.e[skill]
             if (data.cur_exp.gte(data.nxt_exp)) {
 
@@ -532,6 +528,10 @@ addLayer("e", {
 
                 data.nxt_exp = priceStart.add(priceAdd.mul(data.lvl))
                 layers["r"].addRawScore(affordLvls.div(lvlDivider))
+
+                if (affordLvls.gt(0) && battle_skills.has(skill)) {
+                    layers.b.pushBattleLog(`${skill_dispn[skill]} 技能提升到了 ${format(data.lvl)} 级！`)
+                }
             }
         }
     }

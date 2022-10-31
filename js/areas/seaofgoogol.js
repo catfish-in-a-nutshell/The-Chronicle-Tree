@@ -13,7 +13,8 @@ addLayer("g", {
         diving_up: false,
         diving_down: false,
         tot_time: d(0),
-        last_fish: d(-1)
+        last_fish: d(-1),
+        fishing_unlocked: false
     }},
     canReset() {
         return (!player.r.is_dead)
@@ -102,7 +103,7 @@ addLayer("g", {
                 let t = data.points
                 
                 let harv = d(0.5).mul(t).mul(player.i.equips.fishingrod.number)
-                let fishing_exp = harv.mul(20).mul(tmp.e.lvlpEffect)
+                let fishing_exp = harv.mul(20).mul(layers.e.survivalSkillExpMult("fishing"))
 
                 harv = harv.mul(tmp.e.fishingEffect)
                 let harv_exp = harv.log10()
@@ -115,7 +116,7 @@ addLayer("g", {
                 player.e.fishing.cur_exp = player.e.fishing.cur_exp.add(fishing_exp)
             },
             canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.g.points.gt(0) && player.i.equips.fishingrod.equipped,
-            unlocked: () => hasUpgrade("p", 31)
+            unlocked: () => player.g.fishing_unlocked
         }
     },
 
@@ -175,7 +176,7 @@ addLayer("g", {
     doReset(resettingLayer) {
         // console.log("g:receiving " + resettingLayer)
         if (layers[resettingLayer].row > this.row || resettingLayer == "r") {
-            let keep = ["depth_best"]
+            let keep = ["depth_best", "fishing_unlocked"]
             layerDataReset(this.layer, keep)
             player.g.air_cur = d(100)
         }
@@ -204,7 +205,7 @@ addLayer("g", {
         swim_speed = swim_speed.mul(tmp.e.swimmingEffect)
         let air_max = tmp.g.maxAir
         
-        let exp_gain = d(10).mul(tmp.e.lvlpEffect)
+        let exp_gain = d(10).mul(layers.e.survivalSkillExpMult("swimming"))
         if (data.diving_up) {
             let tick_swim_time = d(diff)
             tick_swim_time = tick_swim_time.min(data.air_cur.div(air_consume_rate))

@@ -242,22 +242,43 @@ addLayer("i", {
     },
 
     applyEquipmentBuffs() {
+        const elist = ["weapon", "armor", "shield", "ring"]
+        for (let e of elist) {
+            if (player.i.equips[e].equipped) {
+                let name = player.i.equips[e].name
+                if (full_equips[name].applyEffect) {
+                    full_equips[name].applyEffect()
+                }
+            }
+        }
+    },
 
+    possibleEffect(etype, ename, default_eff) {
+        if (player.i.equips[etype].equipped && player.i.equips[etype].name == ename) {
+            return full_equips[ename].effect(player.i.equips[etype].number)
+        }
+        return default_eff
+    },
+
+
+    equipDisplay(etype) {
+        let inv = player.i.equips[etype]
+        if (!inv.equipped) return ""
+
+        let disp = full_equips[inv.name].dispn + "<br>"
+        disp += `数字: ${format(inv.number)}<br>`
+
+        if (full_equips[inv.name].desc) {
+            disp += full_equips[inv.name].desc(inv.number.cube().mul(player.r.number.cube()).sqrt())
+        }
+
+        return disp
     },
 
     clickables: {
         11: {
             title: "武器",
-            display() {
-                let inv = player.i.equips.weapon
-                if (!inv.equipped) return ""
-
-                let disp = full_equips[inv.name].dispn + "<br>"
-                disp += `数字: ${format(inv.number)}<br>`
-
-                // TODO: should include additional information, like effects
-                return disp
-            },
+            display: () => layers.i.equipDisplay("weapon"),
             style() {
                 return {
                     "background-color": "#3498db",
@@ -269,16 +290,7 @@ addLayer("i", {
         },
         12: {
             title: "盾牌",
-            display() {
-                let inv = player.i.equips.shield
-                if (!inv.equipped) return ""
-
-                let disp = full_equips[inv.name].dispn + "<br>"
-                disp += `数字: ${format(inv.number)}<br>`
-
-                // TODO: should include additional information, like effects
-                return disp
-            },
+            display: () => layers.i.equipDisplay("shield"),
             style() {
                 return {
                     "background-color": "#3498db",
@@ -290,16 +302,7 @@ addLayer("i", {
         },
         13: {
             title: "护甲",
-            display() {
-                let inv = player.i.equips.armor
-                if (!inv.equipped) return ""
-
-                let disp = full_equips[inv.name].dispn + "<br>"
-                disp += `数字: ${format(inv.number)}<br>`
-
-                // TODO: should include additional information, like effects
-                return disp
-            },
+            display: () => layers.i.equipDisplay("armor"),
             style() {
                 return {
                     "background-color": "#3498db",
@@ -311,16 +314,7 @@ addLayer("i", {
         },
         14: {
             title: "戒指",
-            display() {
-                let inv = player.i.equips.ring
-                if (!inv.equipped) return ""
-
-                let disp = full_equips[inv.name].dispn + "<br>"
-                disp += `数字: ${format(inv.number)}<br>`
-
-                // TODO: should include additional information, like effects
-                return disp
-            },
+            display: () => layers.i.equipDisplay("ring"),
             style() {
                 return {
                     "background-color": "#3498db",
@@ -332,16 +326,7 @@ addLayer("i", {
         },
         21: {
             title: "渔具",
-            display() {
-                let inv = player.i.equips.fishingrod
-                if (!inv.equipped) return ""
-
-                let disp = full_equips[inv.name].dispn + "<br>"
-                disp += `数字: ${format(inv.number)}<br>`
-
-                // TODO: should include additional information, like effects
-                return disp
-            },
+            display: () => layers.i.equipDisplay("fishingrod"),
             style() {
                 return {
                     "background-color": "#3498db",
@@ -353,16 +338,7 @@ addLayer("i", {
         },
         22: {
             title: "伐木",
-            display() {
-                let inv = player.i.equips.axe
-                if (!inv.equipped) return ""
-
-                let disp = full_equips[inv.name].dispn + "<br>"
-                disp += `数字: ${format(inv.number)}<br>`
-
-                // TODO: should include additional information, like effects
-                return disp
-            },
+            display: () => layers.i.equipDisplay("axe"),
             style() {
                 return {
                     "background-color": "#3498db",
@@ -374,16 +350,7 @@ addLayer("i", {
         },
         23: {
             title: "挖矿",
-            display() {
-                let inv = player.i.equips.pickaxe
-                if (!inv.equipped) return ""
-
-                let disp = full_equips[inv.name].dispn + "<br>"
-                disp += `数字: ${format(inv.number)}<br>`
-
-                // TODO: should include additional information, like effects
-                return disp
-            },
+            display: () => layers.i.equipDisplay("pickaxe"),
             style() {
                 return {
                     "background-color": "#3498db",

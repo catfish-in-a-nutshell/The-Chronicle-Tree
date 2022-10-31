@@ -5,28 +5,6 @@ addLayer("b", {
     symbol: "B", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 5, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() {
-        let pl_buffs = {}
-        for (let i in full_buffs) {
-            var buff = full_buffs[i]
-            pl_buffs[i] = {exist: false}
-            
-            for (let s in buff.params) {
-                var p = buff.params[s]
-                pl_buffs[i][p] = 0
-            }
-        }
-
-        let ene_buffs = {}
-        for (let i in full_buffs) {
-            let buff = full_buffs[i]
-            ene_buffs[i] = {exist: false}
-            
-            for (let s in buff.params) {
-                let p = buff.params[s]
-                ene_buffs[i][p] = 0
-            }
-        }
-
         return {
             unlocked: true,
             points: d(0),
@@ -45,8 +23,8 @@ addLayer("b", {
                 critdmg: d(1.5),
                 atk: d(1),
                 def: d(1),
-                buffs: pl_buffs,
-                traits: new Set()
+                buffs: {},
+                traits: {},
             },
             enemy: {
                 name: "",
@@ -61,8 +39,8 @@ addLayer("b", {
                 critdmg: d(1),
                 atk: d(0),
                 def: d(0),
-                buffs: ene_buffs,
-                traits: new Set()
+                buffs: {},
+                traits: {},
             },
             battle_logs: [],
             queued_encounters: [],
@@ -70,7 +48,7 @@ addLayer("b", {
             zone_countdown: 0,
             zone_total: 0,
             zone_name: "",
-            zone_area: "",
+            zone_area: "", // layer code of the zone-belonged-area
             just_defeated: "", // the last enemy defeated, useful for achievements
         }
     },
@@ -98,14 +76,17 @@ addLayer("b", {
         return player.b.in_battle
     },
 
-    plBaseHP() {return d(100)},
+    plBaseHP() {
+        return d(100).mul(tmp.e.hpEffect)
+    },
     plBaseMP() {
         return d(10)
     },
     plAtk() {
         let weapon = player.i.equips.weapon
         let base_atk = player.i.equips.weapon.equipped ? full_equips[weapon.name].atk : d(0)
-        base_atk = base_atk.mul(player.r.number.sqrt()).mul(weapon.number.sqrt())
+        base_atk = base_atk.mul(tmp.r.physicalEffect.cube().sqrt()).mul(weapon.number.cube().sqrt())
+        base_atk = base_atk.mul(tmp.e.atkEffect)
         return base_atk
     },
     plDef() {
@@ -113,20 +94,20 @@ addLayer("b", {
         let shield_def = d(0)
         if (shield.equipped) {
             shield_def = full_equips[shield.name].def
-            shield_def = shield_def.mul(player.r.number.sqrt()).mul(shield.number.sqrt())
+            shield_def = shield_def.mul(tmp.r.physicalEffect.cube().sqrt()).mul(shield.number.cube().sqrt())
         }
 
         let armor = player.i.equips.armor
         let armor_def = d(0)
         if (armor.equipped) {
             armor_def = full_equips[armor.name].def
-            armor_def = armor_def.mul(player.r.number.sqrt()).mul(armor.number.sqrt())
+            armor_def = armor_def.mul(tmp.r.physicalEffect.cube().sqrt()).mul(armor.number.cube().sqrt())
         }
 
-        return shield_def.add(armor_def)
+        return shield_def.add(armor_def).mul(tmp.e.defEffect)
     },
     plBaseSpeed() {
-        return d(1)
+        return d(1).mul(tmp.e.speedEffect)
     },
     plCrit() {
         return d(0.2)
@@ -256,7 +237,7 @@ addLayer("b", {
     tabFormat: [
         ["display-text", function() {
             if (player.b.in_zone) {
-                return `你正在副本 ${player.b.zone_name} 中，剩余 ${player.b.zone_countdown}/${player.b.zone_total} 场战斗`
+                return `你正在副本 ${zones[player.b.zone_name].dispn} 中，剩余 ${player.b.zone_countdown}/${player.b.zone_total} 场战斗`
             }
         }],
         "blank",
@@ -275,11 +256,16 @@ addLayer("b", {
             if (!player.b.in_battle) return ""
             let ene = player.b.enemy
             return `<p><b style='font-size: 20px'>${ene.dispn}</b> 数字 ${format(ene.number)}</p>
-            ATK ${format(ene.atk)}, DEF ${format(ene.def)}`
+            ATK ${format(ene.atk)}, DEF ${format(ene.def)}, 速度 ${format(ene.speed)}`
         }],
         ["bar", "enemyHPBar"],
         ["bar", "enemyMPBar"],
         ["bar", "enemyActionBar"],
+        "blank",
+        ["display-text", function() {
+            if (!player.b.in_battle) return ""
+            return tmp.b.enemyTraitsText
+        }],
         "blank",
         ["display-text", function() {
             if (!player.b.in_battle) return ""
@@ -291,11 +277,16 @@ addLayer("b", {
             if (!player.b.in_battle) return ""
             let pl = player.b.pl
             return `<p><b style='font-size: 20px'>你</b> 数字 ${format(player.r.number)}</p>
-            ATK ${format(pl.atk)}, DEF ${format(pl.def)}`
+            ATK ${format(pl.atk)}, DEF ${format(pl.def)}, 速度 ${format(pl.speed)}`
         }],
         ["bar", "plHPBar"],
         ["bar", "plMPBar"],
         ["bar", "plActionBar"],
+        "blank",
+        ["display-text", function() {
+            if (!player.b.in_battle) return ""
+            return tmp.b.plTraitsText
+        }],
         "blank",
         ["display-text", function() {
             if (!player.b.in_battle) return ""
@@ -320,7 +311,6 @@ addLayer("b", {
 
         ["clickable", 11]
 
-        // TODO: draw battle UI!
     ],
 
     doReset(resettingLayer) {
@@ -331,19 +321,22 @@ addLayer("b", {
     },
 
     startZone(name, area) {
-        zone = zones[name]
+        let zone = zones[name]
+        player.b.zone_name = name
         player.b.zone_area = area
         player.b.zone_total = zone.len
         player.b.zone_countdown = zone.len
 
-        player[area].max_prog = player[area].max_prog > 0 ? player[area].max_prog : 1;
+        player[area].max_prog[name] = player[area].max_prog[name] > 0 ? player[area].max_prog[name] : 1;
 
-        for (e in zone.encounters) {
+        for (let e in zone.encounters) {
             encounter = zone.encounters[e]
-            d = weighted_choice(encounter.weights)
+            let d = weighted_choice(encounter.weights)
 
             player.b.queued_encounters.push([encounter.targets[d], encounter.number])
         }
+
+        player.b.in_zone = true
     },
 
     prevBattleBuff() {
@@ -354,49 +347,52 @@ addLayer("b", {
         let p = player.b[side]
 
         // DOT
-        if (p.buffs.burning.exist) {
-            p.hp = p.hp.sub(p.buffs.burning.dot)
-            p.buffs.burning.time = p.buffs.burning.time.sub(diff)
-            if (p.buffs.burning.time.lte(0)) {
-                p.buffs.burning.exist = false
+        if ("burning" in p.buffs) {
+            let burning = p.buffs["burning"]
+            p.hp = p.hp.sub(burning.dot)
+            burning.time = burning.time.sub(diff)
+
+            if (burning.time.lte(0)) {
+                delete(p.buffs.burning)
             }
         }
     },
 
     subBuffMoves(side, buff_name) {
         let p = player.b[side]
-        p.buffs[buff_name].moves -= 1
-        if (p.buffs[buff_name].moves <= 0) {
-            p.buffs[buff_name].exist = false
+        let buff = p.buffs[buff_name]
+        buff.moves -= 1
+        if (buff.moves <= 0) {
+            delete(p.buffs[buff_name])
         }
     },
 
     attack(attacker, attacked) {
+        // Attack 
         let atker = player.b[attacker]
         let atked = player.b[attacked]
 
         let atk = atker.atk
 
-        console.log(attacker, atker.buffs.comboatk.exist, atker.buffs.comboatk.moves, atker.buffs.comboatk.times)
-        if (atker.buffs["stunned"].exist) {
+        if ("stunned" in atker.buffs) {
             layers.b.subBuffMoves(attacker, "stunned")
             return
         }
 
         let repeat = 1
-        if (atker.buffs["comboatk"].exist) {
+        if ("comboatk" in atker.buffs) {
             repeat = atker.buffs["comboatk"].times
             atk = atk.mul(atker.buffs["comboatk"].discnt)
             layers.b.subBuffMoves(attacker, "comboatk")
         }
         
-        if (atker.buffs["weakened"].exist) {
+        if ("weakened" in atker.buffs) {
             atk = atk.mul(atker.buffs["weakened"].atkrate)
             layers.b.subBuffMoves(attacker, "weakened")
         }
         
         let atked_def = atked.def
-        if (atker.buffs["pierce"].exist) {
+        if ("pierce" in atker.buffs) {
             atked_def = atked_def.mul(atker.buffs["pierce"].piercerate)
             layers.b.subBuffMoves(attacker, "pierce")
         }
@@ -406,28 +402,42 @@ addLayer("b", {
             let dmg = atk
 
             let is_crit = atker.crit.gte(Math.random())
-            if (atker.buffs["raging"].exist) {
+            if ("raging" in atker.buffs) {
                 is_crit = true
                 layers.b.subBuffMoves(attacker, "raging")
             }
     
             if (is_crit) {
-                dmg = dmg.mul(atker.critdmg)  
+                dmg = dmg.mul(atker.critdmg)
+
+                if ("furious" in atker.traits) {
+                    dmg = dmg.mul(2)
+                }
             }
     
             dmg = dmg.sub(atked.def) // TODO: better damage calc formula
             dmg = dmg.max(0)
     
             atked.hp = atked.hp.sub(dmg)
-            layers["b"].pushBattleLog(`${atker.dispn} 对 ${atked.dispn} 造成了 ${format(dmg)}点伤害！`)
+            layers["b"].pushBattleLog(`${is_crit? "暴击！ " : ""}${atker.dispn} 对 ${atked.dispn} 造成了 ${format(dmg)}点伤害！`)
 
-            if (atker.buffs["bleeding"].exist) {
-                atker.hp = atker.hp.sub(atker.maxhp.mul(atker.buffs["bleeding"].dmgrate))
-                if (atker.hp.lte(0)) return
+            if ("induce_bleeding" in atker.traits) {
+                let bleeding = {moves:3, dmgrate: 0.05}
+                atked.buffs["bleeding"] = bleeding
+            }
+
+            if ("bleeding" in atker.buffs) {
+                let bleeding_dmg = atker.maxhp.mul(atker.buffs["bleeding"].dmgrate)
+                layers["b"].pushBattleLog(`${atker.dispn} 流血受到 ${format(bleeding_dmg)}点伤害！`)
+                atker.hp = atker.hp.sub(bleeding_dmg)
                 layers.b.subBuffMoves(attacker, "bleeding")
+                if (atker.hp.lte(0)) return
+            }
+
+            if ("warcry" in atker.traits) {
+                atker.atk = atker.atk.mul(1.2)
             }
         }
-
 
     },
 
@@ -440,7 +450,7 @@ addLayer("b", {
 
         e.name = enemy
         e.dispn = full_enemies[enemy].dispn
-        e.number = ene_stat.rel_number.mul(base_number).mul(0.8 + 0.4*Math.random())
+        e.number = ene_stat.rel_number.mul(base_number).mul(0.9 + 0.15*Math.random())
         let fac = e.number.cube()
 
         e.maxhp = ene_stat.hp.mul(fac)
@@ -454,22 +464,27 @@ addLayer("b", {
         e.critdmg = ene_stat.critdmg
         
         // clear previous buffs
-        for (let buff in e.buffs) {
-            e.buffs[buff].exist = false
-            pl.buffs[buff].exist = false
-        }
+        e.buffs = {}
+        pl.buffs = {}
 
+        // add enemy initial buffs
         for (let buff in ene_stat.init_buffs) {
             let init_buff = ene_stat.init_buffs[buff]
             let buff_name = init_buff.name
+
+            let new_buff = {}
             for (let param in full_buffs[buff_name].params) {
                 param = full_buffs[buff_name].params[param]
-                e.buffs[buff_name][param] = init_buff[param]
+                new_buff[param] = init_buff[param]
             }
-            e.buffs[buff_name].exist = true
+            e.buffs[buff_name] = new_buff
         }
 
-        e.traits = new Set(ene_stat.traits)
+        e.traits = {} 
+        for (let t in full_enemies[enemy].traits) {
+            let trait = full_enemies[enemy].traits
+            e.traits[trait] = undefined // maybe traits could have params
+        }
 
         pl.maxhp = tmp.b.plBaseHP.mul(tmp.r.physicalEffect.cube())
         pl.hp = pl.maxhp
@@ -482,7 +497,7 @@ addLayer("b", {
         pl.crit = tmp.b.plCrit
         pl.critdmg = tmp.b.plCritDmg
 
-        pl.traits = new Set()
+        pl.traits = []
 
         b.pl_action = d(0)
         b.ene_action = d(0)
@@ -496,17 +511,29 @@ addLayer("b", {
     buffText(side) {
         let side_buffs = player.b[side].buffs
         let buff_text = ""
-        for (let b in full_buffs) {
-            if (side_buffs[b].exist) {
-                buff_text += full_buffs[b].desc(side_buffs[b]) + "\n"
-            }
+        for (let b in side_buffs) {
+            let buff = side_buffs[b]
+            buff_text += full_buffs[b].desc(buff) + "\n"
         }
         return buff_text
+    },
+
+    traitsText(side) {
+        let side_traits = player.b[side].traits
+        let trait_text = ""
+        for (let t in side_traits) {
+            trait_text += full_traits[t].desc() + "\n"
+        }
+        return trait_text
     },
 
     plBuffText() { return layers.b.buffText("pl") },
 
     enemyBuffText() { return layers.b.buffText("enemy") },
+
+    plTraitsText() { return layers.b.traitsText("pl") },
+
+    enemyTraitsText() { return layers.b.traitsText("enemy") },
 
     pushBattleLog(log_line) {
         player.b.battle_logs.push(log_line)
@@ -526,6 +553,7 @@ addLayer("b", {
 
         let b = player.b
         if (!b.in_battle && b.in_zone && b.queued_encounters.length > 0) {
+            console.log(b.queued_encounters)
             layers["b"].startEncounter(...b.queued_encounters.shift())
         }
 
@@ -552,46 +580,59 @@ addLayer("b", {
             layers["b"].OTBuffs("enemy", diff)
 
             if (enemy.hp.lte(0)) {
-                // you win
-                layers["b"].pushBattleLog(`${enemy.dispn} 倒下了！`)
+                if ("boss" in enemy.buffs) {
+                    enemy.maxhp = enemy.maxhp.mul(enemy.buffs["boss"].rate)
+                    enemy.hp = enemy.maxhp
+                    enemy.atk = enemy.atk.mul(enemy.buffs["boss"].rate)
+                    enemy.def = enemy.def.mul(enemy.buffs["boss"].rate)                    
+                    layers.b.subBuffMoves("enemy", "boss")
+                } else {
+                    // you win
+                    layers["b"].pushBattleLog(`${enemy.dispn} 倒下了！`)
 
-                // roll drop items
-                let drop = full_enemies[enemy.name].drop
-                let drop_exp = layers["e"].addBattleExp(drop.exp.mul(enemy.number.pow(3)))
-                layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} 经验！`)
-                
+                    // roll drop items
+                    let drop = full_enemies[enemy.name].drop
+                    let exp = drop.exp.mul(layers.i.possibleEffect("ring", "goldenring", d(1)))
+                    let drop_exp = layers["e"].addBattleExp(exp.mul(enemy.number.pow(3)))
+                    layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} 经验！`)
 
-                for (let loot in drop.loots) {
-                    loot = drop.loots[loot]
-                    if (Math.random() < loot.droprate) {
-                        if (loot.is_equip) {
-                            // TODO: drop equipment, need further interface design
-                            // there is no equip drop so far, later
-                        } else {
-                            let loot_num = loot.base.mul(enemy.number.pow(3))
-                            layers["b"].pushBattleLog(`获得了 ${format(loot_num)} ${res_name[loot.res]}！`)
-                            player.i[loot.res] = player.i[loot.res].add(loot_num)
+
+                    for (let loot in drop.loots) {
+                        loot = drop.loots[loot]
+                        if (Math.random() < loot.droprate) {
+                            if (loot.is_equip) {
+                                // TODO: drop equipment, need further interface design
+                                // there is no equip drop so far, later
+                            } else {
+                                let loot_num = loot.base.mul(enemy.number.pow(3))
+                                
+                                loot_num = loot_num.mul(layers.i.possibleEffect("ring", "goldenring", d(1)))
+                                layers["b"].pushBattleLog(`获得了 ${format(loot_num)} ${res_name[loot.res]}！`)
+                                player.i[loot.res] = player.i[loot.res].add(loot_num)
+                            }
                         }
                     }
-                }
-                
-                // update battle status
-                b.just_defeated = enemy.name
-                b.in_battle = false
-                if (b.in_zone) {
-                    b.zone_countdown -= 1
-                    if (b.zone_countdown == 0) {
-                        b.in_zone = false
-                        // TODO: zone clear awards!
+                    
+                    // update battle status
+                    b.just_defeated = enemy.name
+                    b.in_battle = false
+                    if (b.in_zone) {
+                        b.zone_countdown -= 1
+                        if (b.zone_countdown == 0) {
+                            b.in_zone = false
+                            zones[b.zone_name].onComplete()
+                        }
+
+                        let prog = 1 + b.zone_total - b.zone_countdown
+
+                        // update max progress in zone
+                        if (prog > player[b.zone_area].max_prog[b.zone_name]) {
+                            player[b.zone_area].max_prog[b.zone_name] = prog
+                        }
                     }
 
-                    let prog = 1 + b.zone_total - b.zone_countdown
-                    if (prog > player[b.zone_area].prog) {
-                        player[b.zone_area].prog = prog
-                    }
-                }
-
-                return
+                    return                    
+                }       
             }
 
             if (b.ene_action.gte(actionBar)) {
@@ -602,7 +643,7 @@ addLayer("b", {
             layers["b"].OTBuffs("pl", diff)
 
             if (pl.hp.lte(0)) {
-                // you dead
+                // you died
                 b.in_battle = false
                 b.in_zone = false
                 b.zone_countdown = 0

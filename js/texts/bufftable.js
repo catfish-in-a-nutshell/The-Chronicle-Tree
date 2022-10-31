@@ -2,25 +2,25 @@ var full_buffs = {
     "burning": {
         name: "燃烧",
         params: ["time", "dot"],
-        desc: (buff) => `燃烧：每秒损失${buff.dot}生命值，剩余${buff.time}秒`
+        desc: (buff) => `燃烧：每秒损失${buff.dot} HP，剩余${buff.time}秒`
     },
     
     "weakened": {
         name: "虚弱",
         params: ["moves", "atkrate"],
-        desc: (buff) => `虚弱：攻击力x${buff.atkrate}，剩余${buff.moves}次行动`
+        desc: (buff) => `虚弱：ATK x${buff.atkrate}，剩余${buff.moves}次行动`
     },
 
     "pierce": {
         name: "穿透",
         params: ["moves", "piercerate"],  
-        desc: (buff) => `穿透：使对方防御力x${buff.piercerate}，剩余${buff.moves}次行动`
+        desc: (buff) => `穿透：本次攻击对方DEF x${buff.piercerate}，剩余${buff.moves}次行动`
     },
 
     "bleeding": {
         name: "流血",
         params: ["moves", "dmgrate"],
-        desc: (buff) => `流血：每次行动损失生命上限x${buff.dmgrate}的生命值，剩余${buff.moves}次行动`
+        desc: (buff) => `流血：每次行动损失HP上限x${buff.dmgrate}的HP，剩余${buff.moves}次行动`
     },
 
     "raging": {
@@ -32,18 +32,35 @@ var full_buffs = {
     "comboatk": {
         name: "连击",
         params: ["moves", "times", "discnt"],
-        desc: (buff) => `连击：每次以${buff.discnt}x的攻击力攻击${buff.times}次，剩余${buff.moves}次行动`
+        desc: (buff) => `连击：每次以${buff.discnt}x的ATK 攻击${buff.times}次，剩余${buff.moves}次行动`
     },
 
     "stunned": {
         name: "眩晕",
         params: ["moves"],
         desc: (buff) => `眩晕：无法行动，剩余${buff.moves}次行动`
+    },
+
+    "boss": {
+        name: "精英",
+        params: ["moves", "rate"],
+        desc: (buff) => `精英: 在HP归0时，HP, ATK, DEFx${buff.rate}并恢复全部HP，剩余${buff.moves}次`
     }
 }
 
 var full_traits = {
     "induce_bleeding": {
-        
+        dispn: "出血",
+        desc: () => `出血: 攻击附加流血`
+    },
+
+    "furious": {
+        dispn: "狂暴",
+        desc: () => `暴击伤害翻倍(x1.5 -> x3)`
+    },
+
+    "warcry": {
+        dispn: "战吼",
+        desc: () => `每次攻击后 ATK x1.2`
     }
 }
