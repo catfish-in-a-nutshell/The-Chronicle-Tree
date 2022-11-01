@@ -98,7 +98,7 @@ addLayer("b", {
             return base_atk
         }
     },
-    
+
     plDef() {
         let shield = player.i.equips.shield
         let shield_def = d(0)
@@ -515,7 +515,7 @@ addLayer("b", {
         layers["b"].prevBattleBuff()
 
         b.in_battle = true
-        player.tab = "b"
+        showTab('b')
     },
 
     buffText(side) {

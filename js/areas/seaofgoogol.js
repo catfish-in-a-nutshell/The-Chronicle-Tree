@@ -130,7 +130,8 @@ addLayer("g", {
             cost: d(10),
             currencyDisplayName: () => res_name["fish"],
             currencyInternalName: "fish",
-            currencyLocation: () => player.i
+            currencyLocation: () => player.i,
+            unlocked: () => player.i.bestfish.gt(0)
         },
     },
 

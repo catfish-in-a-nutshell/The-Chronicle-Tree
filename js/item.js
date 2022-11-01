@@ -276,7 +276,7 @@ addLayer("i", {
     },
 
     canFight() {
-        return (player.i.equips.weapon.exist || hasUpgrade("r", 12))
+        return (player.i.equips.weapon.equipped || hasUpgrade("r", 12))
     },
 
     clickables: {
