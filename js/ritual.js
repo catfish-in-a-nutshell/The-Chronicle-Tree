@@ -87,6 +87,13 @@ addLayer("r", {
             unlocked: () => hasAchievement("m", 22),
             cost: d(100),
         },
+
+        12: {
+            title: "破序I",
+            description: "为什么一定要买武器？没有武器时，视作持有拳头(数字1, ATK 3)，且现在可以无需 升级-从皮亚诺村启程，即可直接到达幂次原野。",
+            unlocked: () => hasUpgrade("r", 11),
+            cost: d(300), // TODO: balance cost
+        }
     },
 
     buyables: {
@@ -331,7 +338,7 @@ addLayer("r", {
                 return ret
             }], ["display-text", function() {
                 if (!player.m.sigil0_unlocked) return
-                let ret = `角质构成的椭圆形符号，带有浅浅的麝香气息。<br>
+                let ret = `角质构成的椭圆形符号，带有浅浅的麝香味。<br>
                     根据所获战斗经验总量得到成长，提升下一次重生的数字。<br>
                     目前效果: x${format(tmp.r.sigil0Effect)} 重生后: x${format(tmp.r.sigil0EffectNext)}`
                 return ret

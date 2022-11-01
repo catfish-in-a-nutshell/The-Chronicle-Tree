@@ -12,7 +12,7 @@ addLayer("mp", {
         }
     }},
     canReset() {
-        return (!player.r.is_dead && tmp.g.isInited) && hasUpgrade("p", 35)
+        return (!player.r.is_dead && tmp.g.isInited) && (hasUpgrade("r", 11) || hasUpgrade("p", 35))
     },
     color: "#44bd32",
     requires: d(1), // Can be a function that takes requirement increases into account
@@ -31,7 +31,7 @@ addLayer("mp", {
         return d(1)
     },
     tooltip: function() {
-        if (hasUpgrade("p", 35)) {
+        if (hasUpgrade("p", 35) || hasUpgrade("r", 11)) {
             return `幂次原野: ${format(player.mp.points)} 投入时间`
         } else {
             return "幂次原野 - 需要升级: 从皮亚诺村启程"
@@ -45,6 +45,24 @@ addLayer("mp", {
     ],
     layerShown() {
         return hasAchievement("m", 13)
+    },
+
+    upgrades: {
+        11: {
+            title: "猎人的帐篷",
+            description: "解锁与猎人们的对话",
+            unlocked: () => getBuyableAmount("mp", 11).gte(2),
+            cost: d(20)
+        },
+        12: {
+            title: "狩猎技巧",
+            description: () => `你的${skill_dispn["hunting"]}等级提升战斗中获得的经验，目前x${tmp.mp.upgrades[12].effect}`,
+            unlocked: () => hasUpgrade("mp", 11),
+            cost: d(2000),
+            currencyDisplayName: () => res_name["fur"],
+            currencyInternalName: "fur",
+            currencyLocation: () => player.i,
+        }
     },
 
     
@@ -90,23 +108,15 @@ addLayer("mp", {
         11: {
             "title": "伐木",
             display() {
-                let disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)} ${res_name["food"]}，获得${res_name["wood"]}与${res_name["fiber"]}，并增长劳务能力。\n
-                单位时间收益:
-                ${format(tmp.mp.lumberWoodIncome)} ${res_name["wood"]}
-                ${format(tmp.mp.lumberFiberIncome)} ${res_name["fiber"]}
-                ${format(tmp.mp.lumberExp)} 经验`
+                let disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)}${res_name["food"]}，获得${res_name["wood"]}与${res_name["fiber"]}，并增长劳务能力。\n
+                收益:
+                ${format(player.mp.points.mul(0.5).mul(tmp.mp.lumberWoodIncome))} ${res_name["wood"]}
+                ${format(player.mp.points.mul(0.5).mul(tmp.mp.lumberFiberIncome))} ${res_name["fiber"]}
+                ${format(player.mp.points.mul(0.5).mul(tmp.mp.lumberExp))} 经验`
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
-                    return {
-                        "background-color": "#44bd32"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return clickable_style(player.r.is_dead ? "#ffffff" : "#27ae60")
             },
             onClick() {
                 let data = player.mp
@@ -128,22 +138,14 @@ addLayer("mp", {
         12: {
             "title": "挖矿",
             display() {
-                disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)} ${res_name["food"]}，获得${res_name["mineral"]}，并增长劳务能力。\n
-                单位时间收益:
-                ${format(tmp.mp.mineIncome)} ${res_name["mineral"]}
-                ${format(tmp.mp.mineExp)} 经验`
+                disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)}${res_name["food"]}，获得${res_name["mineral"]}，并增长劳务能力。\n
+                收益:
+                ${format(player.mp.points.mul(0.5).mul(tmp.mp.mineIncome))} ${res_name["mineral"]}
+                ${format(player.mp.points.mul(0.5).mul(tmp.mp.mineExp))} 经验`
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
-                    return {
-                        "background-color": "#44bd32"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return clickable_style(player.r.is_dead ? "#ffffff" : "#27ae60")
             },
             onClick() {
                 let data = player.mp
@@ -165,22 +167,14 @@ addLayer("mp", {
         13: {
             "title": "狩猎",
             display() {
-                let disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)} ${res_name["food"]}，有概率发现野兽(掉落皮毛)，并增长索敌能力。\n
-                单位时间收益:
+                let disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)}${res_name["food"]}，有概率发现野兽(掉落皮毛)，并增长索敌能力。\n
+                收益:
                 ${format(tmp.mp.huntProbability)} 几率发现猎物
-                ${format(tmp.mp.huntExp)} 经验(成功发现时x1.5)`
+                ${format(player.mp.points.mul(0.5).mul(tmp.mp.huntExp))} 经验(成功时x1.5)`
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
-                    return {
-                        "background-color": "#44bd32"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return clickable_style(player.r.is_dead ? "#ffffff" : "#27ae60")
             },
             onClick() {
                 let data = player.mp
@@ -202,7 +196,7 @@ addLayer("mp", {
                 player.e.hunting.cur_exp = player.e.hunting.cur_exp.add(exp)
             },
             canClick() {
-                return !player.r.is_dead && player.mp.points.gt(0) && player.i.food.gt(5) && player.i.equips.weapon.equipped
+                return !player.r.is_dead && player.mp.points.gt(0) && player.i.food.gt(5) && tmp.i.canFight
             },
             unlocked() {
                 return getBuyableAmount(this.layer, 11).gt(0)
@@ -214,7 +208,7 @@ addLayer("mp", {
             display() {
                 let disp = `副本长度: 3
                     关卡数字: 1.2-1.8
-                    首通: 解锁技能点升级、新装备以及???
+                    首通: 解锁重生点升级、新装备以及${player.m.sigil0_unlocked ? "符号0" : "???"}
                     奖励: ${res_name["mineral"]}、${res_name["gold"]}、经验`
                 return disp
             },
@@ -234,7 +228,7 @@ addLayer("mp", {
             },
             canClick() {
                 return !player.r.is_dead && tmp.mp.canReset
-                    && player.i.equips.weapon.equipped
+                    && tmp.i.canFight
                     && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
@@ -268,7 +262,7 @@ addLayer("mp", {
             },
             canClick() {
                 return !player.r.is_dead && tmp.mp.canReset
-                    && player.i.equips.weapon.equipped
+                    && tmp.i.canFight
                     && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
@@ -302,7 +296,7 @@ addLayer("mp", {
             },
             canClick() {
                 return !player.r.is_dead && tmp.mp.canReset
-                    && player.i.equips.weapon.equipped
+                    && tmp.i.canFight
                     && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
@@ -390,7 +384,9 @@ addLayer("mp", {
                 "blank",
                 "clickables",
                 "blank",
-                "buyables",
+                ["buyables", [1]],
+                "blank",
+                ["buyables", [2]],
                 "blank",
             ]
         },

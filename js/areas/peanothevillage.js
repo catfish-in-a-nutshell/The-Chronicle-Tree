@@ -1,3 +1,13 @@
+function clickable_style(bg) {
+    return {
+        "background-color": bg,
+        "width": "140px",
+        "height": "160px",
+        "border-radius": "1px",
+        "margin-bottom": "10px"
+    }
+}
+
 addLayer("p", {
     name: "皮亚诺村", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "p", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -354,15 +364,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
-                    return {
-                        "background-color": "#f39c12"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
             },
             onClick() {
                 let data = player.p
@@ -390,15 +392,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
-                    return {
-                        "background-color": "#f39c12"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
             },
             onClick() {
                 let data = player.p
@@ -423,15 +417,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
-                    return {
-                        "background-color": "#f39c12"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
             },
             onClick() {
                 let data = player.i
@@ -455,15 +441,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
-                    return {
-                        "background-color": "#f39c12"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
             },
             onClick() {
                 let data = player.i
@@ -487,15 +465,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
-                    return {
-                        "background-color": "#f39c12"
-                    }
-                } else {
-                    return {
-                        "background-color": "#ffffff"
-                    }
-                }
+                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
             },
             onClick() {
                 let data = player.i

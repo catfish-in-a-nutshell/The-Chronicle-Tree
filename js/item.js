@@ -275,6 +275,10 @@ addLayer("i", {
         return disp
     },
 
+    canFight() {
+        return (player.i.equips.weapon.exist || hasUpgrade("r", 12))
+    },
+
     clickables: {
         11: {
             title: "武器",

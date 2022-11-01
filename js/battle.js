@@ -82,13 +82,23 @@ addLayer("b", {
     plBaseMP() {
         return d(10)
     },
+
     plAtk() {
         let weapon = player.i.equips.weapon
-        let base_atk = player.i.equips.weapon.equipped ? full_equips[weapon.name].atk : d(0)
-        base_atk = base_atk.mul(tmp.r.physicalEffect.cube().sqrt()).mul(weapon.number.cube().sqrt())
-        base_atk = base_atk.mul(tmp.e.atkEffect)
-        return base_atk
+
+        if (!weapon.equipped) {
+            let base_atk = hasUpgrade("r", 12) ? d(3) : d(0)
+            base_atk = base_atk.mul(tmp.r.physicalEffect.cube().sqrt())
+            base_atk = base_atk.mul(tmp.e.atkEffect)
+            return base_atk
+        } else {
+            let base_atk = full_equips[weapon.name].atk
+            base_atk = base_atk.mul(tmp.r.physicalEffect.cube().sqrt()).mul(weapon.number.cube().sqrt())
+            base_atk = base_atk.mul(tmp.e.atkEffect)
+            return base_atk
+        }
     },
+    
     plDef() {
         let shield = player.i.equips.shield
         let shield_def = d(0)

@@ -52,7 +52,7 @@ let intro = `<h1>游戏介绍:</h1><br>
 		在增量游戏和放置游戏的基础上，试图讲述一个数值膨胀的RPG故事。<br>
 	`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `你已玩通了目前所有游戏内容！感谢您的游玩，敬请期待更新~`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)

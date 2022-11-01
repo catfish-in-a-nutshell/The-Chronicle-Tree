@@ -133,8 +133,7 @@ addLayer("m", {
             done: () => player.m.sigil0_unlocked,
             tooltip() {
                 if (hasAchievement("m", this.id)) {
-                    // return "在你的掌心，镶嵌着一枚椭圆形的角质鳞片，你感受到其中寄宿着非凡而古老的力量。解锁功能：重生-数字-符号《0》"
-                    return "在你的掌心，镶嵌着一枚椭圆形的角质鳞片，你感受到其中寄宿着非凡而古老的力量……暂未实现"
+                    return "在你的掌心，镶嵌着一枚椭圆形的角质鳞片，你感受到其中寄宿着非凡而古老的力量。解锁：重生-数字-符号0"
                 } else {
                     return "未解锁"
                 }
