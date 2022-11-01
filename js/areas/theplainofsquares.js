@@ -336,12 +336,12 @@ addLayer("mp", {
     },
 
     lumberWoodIncome() {
-        let number_eff = player.r.number.pow(1.5).mul(player.i.equips.axe.number.pow(1.5))
+        let number_eff = tmp.r.physicalEffect.pow(1.5).mul(player.i.equips.axe.number.pow(1.5))
         return number_eff.mul(tmp.e.laboringEffect).mul(0.1)
     },
 
     lumberFiberIncome() {
-        let number_eff = player.r.number.pow(1.5).mul(player.i.equips.axe.number.pow(1.5))
+        let number_eff = tmp.r.physicalEffect.pow(1.5).mul(player.i.equips.axe.number.pow(1.5))
         return number_eff.mul(tmp.e.laboringEffect).mul(0.04)
     },
 
@@ -350,7 +350,7 @@ addLayer("mp", {
     },
 
     mineIncome() {
-        let number_eff = player.r.number.pow(1.5).mul(player.i.equips.pickaxe.number.pow(1.5))
+        let number_eff = tmp.r.physicalEffect.pow(1.5).mul(player.i.equips.pickaxe.number.pow(1.5))
         return number_eff.mul(tmp.e.laboringEffect).mul(0.02)
     },
 

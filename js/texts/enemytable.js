@@ -33,7 +33,7 @@ var zones = {
 
         onComplete: () => {
             player.m.sigil0_unlocked = true,
-            player.mk.goldenring_unlocked = true
+            player.mk.mpcave_reward_unlocked = true
         },
     },
 

@@ -13,6 +13,10 @@ let ritual_buyable_style = {
     "border-color": "rgba(0, 0, 0, 0.125)"
 }
 
+let sigil_template = (symbol) => {
+    return `<p class='sigilSymbol'>${symbol}</p>`
+}
+
 addLayer("r", {
     name: "重生", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -21,8 +25,9 @@ addLayer("r", {
         unlocked: false,
         points: d(0),
         score: d(0),
+        sigil0_pool: d(0),
+        sigil0_score: d(0),
         deaths: d(0),
-        number: d(1),
         is_dead: false
     }},
     color: "#3498db",
@@ -47,12 +52,10 @@ addLayer("r", {
         let score_exp = d(1)
         return score_exp
     },
-    // upgrades: {
-    //     11: {
-    //         title: "",
-    //         description: "",
-    //     }
-    // },
+    number() {
+        let n = d(1).mul(tmp.r.sigil0Effect)
+        return n
+    },
 
 
     // effect 0: add extra levels to skill;
@@ -77,6 +80,15 @@ addLayer("r", {
         下一级价格: ${format(cost)} 重生点`
     },
 
+    upgrades: {
+        11: {
+            title: "自动化 - 皮亚诺村",
+            description: "在皮亚诺村，每秒自动获得0.5投入时间（受怠惰与数字加成）",
+            unlocked: () => hasAchievement("m", 22),
+            cost: d(100),
+        },
+    },
+
     buyables: {
         11: {
             title: "游泳",
@@ -96,7 +108,7 @@ addLayer("r", {
         
         12: {
             title: "交流", 
-            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
@@ -113,7 +125,7 @@ addLayer("r", {
         
         13: {
             title: "劳务",
-            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
@@ -130,7 +142,7 @@ addLayer("r", {
         
         21: {
             title: "烹饪",
-            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
@@ -147,7 +159,7 @@ addLayer("r", {
 
         22: {
             title: "贸易",
-            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
@@ -164,7 +176,7 @@ addLayer("r", {
 
         23: {
             title: "钓鱼",
-            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
@@ -181,7 +193,7 @@ addLayer("r", {
         
         31: {
             title: "索敌",
-            cost(x) { return d(1).mul(x.add(1).pow(2)) }, // TODO
+            cost(x) { return d(1).mul(x.add(1).pow(2)) },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 return layers.r.extraExpDisplay(this.id, this.cost(cur_amount))
@@ -226,10 +238,12 @@ addLayer("r", {
                     实际DEF = 盾牌DEF + 护甲DEF<br>
                     盾牌DEF = 盾牌基础DEF * (盾牌数字 * 角色数字)<sup>1.5</sup><br>
                     护甲DEF = 护甲基础DEF * (护甲数字 * 角色数字)<sup>1.5</sup><br>
-
                     <br>
                     戒指虽不提供战斗数值，但其特殊效果受到自身数字影响。<br>
+                    <br>
                     生产工具的数字，同样直接提升相关行动的产出。<br>
+                    <br>
+                    生产工具产出 = 基础产出 * 技能加成 * (工具数字 * 角色数字)<sup>1.5</sup><br>
                 `
             }
         }
@@ -245,6 +259,9 @@ addLayer("r", {
         score = score.mul(tmp.r.scoreGainMult)
         player.r.score = player.r.score.add(score)
     },
+    addSigil0Score(score) {
+        player.r.sigil0_score = player.r.sigil0_score.add(score)
+    },
 
     row: 10, // Row the layer is in on the tree (0 is the first row)
     displayRow: "side",
@@ -256,21 +273,34 @@ addLayer("r", {
             player.r.is_dead = false
             player.r.last_death_cause = ""
             player.r.score = d(0)
+            player.r.sigil0_pool = player.r.sigil0_pool.add(player.r.sigil0_score)
+            player.r.sigil0_score = d(0)
         }
     },
     layerShown() {
         return player.r.deaths.gte(1)
     },
     physicalEffect() {
-        return player.r.number
+        return tmp.r.number
     },
     consumptionEffect() {
-        return player.r.number.pow(3)
+        return tmp.r.number.pow(3)
     },
     speedUp() {
-        return player.r.number.cbrt()
+        return tmp.r.number.cbrt()
     },
     
+
+    sigil0Effect() {
+        if (!player.m.sigil0_unlocked) return d(1)
+        return player.r.sigil0_pool.div(100).add(1).pow(0.25)
+    },
+
+    sigil0EffectNext() {
+        if (!player.m.sigil0_unlocked) return d(1)
+        let next_sigil0_pool = player.r.sigil0_pool.add(player.r.sigil0_score)
+        return next_sigil0_pool.div(100).add(1).pow(0.25)
+    },
 
     tabFormat: {
         "技能": {
@@ -279,12 +309,14 @@ addLayer("r", {
                 "blank",
                 ["infobox", "lore"],
                 "blank",
+                "upgrades",
+                "blank",
                 "buyables"]
         },
 
         "数字": {
             content: [["display-text", function(){
-                let ret = `<p style='font-size: 20px; margin-bottom: 20px'>你目前的数字为 ${format(player.r.number)}</p>`
+                let ret = `<p style='font-size: 20px; margin-bottom: 20px'>你目前的数字为 ${format(tmp.r.number)}</p>`
 
                 ret += `<p>你的物理尺寸提升 x${format(tmp.r.physicalEffect)}</p>`
                 ret += `<p>你的资源消耗提升 x${format(tmp.r.consumptionEffect)}</p>`
@@ -292,6 +324,19 @@ addLayer("r", {
 
                 return ret
             }],
+            "blank",
+            ["row", [["display-text", function() {
+                if (!player.m.sigil0_unlocked) return
+                let ret = sigil_template("0")
+                return ret
+            }], ["display-text", function() {
+                if (!player.m.sigil0_unlocked) return
+                let ret = `角质构成的椭圆形符号，带有浅浅的麝香气息。<br>
+                    根据所获战斗经验总量得到成长，提升下一次重生的数字。<br>
+                    目前效果: x${format(tmp.r.sigil0Effect)} 重生后: x${format(tmp.r.sigil0EffectNext)}`
+                return ret
+            }]]],
+            "blank",
             ["infobox", "systemintro"]],
             unlocked() {
                 return hasAchievement("m", 14)

@@ -164,3 +164,21 @@
 	border-color: rgba(0, 0, 0, 0.125);
 }
 
+
+@keyframes sigil_symbol {
+	0% {text-shadow: 0 0 0px #fff;}
+	50% {text-shadow: 0 0 12px #fff;}
+	100% {text-shadow: 0 0 0px #fff;}
+}
+
+.sigilSymbol {
+	font-size: 50px;
+	height: 60px;
+	width: 60px;
+	border: 1px solid #fff;
+	margin: 10px;
+	animation-name: sigil_symbol;
+	animation-duration: 5s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+}

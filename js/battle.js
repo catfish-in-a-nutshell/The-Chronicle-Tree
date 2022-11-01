@@ -276,7 +276,7 @@ addLayer("b", {
         ["display-text", function() {
             if (!player.b.in_battle) return ""
             let pl = player.b.pl
-            return `<p><b style='font-size: 20px'>你</b> 数字 ${format(player.r.number)}</p>
+            return `<p><b style='font-size: 20px'>你</b> 数字 ${format(tmp.r.number)}</p>
             ATK ${format(pl.atk)}, DEF ${format(pl.def)}, 速度 ${format(pl.speed)}`
         }],
         ["bar", "plHPBar"],

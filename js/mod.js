@@ -58,7 +58,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 // (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "youDied", "addRawScore", "addInventory", "discardInventory", "forgeEquipment", "removeEquip",
 	"startEncounter", "startZone", "pushBattleLog", "addBattleExp", "prevBattleBuff", "OTBuffs", "attack", "subBuffMoves", "applyEquipmentBuffs", "possibleEffect",
-	"buffText", "traitsText", "equipDisplay", "extraExpEffect", "getExtraExpEffect", "survivalSkillExpMult", "addRawExpSurvival", "extraExpDisplay"]
+	"buffText", "traitsText", "equipDisplay", "extraExpEffect", "getExtraExpEffect", "survivalSkillExpMult", "addRawExpSurvival", "extraExpDisplay", "addSigil0Score"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -100,7 +100,7 @@ var displayThings = [
 
 	function() {
 		if (hasAchievement("m", 14)) {
-			return `你当前的数字为 ${format(player.r.number)}`
+			return `你当前的数字为 ${format(tmp.r.number)}`
 		}
 	}
 ]

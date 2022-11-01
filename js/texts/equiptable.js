@@ -146,6 +146,20 @@ var full_equips = {
         },
         desc: (number) => `战斗奖励 x${format(number.add(2).log(2))}`,
         effect: (number) => number.add(2).log(2),
-        unlocked: () => player.mk.goldenring_unlocked
+        unlocked: () => player.mk.mpcave_reward_unlocked
+    },
+
+    "foodring": {
+        dispn: "储备粮戒指",
+        etype: "ring",
+        cost: {
+            food: d(200)
+        },
+        desc: (number) => `最大HP x${format(number.add(3).log(3))}`,
+        applyEffect: (number) => {
+            player.b.pl.maxhp = player.b.pl.maxhp.mul(number.add(3).log(3))
+            player.b.pl.hp = player.b.pl.maxhp
+        },
+        unlocked: () => player.mk.mpcave_reward_unlocked
     }
 }

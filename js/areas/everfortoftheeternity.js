@@ -7,7 +7,7 @@ addLayer("f", {
 		points: d(0),
     }},
     canReset() {
-        return (!player.r.is_dead && tmp.g.is_inited) && player.r.number.gte(d(1e100))
+        return (!player.r.is_dead && tmp.g.is_inited) && tmp.r.number.gte(d(1e100))
     },
     color: "#fbc531",
     requires: d(1), // Can be a function that takes requirement increases into account
@@ -24,7 +24,7 @@ addLayer("f", {
         return d(1)
     },
     tooltip: () => "亘古王都: " + format(player.f.points) + " 投入时间",
-    tooltipLocked: () => "亘古王都 - 到达 1e100 数字解锁",
+    tooltipLocked: () => "??? - 到达 ??? 解锁",
     
     row: 0, // Row the layer is in on the tree (0 is the first row)
     displayRow: 4,

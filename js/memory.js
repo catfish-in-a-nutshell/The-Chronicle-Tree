@@ -82,13 +82,13 @@ addLayer("m", {
         },
 
         15: {
-            name: "懒惰的记忆",
+            name: "怠惰的记忆",
             unlocked: () => hasAchievement("m", 12), 
             onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
             done: () => getBuyableAmount("p", 14).gte(8),
             tooltip() {
                 if (hasAchievement("m", this.id)) {
-                    return "在见识了一个流浪汉的生活之后，你意识到偷懒有时也是一门艺术。解锁页面：懒惰"
+                    return "在见识了一个流浪汉的生活之后，你意识到偷懒有时也是一门艺术。解锁页面：怠惰"
                 } else {
                     return "未解锁"
                 }

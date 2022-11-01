@@ -139,6 +139,7 @@ addLayer("e", {
                 break;
 
         }
+        layers.r.addSigil0Score(exp)
         return exp
     },
 

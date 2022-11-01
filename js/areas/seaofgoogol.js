@@ -86,8 +86,8 @@ addLayer("g", {
                 player.g.diving_down = true
                 player.g.diving_up = false
             },
-            canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.r.points.gt(0),
-            unlocked: () => hasUpgrade("p", 23)
+            canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.g.points.gt(0),
+            unlocked: () => hasUpgrade("p", 23) && false // not yet!
         },
 
         13: { 
@@ -102,7 +102,9 @@ addLayer("g", {
                 let data = player.g
                 let t = data.points
                 
-                let harv = d(0.5).mul(t).mul(player.i.equips.fishingrod.number)
+                let harv = d(0.5).mul(t)
+                
+                harv = harv.mul(player.i.equips.fishingrod.number.cube().mul(tmp.r.physicalEffect.cube()).sqrt())
                 let fishing_exp = harv.mul(20).mul(layers.e.survivalSkillExpMult("fishing"))
 
                 harv = harv.mul(tmp.e.fishingEffect)

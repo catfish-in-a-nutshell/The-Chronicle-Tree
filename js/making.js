@@ -7,7 +7,7 @@ addLayer("mk", {
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
-        goldenring_unlocked: false,
+        mpcave_reward_unlocked: false,
     }},
     color: "#ffffff",
     requires: d(1), // Can be a function that takes requirement increases into account

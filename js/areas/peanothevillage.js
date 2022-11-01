@@ -591,6 +591,16 @@ addLayer("p", {
         return d(10).mul(layers.e.survivalSkillExpMult("trading"))
     },
 
+    update(diff) {
+        if (hasUpgrade("r", 11)) {
+            let auto_gain = tmp.pointGen.mul(0.5).mul(diff)
+            if (hasAchievement("m", 21)) {
+                auto_gain = auto_gain.mul(2)
+            }
+            player.p.points = player.p.points.add(auto_gain)
+        }
+    },
+
     tabFormat: {
         "主界面": {
             content: [

@@ -247,7 +247,7 @@ addLayer("i", {
             if (player.i.equips[e].equipped) {
                 let name = player.i.equips[e].name
                 if (full_equips[name].applyEffect) {
-                    full_equips[name].applyEffect()
+                    full_equips[name].applyEffect(player.i.equips[e].number)
                 }
             }
         }
@@ -269,7 +269,7 @@ addLayer("i", {
         disp += `数字: ${format(inv.number)}<br>`
 
         if (full_equips[inv.name].desc) {
-            disp += full_equips[inv.name].desc(inv.number.cube().mul(player.r.number.cube()).sqrt())
+            disp += full_equips[inv.name].desc(inv.number.cube().mul(tmp.r.physicalEffect.cube()).sqrt())
         }
 
         return disp
