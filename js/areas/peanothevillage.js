@@ -270,7 +270,7 @@ addLayer("p", {
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 let ret = `进度 ${format(cur_amount, 0)}/14\n\n`
-                if (cur_amount.gte(1) && cur_amount.lt(14)) {
+                if (cur_amount.gte(1) && cur_amount.lte(14)) {
                     ret += full_dialogue["p12"][format(cur_amount, 0)-1] + "\n\n"
                 }
                 if (cur_amount.lt(14)) {
@@ -298,7 +298,7 @@ addLayer("p", {
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 let ret = `进度 ${format(cur_amount, 0)}/8\n\n`
-                if (cur_amount.gte(1) && cur_amount.lt(8)) {
+                if (cur_amount.gte(1) && cur_amount.lte(8)) {
                     ret += full_dialogue["p13"][format(cur_amount, 0)-1] + "\n\n"
                 }
                 ret += `当前效果：村中对话花费 x${format(this.effect())}\n`
@@ -329,7 +329,7 @@ addLayer("p", {
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
                 let ret = "进度 " + format(cur_amount, 0) + "/8\n"
-                if (cur_amount.gte(1) && cur_amount.lt(8)) {
+                if (cur_amount.gte(1) && cur_amount.lte(8)) {
                     ret += full_dialogue["p14"][format(cur_amount, 0)-1] + "\n"
                 }
                 if (cur_amount.lt(8)) {
