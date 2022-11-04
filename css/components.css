@@ -84,8 +84,8 @@
 .story {
     width: 600px;
     max-width: 95%;
-    border-bottom: solid 4px;
-    border-radius: 8px;
+    border-bottom: solid 3px;
+    border-radius: 0px;
     margin-bottom: 8px;
     text-align: left;
 }
@@ -97,7 +97,8 @@
     cursor: pointer;
     border: none;
     padding: 2px;
-    border-radius: 8px 8px 0 0;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 .story-toggle {
@@ -111,12 +112,12 @@
 }
 
 .story-text {
-	padding: 2px;
-    border: solid 4px;
+	padding: 5px;
+    border: solid 3px;
     border-color: inherit;
-    border-radius: inherit;
+    border-radius: 0px;
     border-top-left-radius: 0;
-    margin-bottom: -2px;
+    margin-bottom: -3px;
 }
 
 
@@ -177,8 +178,71 @@
 	width: 60px;
 	border: 1px solid #fff;
 	margin: 10px;
+	box-shadow: 2px 2px white;
 	animation-name: sigil_symbol;
 	animation-duration: 5s;
 	animation-iteration-count: infinite;
 	animation-timing-function: ease-in-out;
+}
+
+.sideMenu {
+	transition-duration: 0s;
+	height: 50px;
+	width: 80px;
+	font-size: 30px;
+	font-family: "Lucida Console", "Courier New", monospace;
+	text-shadow: var(--hqProperty3);
+	padding: 0;
+	margin: 0 0px 10px 10px;
+	border: none;
+	color: #dfe6e9;
+	background-color: transparent;
+	text-shadow: 1px 1px 3px #333;
+	--after-menu-main-color: var(--menu-main-color);
+	--after-menu-sub-color: var(--menu-sub-color);
+}
+
+
+.sideMenu.menuCan:hover {
+	color: var(--menu-main-color);
+	text-shadow: 0 0 2px var(--menu-sub-color);
+	--after-menu-main-color: #b2bec3;
+	--after-menu-sub-color: #636e72;
+}
+
+.sideMenuLabel {
+	transition-duration: 0s;
+	font: inherit;
+	font-family: inherit;
+}
+
+.sideMenu:hover {
+    padding-right: 10px;
+}
+
+
+.sideMenu:after {
+	transition-duration: 0s;
+    content: "";
+    position: relative;
+    left: -10px;
+    top: -10px;
+    height: 20px;
+    width: 80px;
+    border-radius: 0px;
+    border: 10px solid transparent;
+    border-top-color: var(--after-menu-main-color);
+    background-color: transparent;
+    display: flex;
+    border-right-width: 0;
+	filter: drop-shadow(3px 3px var(--after-menu-sub-color)) ;
+	z-index: -1;
+}
+
+.sideMenu:hover:after {
+    left: -15px;
+}
+
+.menuNotify {
+	filter: drop-shadow(3px 3px 10px red) ;
 }

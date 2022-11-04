@@ -24,6 +24,13 @@ function constructNodeStyle(layer){
     return style
 }
 
+function constructSideMenuStyle(layer) {
+	let style = []
+	if ((tmp[layer].isLayer && layerunlocked(layer)) || (!tmp[layer].isLayer && tmp[layer].canClick))
+		style.push({'--menu-main-color': tmp[layer].color})
+		style.push({'--menu-sub-color': tmp[layer].subcolor})
+	return style
+}
 
 function challengeStyle(layer, id) {
 	if (player[layer].activeChallenge == id && canCompleteChallenge(layer, id)) return "canComplete"

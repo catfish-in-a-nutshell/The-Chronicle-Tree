@@ -19,6 +19,7 @@ let sigil_template = (symbol) => {
 
 addLayer("r", {
     name: "重生", // This is optional, only used in a few places, If absent it just uses the layer id.
+    disp_symbol: "重生",
     symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
@@ -31,6 +32,7 @@ addLayer("r", {
         is_dead: false
     }},
     color: "#3498db",
+    subcolor: "#74b9ff",
     requires: d(1), // Can be a function that takes requirement increases into account
     resource: "重生点", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on
@@ -91,7 +93,7 @@ addLayer("r", {
         12: {
             title: "破序I",
             description: "为什么一定要买武器？没有武器时，视作持有拳头(数字1, ATK 3)，且现在可以无需 升级-从皮亚诺村启程，即可直接到达幂次原野。",
-            unlocked: () => hasUpgrade("r", 11),
+            unlocked: () => hasUpgrade("r", 11) || true,
             cost: d(300), // TODO: balance cost
         }
     },

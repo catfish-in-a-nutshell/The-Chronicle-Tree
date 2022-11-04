@@ -2,6 +2,7 @@
 
 addLayer("s", {
     name: "怠惰", // This is optional, only used in a few places, If absent it just uses the layer id.
+    disp_symbol: "怠惰",
     symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 4, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
@@ -12,6 +13,7 @@ addLayer("s", {
         speed: d(1)
     }},
     color: "#f1c40f",
+    subcolor: "#ffeaa7",
     requires: d(1), // Can be a function that takes requirement increases into account
     resource: "重生点", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on

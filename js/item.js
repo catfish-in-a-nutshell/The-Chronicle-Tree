@@ -15,6 +15,7 @@ var res_list = [
 
 addLayer("i", {
     name: "物品", // This is optional, only used in a few places, If absent it just uses the layer id.
+    disp_symbol: "物品",
     symbol: "I", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { 
@@ -95,6 +96,7 @@ addLayer("i", {
         }
     },
     color: "#2c3e50",
+    subcolor: "#b2bec3",
     requires: d(1), // Can be a function that takes requirement increases into account
     resource: "物品点", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on

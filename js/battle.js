@@ -2,6 +2,7 @@
 
 addLayer("b", {
     name: "战斗", // This is optional, only used in a few places, If absent it just uses the layer id.
+    disp_symbol: "战斗",
     symbol: "B", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 5, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() {
@@ -53,6 +54,7 @@ addLayer("b", {
         }
     },
     color: "#d63031",
+    subcolor: "#ff7675",
     requires: d(1), // Can be a function that takes requirement increases into account
     resource: "战斗积分", // Name of prestige currency
     baseResource: "重生分数", // Name of resource prestige is based on
@@ -515,7 +517,7 @@ addLayer("b", {
         layers["b"].prevBattleBuff()
 
         b.in_battle = true
-        showTab('b')
+        showTab("b")
     },
 
     buffText(side) {
@@ -659,6 +661,7 @@ addLayer("b", {
                 b.zone_countdown = 0
                 layers["b"].pushBattleLog(`你死了。`)
 
+                showTab("b")
                 layers["r"].youDied(`你在战斗中身亡。凶手是${enemy.dispn}`)
                 return
             }

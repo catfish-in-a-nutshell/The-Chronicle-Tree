@@ -62,6 +62,7 @@ addLayer("mp", {
             currencyDisplayName: () => res_name["fur"],
             currencyInternalName: "fur",
             currencyLocation: () => player.i,
+            effect: () => player.e.hunting.lvl.sqrt()
         }
     },
 
@@ -206,6 +207,10 @@ addLayer("mp", {
         21: {
             title: () => zones["mpcave"].dispn,
             display() {
+                if (!hasAchievement("m", 16)) {
+                    return `一个可以探索的区域，但充满了危险。
+                        你或许应该先通过狩猎，熟悉一下基本的战斗。`
+                }
                 let disp = `副本长度: 3
                     关卡数字: 1.2-1.8
                     首通: 解锁重生点升级、新装备以及${player.m.sigil0_unlocked ? "符号0" : "???"}
@@ -228,7 +233,7 @@ addLayer("mp", {
             },
             canClick() {
                 return !player.r.is_dead && tmp.mp.canReset
-                    && tmp.i.canFight
+                    && tmp.i.canFight && hasAchievement("m", 16)
                     && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
@@ -239,11 +244,15 @@ addLayer("mp", {
         22: {
             title: () => zones["mphorde"].name,
             display() {
+                if (!hasAchievement("m", 16)) {
+                    return `一个可以探索的区域，但充满了危险。
+                        你或许应该先通过狩猎，熟悉一下基本的战斗。`
+                }
                 let disp = `副本
                     长度: 4
                     推荐数字: 40
-                    首通奖励: 解锁更多重生升级
-                    奖励: ${res_name["food"]}、装备、经验`
+                    首通奖励: 解锁更多重生升级、装备
+                    奖励: ${res_name["food"]}、经验`
                 return disp
             },
             style() {
@@ -262,7 +271,7 @@ addLayer("mp", {
             },
             canClick() {
                 return !player.r.is_dead && tmp.mp.canReset
-                    && tmp.i.canFight
+                    && tmp.i.canFight && hasAchievement("m", 16)
                     && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
@@ -273,6 +282,10 @@ addLayer("mp", {
         23: {
             title: () => zones["mpannazone"].name,
             display() {
+                if (!hasAchievement("m", 16)) {
+                    return `一个可以探索的区域，但充满了危险。
+                        你或许应该先通过狩猎，熟悉一下基本的战斗。`
+                }
                 let disp = `副本
                     长度: 5
                     推荐数字: 1e5
@@ -296,7 +309,7 @@ addLayer("mp", {
             },
             canClick() {
                 return !player.r.is_dead && tmp.mp.canReset
-                    && tmp.i.canFight
+                    && tmp.i.canFight && hasAchievement("m", 16)
                     && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {

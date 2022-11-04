@@ -3,6 +3,7 @@
 
 addLayer("m", {
     name: "记忆", // This is optional, only used in a few places, If absent it just uses the layer id.
+    disp_symbol: "记忆",
     symbol: "M", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
@@ -12,6 +13,7 @@ addLayer("m", {
         sigil0_unlocked: false,
     }},
     color: "#8e44ad",
+    subcolor: "#a29bfe",
     requires: d(1), // Can be a function that takes requirement increases into account
     resource: "记忆点", // Name of prestige currency
     baseResource: "placeholder", // Name of resource prestige is based on

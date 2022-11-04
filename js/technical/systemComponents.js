@@ -152,24 +152,22 @@ var systemComponents = {
         template: `
         <table>
             <tr>
-                <td><button class="opt" onclick="save()">Save</button></td>
-                <td><button class="opt" onclick="toggleOpt('autosave')">Autosave: {{ options.autosave?"ON":"OFF" }}</button></td>
-                <td><button class="opt" onclick="hardReset()">HARD RESET</button></td>
+                <td><button class="opt" onclick="save()">保存</button></td>
+                <td><button class="opt" onclick="toggleOpt('autosave')">自动存档: {{ options.autosave?"开":"关" }}</button></td>
+                <td><button class="opt" onclick="hardReset()" style="color:red">硬重置</button></td>
             </tr>
             <tr>
-                <td><button class="opt" onclick="exportSave()">Export to clipboard</button></td>
-                <td><button class="opt" onclick="importSave()">Import</button></td>
-                <td><button class="opt" onclick="toggleOpt('offlineProd')">Offline Prod: {{ options.offlineProd?"ON":"OFF" }}</button></td>
+                <td><button class="opt" onclick="exportSave()">导出到剪贴板</button></td>
+                <td><button class="opt" onclick="importSave()">导入</button></td>
+                <td><button class="opt" onclick="toggleOpt('offlineProd')">离线产能: {{ options.offlineProd?"开":"关" }}</button></td>
             </tr>
             <tr>
-                <td><button class="opt" onclick="switchTheme()">Theme: {{ getThemeName() }}</button></td>
-                <td><button class="opt" onclick="adjustMSDisp()">Show Milestones: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
-                <td><button class="opt" onclick="toggleOpt('hqTree')">High-Quality Tree: {{ options.hqTree?"ON":"OFF" }}</button></td>
-            </tr>
+                <td><button class="opt" onclick="adjustMSDisp()">里程碑显示: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
+			</tr>
             <tr>
-                <td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: {{ options.hideChallenges?"HIDDEN":"SHOWN" }}</button></td>
-                <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">Single-Tab Mode: {{ options.forceOneTab?"ALWAYS":"AUTO" }}</button></td>
-				<td><button class="opt" onclick="toggleOpt('forceTooltips'); needsCanvasUpdate = true">Shift-Click to Toggle Tooltips: {{ options.forceTooltips?"ON":"OFF" }}</button></td>
+                <td><button class="opt" onclick="toggleOpt('hideChallenges')">已完成挑战: {{ options.hideChallenges?"隐藏":"显示" }}</button></td>
+                <td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">单页模式: {{ options.forceOneTab?"永远":"自动" }}</button></td>
+				<td><button class="opt" onclick="toggleOpt('forceTooltips'); needsCanvasUpdate = true">Shift+Click固定工具条: {{ options.forceTooltips?"开":"关" }}</button></td>
 				</tr> 
         </table>`
     },
@@ -214,7 +212,44 @@ var systemComponents = {
 		props: ['layer'],
 		template: `<div class ="bg" v-bind:style="[tmp[layer].style ? tmp[layer].style : {}, (tmp[layer].tabFormat && !Array.isArray(tmp[layer].tabFormat)) ? tmp[layer].tabFormat[player.subtabs[layer].mainTabs].style : {}]"></div>
 		`
-	}
+	},
+
+	
+	'side-menu': {
+		props: ['layer', 'abb', 'size', 'prev'],
+		template: `
+		<button v-if="nodeShown(layer)"
+			v-bind:id="layer"
+			v-on:click="function() {
+				if(tmp[layer].isLayer) {
+					if (tmp[layer].leftTab) {
+						showNavTab(layer, prev)
+						showTab('none')
+					}
+					else
+						showTab(layer, prev)
+				}
+				else {run(layers[layer].onClick, layers[layer])}
+			}"
+			v-bind:style="constructSideMenuStyle(layer)"
+
+
+			v-bind:class="{
+				sideMenu: true,
+				[layer]: true,
+				ghost: tmp[layer].layerShown == 'ghost',
+				hidden: !tmp[layer].layerShown,
+				locked: tmp[layer].isLayer ? !(player[layer].unlocked || tmp[layer].canReset) : !(tmp[layer].canClick),
+				menuNotify: tmp[layer].notify && player[layer].unlocked,
+				resetNotify: tmp[layer].prestigeNotify,
+				menuCan: ((player[layer].unlocked || tmp[layer].canReset) && tmp[layer].isLayer) || (!tmp[layer].isLayer && tmp[layer].canClick),
+				front: !tmp.scrolled,
+			}"	>
+			<span class="sideMenuLabel" v-html="(abb !== '' && tmp[layer].image === undefined) ? abb : '&nbsp;'"></span>
+			
+		</button>
+		`
+	},
 
 }
 

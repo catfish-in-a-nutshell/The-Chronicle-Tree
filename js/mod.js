@@ -37,7 +37,7 @@ let VERSION = {
 	name: "旅途的起始",
 }
 
-let changelog = `<h1>Changelog:</h1><br>
+let changelog = `<h1>更新日志</h1><br>
 	<h3>v0.01+ 第一步</h3><br>
 		- 增加了半个地区层，重写大部分机制，完成了数字系统前的导入。<br>
 		- 节奏可能存在一点问题。<br>

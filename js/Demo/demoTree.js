@@ -43,7 +43,7 @@ addNode("h", {
     row: "side",
     canClick() {return player.points.lt(player.c.otherThingy)},
     onClick() {player.points = new Decimal(player.c.otherThingy)}
-}, 
+},
 )
 
 addLayer("tree-tab", {
