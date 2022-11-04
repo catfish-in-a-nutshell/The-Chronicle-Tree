@@ -33,7 +33,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.01",
+	num: "0.01+",
 	name: "旅途的起始",
 }
 

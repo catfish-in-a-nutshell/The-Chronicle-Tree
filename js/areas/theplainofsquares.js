@@ -32,10 +32,21 @@ addLayer("mp", {
     },
     tooltip: function() {
         if (hasUpgrade("p", 35) || hasUpgrade("r", 11)) {
-            return `幂次原野: ${format(player.mp.points)} 投入时间`
+            return `投入时间 <br>
+            &nbsp; ${formatWhole(player.mp.points)}`
         } else {
-            return "幂次原野 - 需要升级: 从皮亚诺村启程"
+            return `需要升级 <br>
+            &nbsp; 从皮亚诺村启程`
+
         }
+    },
+    
+    nodeBgStyle: {
+        "clip-path": "polygon(50% 0%, 98% 6%, 86% 44%, 100% 79%, 78% 86%, 66% 100%, 20% 90%, 29% 76%, 7% 27%, 33% 13%)",
+    },
+
+    nodeStyle: {
+        "--bg-sub-color": "#00cec9",
     },
     
     row: 0, // Row the layer is in on the tree (0 is the first row)

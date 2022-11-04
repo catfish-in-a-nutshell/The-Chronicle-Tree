@@ -16,6 +16,13 @@ addLayer("g", {
         last_fish: d(-1),
         fishing_unlocked: false
     }},
+    nodeBgStyle: {
+        "clip-path": "polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 23% 89%, 7% 62%, 50% 42%, 23% 13%)",
+    },
+
+    nodeStyle: {
+        "--bg-sub-color": "#74b9ff"
+    },
     canReset() {
         return (!player.r.is_dead)
     },
@@ -35,7 +42,8 @@ addLayer("g", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return d(1)
     },
-    tooltip: () => "古戈尔之海: " + format(player.g.points) + " 投入时间",
+    tooltip: () => `投入时间 <br>
+        &nbsp; ${formatWhole(player.g.points)}`,
     tooltipLocked: () => "古戈尔之海",
     // upgrades: {
     //     11: {

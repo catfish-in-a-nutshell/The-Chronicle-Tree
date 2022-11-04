@@ -43,13 +43,14 @@ var systemComponents = {
 				locked: tmp[layer].isLayer ? !(player[layer].unlocked || tmp[layer].canReset) : !(tmp[layer].canClick),
 				notify: tmp[layer].notify && player[layer].unlocked,
 				resetNotify: tmp[layer].prestigeNotify,
-				can: ((player[layer].unlocked || tmp[layer].canReset) && tmp[layer].isLayer) || (!tmp[layer].isLayer && tmp[layer].canClick),
+				could: ((player[layer].unlocked || tmp[layer].canReset) && tmp[layer].isLayer) || (!tmp[layer].isLayer && tmp[layer].canClick),
 				front: !tmp.scrolled,
 			}"
 			v-bind:style="constructNodeStyle(layer)">
+			<div class="treeNodeBg" v-bind:style="constructNodeBgStyle(layer)"></div>
 			<span class="nodeLabel" v-html="(abb !== '' && tmp[layer].image === undefined) ? abb : '&nbsp;'"></span>
 			<tooltip
-      v-if="tmp[layer].tooltip != ''"
+      v-if="tmp[layer].tooltip != ''" :islayer="tmp[layer].isLayer" 
 			:text="(tmp[layer].isLayer) ? (
 				player[layer].unlocked ? (tmp[layer].tooltip ? tmp[layer].tooltip : formatWhole(player[layer].points) + ' ' + tmp[layer].resource)
 				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : 'Reach ' + formatWhole(tmp[layer].requires) + ' ' + tmp[layer].baseResource + ' to unlock (You have ' + formatWhole(tmp[layer].baseAmount) + ' ' + tmp[layer].baseResource + ')')
@@ -180,8 +181,8 @@ var systemComponents = {
 
 
 	'tooltip' : {
-		props: ['text'],
-		template: `<div class="tooltip" v-html="text"></div>
+		props: ['text', 'islayer'],
+		template: `<div v-bind:class="{tooltipTreeNode: islayer, tooltip: !islayer}" v-html="text"></div>
 		`
 	},
 

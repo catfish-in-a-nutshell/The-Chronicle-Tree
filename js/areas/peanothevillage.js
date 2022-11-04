@@ -23,7 +23,7 @@ addLayer("p", {
     canReset() {
         return (!player.r.is_dead && tmp.g.isInited)
     },
-    color: "#bdc3c7",
+    color: "#2d3436",
     requires: d(1), // Can be a function that takes requirement increases into account
     resource: "投入时间", // Name of prestige currency
     baseResource: "空余时间", // Name of resource prestige is based on
@@ -46,11 +46,20 @@ addLayer("p", {
         let exp = d(1)
         return exp
     },
-    tooltip: () => `皮亚诺村: ${format(player.p.points)} 投入时间`,
+    tooltip: () => `投入时间 <br>
+        &nbsp; ${formatWhole(player.p.points)}`,
     tooltipLocked: () => "皮亚诺村",
     hotkeys: [
         {key: "p", description: "p: 将空余时间投入皮亚诺村区域", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+
+    nodeBgStyle: {
+        "clip-path": "polygon(34% 14%, 75% 0%, 95% 80%, 75% 100%, 41% 85%, 16% 43%)",
+    },
+
+    nodeStyle: {
+        "--bg-sub-color": "#636e72",
+    },
 
 
     upgrades: {
@@ -388,7 +397,7 @@ addLayer("p", {
                 收益:
                 ${format(player.p.points.mul(0.5).mul(tmp.p.farmGoldIncome))} ${res_name["gold"]}
                 ${format(player.p.points.mul(0.5).mul(tmp.p.farmFoodIncome))} ${res_name["food"]}
-                ${format(tmp.p.farmExp)} 经验`
+                ${format(player.p.points.mul(0.5).mul(tmp.p.farmExp))} 经验`
                 return disp
             },
             style() {

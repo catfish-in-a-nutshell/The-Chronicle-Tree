@@ -14,13 +14,21 @@ function prestigeButtonText(layer) {
 
 function constructNodeStyle(layer){
 	let style = []
-	if ((tmp[layer].isLayer && layerunlocked(layer)) || (!tmp[layer].isLayer && tmp[layer].canClick))
-		style.push({'background-color': tmp[layer].color})
+	// if ((tmp[layer].isLayer && layerunlocked(layer)) || (!tmp[layer].isLayer && tmp[layer].canClick))
+	// 	style.push({'background-color': tmp[layer].color})
 	if (tmp[layer].image !== undefined)
 		style.push({'background-image': 'url("' + tmp[layer].image + '")'})
 	if(tmp[layer].notify && player[layer].unlocked)
 		style.push({'box-shadow': 'var(--hqProperty2a), 0 0 20px ' + tmp[layer].trueGlowColor})
 	style.push(tmp[layer].nodeStyle)
+    return style
+}
+
+function constructNodeBgStyle(layer){
+	let style = []
+	if ((tmp[layer].isLayer && layerunlocked(layer)) || (!tmp[layer].isLayer && tmp[layer].canClick))
+		style.push({'background-color': tmp[layer].color})
+	style.push(tmp[layer].nodeBgStyle)
     return style
 }
 

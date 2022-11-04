@@ -1,22 +1,49 @@
 /* Tree nodes, button nodes, and side layers */
 .treeNode {
-	height: 100px;
-	width: 100px;
-	border: var(--hqProperty1);
-	border-color: rgba(0, 0, 0, 0.125);
-	border-radius: 50%;
-	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
+	width: 150px;
+	height: 150px;
+	border: none;
 	font-size: 40px;
 	font-family: "Lucida Console", "Courier New", monospace;
-	color: rgba(0, 0, 0, 0.5);
-	text-shadow: var(--hqProperty3);
 	padding: 0;
 	margin: 0 10px 0 10px;
+	background: transparent;
+	filter: drop-shadow(3px 9px 0px var(--bg-sub-color));
+	
+	transition-duration: 0s;
+}
+
+.treeNodeBg {
+	width: 150px;
+	height: 150px;
+	border: none;
+	font-size: 40px;
+	font-family: "Lucida Console", "Courier New", monospace;
+	padding: 0;
+	margin: 0 10px 0 10px;
+	top: 0px;
+	left: -10px;
+	position: absolute;
+    z-index: -1;
+}
+
+.locked {
+	--bg-sub-color: rgba(250, 177, 160,1.0)
+}
+
+.locked > .treeNodeBg {
+	background-color: #bf8f8f;
+	cursor: not-allowed;
 }
 
 .nodeLabel {
-	font: inherit;
+	font-size: 20px;
+	color: #dfe6e9;
 	font-family: inherit;
+	text-shadow: 5px 5px 1px rgba(99, 110, 114, 0.2);
+	top: 15px;
+	left: 25px;
+	position: absolute;
 }
 
 .treeButton {
@@ -40,16 +67,14 @@
 }
 
 .resetNotify {
-	box-shadow: var(--hqProperty2a), 0 0 8px #ffffff;
+	
 }
 
-.treeNode.can:hover {
+.treeNode.could:hover {
 	transform: scale(1.15, 1.15);
-	box-shadow: var(--hqProperty2a), 0 0 20px var(--points);
 }
 
 .notify {
-	transform: scale(1.05, 1.05);
 	border-color: rgba(0, 0, 0, 0.125);
 	box-shadow: var(--hqProperty2a), 0 0 20px #ff0000;
 }

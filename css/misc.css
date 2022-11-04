@@ -68,6 +68,46 @@
     border-color: var(--background_tooltip) transparent transparent transparent;
 }
 
+.tooltipTreeNode { 
+    pointer-events: none;
+    text-align: left;
+    width: 150px;
+    font-size: 16px;
+    line-height: 1.6;
+    bottom: 20%;
+    left: 90%;
+    margin-bottom: 5px;
+    transform: translateX(-50%);
+    padding: 7px;
+    font-family: "Lucida Console", "Courier New", monospace;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+  
+    position: absolute;
+    z-index: 20000;
+
+	color: #b2bec3;
+	text-shadow: 5px 5px 1px rgba(99, 110, 114, 0.2);
+    content: attr(tooltip);
+    font-size:14px;
+
+}
+
+.tooltipTreeNode::after {
+    content: " ";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+
+    top: 94%;
+    left: 32%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
 /* Horizontal/vertical lines */
 .vl {
 	border-left: 6px solid var(--color);
