@@ -577,7 +577,7 @@ addLayer("p", {
         if (hasUpgrade("r", 11) && tmp.g.isInited) {
             let auto_gain = tmp.pointGen.mul(0.5).mul(diff)
             if (hasAchievement("m", 21)) {
-                auto_gain = auto_gain.mul(3)
+                auto_gain = auto_gain.mul(2)
             }
             player.p.points = player.p.points.add(auto_gain)
 

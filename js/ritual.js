@@ -289,7 +289,10 @@ addLayer("r", {
             player.r.is_dead = false
             player.r.last_death_cause = ""
             player.r.score = d(0)
-            player.r.sigil0_pool = player.r.sigil0_pool.add(player.r.sigil0_score)
+
+            if (player.m.sigil0_unlocked) {
+                player.r.sigil0_pool = player.r.sigil0_pool.add(player.r.sigil0_score)
+            }
             player.r.sigil0_score = d(0)
         }
     },
@@ -309,13 +312,13 @@ addLayer("r", {
 
     sigil0Effect() {
         if (!player.m.sigil0_unlocked) return d(1)
-        return player.r.sigil0_pool.div(400).add(1).log(3)
+        return player.r.sigil0_pool.div(400).add(3).log(3).max(1)
     },
 
     sigil0EffectNext() {
         if (!player.m.sigil0_unlocked) return d(1)
         let next_sigil0_pool = player.r.sigil0_pool.add(player.r.sigil0_score)
-        return next_sigil0_pool.div(400).add(1).log(3)
+        return next_sigil0_pool.div(400).add(3).log(3)
     },
 
     tabFormat: {

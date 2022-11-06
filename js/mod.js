@@ -33,11 +33,15 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.01+",
-	name: "旅途的起始",
+	num: "0.02",
+	name: "第一点五步",
 }
 
 let changelog = `<h1>更新日志</h1><br>
+	<h3>v0.02 第一点五步</h3><br>
+		- 增加了小半个地区层，修改了明显不合理的部分数值。<br>
+		- 现在初期可能反而过于缓慢。<br>
+
 	<h3>v0.01+ 第一步</h3><br>
 		- 增加了半个地区层，重写大部分机制，完成了数字系统前的导入。<br>
 		- 节奏可能存在一点问题。<br>
