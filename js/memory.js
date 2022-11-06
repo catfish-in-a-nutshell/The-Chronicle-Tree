@@ -78,7 +78,7 @@ addLayer("m", {
                 if (hasAchievement("m", this.id)) {
                     return "你回想起数字/数量级相关的知识。解锁子页面：重生-数字"
                 } else {
-                    return "未解锁"
+                    return "完成与村长的对话以解锁"
                 }
             }
         },
@@ -123,7 +123,7 @@ addLayer("m", {
                 if (hasAchievement("m", this.id)) {
                     return "你已经了解了皮亚诺村的一切——如果之后再回到这里，你的一切都会更有效率。皮亚诺村投入时间x2"
                 } else {
-                    return "未解锁"
+                    return "购买皮亚诺村的全部内容以解锁"
                 }
             }
         },
@@ -136,6 +136,20 @@ addLayer("m", {
             tooltip() {
                 if (hasAchievement("m", this.id)) {
                     return "在你的掌心，镶嵌着一枚椭圆形的角质鳞片，你感受到其中寄宿着非凡而古老的力量。解锁：重生-数字-符号0"
+                } else {
+                    return "未解锁"
+                }
+            }
+        },
+
+        23: {
+            name: "农场的记忆",
+            unlocked: () => hasUpgrade("mp", 16) || hasAchievement("m", 23),
+            onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
+            done: () => getBuyableAmount("mp", 22).gte(8),
+            tooltip() {
+                if (hasAchievement("m", this.id)) {
+                    return "农场的陌生人解放了你手中符号的力量——现在，你可以通过献上材料，增强它的力量。解锁：重生-数字-喂食(TODO)"
                 } else {
                     return "未解锁"
                 }

@@ -45,6 +45,12 @@ var full_buffs = {
         name: "精英",
         params: ["moves", "rate"],
         desc: (buff) => `精英: 在HP归0时，HP, ATK, DEFx${buff.rate}并恢复全部HP，剩余${buff.moves}次`
+    },
+
+    "engulfed": {
+        name: "吞噬",
+        params: ["rate"],
+        desc: (buff) => `吞噬: 每层使得行动速度减半(最小x0.0001)，目前x${buff.rate}`
     }
 }
 
@@ -56,11 +62,21 @@ var full_traits = {
 
     "furious": {
         dispn: "狂暴",
-        desc: () => `暴击伤害翻倍(x1.5 -> x3)`
+        desc: () => `狂暴：暴击伤害翻倍(x1.5 -> x3)`
     },
 
     "warcry": {
         dispn: "战吼",
-        desc: () => `每次攻击后 ATK x1.2`
+        desc: () => `战吼：每次攻击后 ATK x1.2`
+    },
+
+    "peeled": {
+        dispn: "被剥皮",
+        desc: () => `无皮：DEF为0, 每次攻击或被攻击后 ATK x0.8`
+    },
+
+    "worms": {
+        dispn: "虫群",
+        desc: () => `虫群：行动时造成百分比伤害(HP上限的1%)，并造成可叠加的吞噬`
     }
 }

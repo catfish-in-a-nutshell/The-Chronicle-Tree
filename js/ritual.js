@@ -91,11 +91,18 @@ addLayer("r", {
         },
 
         12: {
-            title: "破序I",
+            title: "破序 I",
             description: "为什么一定要买武器？没有武器时，视作持有拳头(数字1, ATK 3)，且现在可以无需 升级-从皮亚诺村启程，即可直接到达幂次原野。",
-            unlocked: () => hasUpgrade("r", 11) || true,
-            cost: d(300), // TODO: balance cost
-        }
+            unlocked: () => hasUpgrade("r", 11),
+            cost: d(300),
+        },
+        
+        13: {
+            title: "简单化 I",
+            description: "在皮亚诺村的酒馆、农家自动投入一定时间。",
+            unlocked: () => hasUpgrade("r", 12),
+            cost: d(2000),
+        },
     },
 
     buyables: {
@@ -302,13 +309,13 @@ addLayer("r", {
 
     sigil0Effect() {
         if (!player.m.sigil0_unlocked) return d(1)
-        return player.r.sigil0_pool.div(100).add(1).pow(0.25)
+        return player.r.sigil0_pool.div(400).add(1).log(3)
     },
 
     sigil0EffectNext() {
         if (!player.m.sigil0_unlocked) return d(1)
         let next_sigil0_pool = player.r.sigil0_pool.add(player.r.sigil0_score)
-        return next_sigil0_pool.div(100).add(1).pow(0.25)
+        return next_sigil0_pool.div(400).add(1).log(3)
     },
 
     tabFormat: {

@@ -1,4 +1,5 @@
-// Items, including variant resources
+// Items, including variant resources, equipments
+
 var res_name = {
     "gold": "金子",
     "food": "食物",
@@ -12,6 +13,15 @@ var res_name = {
 var res_list = [
     "gold", "food", "fish", "wood", "fiber", "mineral", "fur"
 ]
+
+let inventory_buyable_style = {
+    "width": "200px",
+    "height": "120px",
+    "margin-top": "10px",
+    "border-radius": "0px",
+    "border": "1px",
+    "border-color": "rgba(0, 0, 0, 0.125)"
+}
 
 addLayer("i", {
     name: "物品", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -271,7 +281,7 @@ addLayer("i", {
         disp += `数字: ${format(inv.number)}<br>`
 
         if (full_equips[inv.name].desc) {
-            disp += full_equips[inv.name].desc(inv.number.cube().mul(tmp.r.physicalEffect.cube()).sqrt())
+            disp += full_equips[inv.name].desc(inv.number.cube().mul(tmp.r.physicalEffect.cube()).sqrt(), inv.number)
         }
 
         return disp
@@ -520,6 +530,17 @@ addLayer("i", {
         },
     },
 
+    buyables: {
+        11: {
+            title: "背包扩容 I",
+            unlocked: () => player.mk.mphorde_reward_unlocked,
+
+            display() { return "TODO"},
+            style: inventory_buyable_style
+            // TODO
+        }
+    },
+
     shouldNotify: () => {
         return player.i.cur_invs >= player.i.inv_slots
     },
@@ -555,7 +576,10 @@ addLayer("i", {
             "blank",
             ["clickables", [3]],
             "blank",
-            "grid",]
+            "grid",
+            "blank",
+            "buyables",
+            "blank"]
         },
         "制造": {
             content: [    
@@ -578,7 +602,9 @@ addLayer("i", {
                 "blank",
 
                 ["display-text", function() {
-                    return `<p>你可以在此处消耗资源，制造数字为1的装备。</p><p>拥有多个同样的装备并没有什么好处。</p>`
+                    return `<p>你可以在此处消耗资源，制造数字为1的装备。</p>
+                    <p>拥有多个同样的装备并没有什么好处。</p>
+                    <p>戒指往往提供战斗外的加成，推荐首先制造。</p>`
                 }, {"font-size": "16px"}],
 
                 "blank",
@@ -592,8 +618,8 @@ addLayer("i", {
     doReset(resettingLayer) {
         if (layers[resettingLayer].row > this.row || resettingLayer == "r") {
             let keep = ["inv_slots", "forge_unlocked", "making_unlocked"]
-            for (var res_n in res_list) {
-                keep.push(res_n)
+            for (let res_n in res_list) {
+                keep.push("best"+res_list[res_n])
             }
             layerDataReset(this.layer, keep)
         }

@@ -167,17 +167,17 @@ addLayer("e", {
 
     cookingEffect() {
         let lvl = player.e.cooking.lvl.add(buyableEffect("r", 21)[0])
-        return lvl.mul(0.3).add(1)
+        return lvl.sqrt().mul(0.3).add(1)
     },
 
     tradingEffect() {
         let lvl = player.e.trading.lvl.add(buyableEffect("r", 22)[0])
-        return lvl.mul(0.15).add(1)
+        return lvl.sqrt().mul(0.15).add(1)
     },
 
     fishingEffect() {
         let lvl = player.e.fishing.lvl.add(buyableEffect("r", 23)[0])
-        return lvl.mul(0.5).add(1)
+        return lvl.sqrt().mul(0.5).add(1)
     }, 
 
     huntingEffect() {
@@ -215,7 +215,7 @@ addLayer("e", {
     },
 
     lvlpEffect() {
-        return player.e.lvlpoints.add(1).pow(0.25)
+        return player.e.lvlpoints.add(1).pow(0.2)
     },
 
     survivalSkillExpMult(skill) {

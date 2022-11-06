@@ -7,7 +7,9 @@ addLayer("mk", {
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
+        compositebow_unlocked: false,
         mpcave_reward_unlocked: false,
+        mphorde_reward_unlocked: false
     }},
     color: "#ffffff",
     requires: d(1), // Can be a function that takes requirement increases into account
@@ -90,7 +92,7 @@ addLayer("mk", {
             for (let res_n in cost) {
                 let is_lacking = player.i[res_n].lt(cost[res_n])
                 let cur_disp = `
-                ${cost[res_n]} ${res_name[res_n]}`
+                ${format(cost[res_n])} ${res_name[res_n]}`
                 if (is_lacking) {
                     cur_disp = `<span style='color:#ee5253'> ${cur_disp} </span>`
                 }

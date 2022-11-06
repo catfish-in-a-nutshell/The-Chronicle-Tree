@@ -1,8 +1,14 @@
+// Contains all equipments, including craft cost and effects.
+
 var full_equip_list = [
     "sword0", "bow0", "dagger0", "shield0", "armor0", "cloth", "grassring",
-    "fishingrod0", "axe0", "pickaxe0", "goldenring"
+    "fishingrod0", "axe0", "pickaxe0", "goldenring", "foodring", "compositebow",
+    "skinshield", "bonering"
 ]
 
+
+// desc: has 2 params, number = sqrt(player number * equip number), inv_number = equip number
+// effect, applyEffect: param = equip number
 var full_equips = {
     // fishingrod
     "fishingrod0": {
@@ -53,7 +59,7 @@ var full_equips = {
         dispn: "长弓",
         etype: "weapon",
         cost: {
-            wood: d(30),
+            wood: d(40),
             fiber: d(20)
         },
         atk: d(18),
@@ -133,8 +139,8 @@ var full_equips = {
         cost: {
             fiber: d(10)
         },
-        desc: (number) => `幂次原野投入时间 x${format(number.add(1.5).log(1.5))}`,
-        effect: (number) => number.add(2).log(2),
+        desc: (number, inv_number) => `幂次原野投入时间 x${format(inv_number.add(8).log(5))}`,
+        effect: (number) => number.add(5).log(5),
         unlocked: () => true
     },
 
@@ -144,8 +150,8 @@ var full_equips = {
         cost: {
             gold: d(200)
         },
-        desc: (number) => `战斗奖励 x${format(number.add(2).log(2))}`,
-        effect: (number) => number.add(2).log(2),
+        desc: (number, inv_number) => `战斗奖励 x${format(inv_number.add(8).log(5))}`,
+        effect: (number) => number.add(5).log(5),
         unlocked: () => player.mk.mpcave_reward_unlocked
     },
 
@@ -155,11 +161,53 @@ var full_equips = {
         cost: {
             food: d(200)
         },
-        desc: (number) => `最大HP x${format(number.add(3).log(3))}`,
+        desc: (number, inv_number) => `最大HP x${format(inv_number.add(3).log(3))}`,
         applyEffect: (number) => {
             player.b.pl.maxhp = player.b.pl.maxhp.mul(number.add(3).log(3))
             player.b.pl.hp = player.b.pl.maxhp
         },
         unlocked: () => player.mk.mpcave_reward_unlocked
+    },
+
+    "compositebow": {
+        dispn: "复合弓",
+        etype: "weapon",
+        cost: {
+            wood: d(50),
+            fiber: d(40),
+            mineral: d(15),
+        },
+        atk: d(25),
+        
+        desc: (number) => `ATK ${format(number.mul(18))}
+            暴击率+20%
+            速度x0.5
+            预行动90%`,
+        applyEffect: () => {
+            player.b.pl.crit = player.b.pl.crit.add(0.2)
+            player.b.pl_action = tmp.b.fullActionBar.mul(0.9)
+            player.b.pl.speed = player.b.pl.speed.mul(0.5)
+        },
+        unlocked: () => player.mk.compositebow_unlocked,
+    },
+
+    "skinshield": {
+        dispn: "兽皮盾",
+        etype: "shield",
+        cost: {
+            fur: d("1eee10")
+        },
+        applyEffect: () => {},
+        unlocked: () => player.mk.mphorde_reward_unlocked
+    },
+
+    "bonering": {
+        dispn: "骨戒",
+        etype: "ring",
+        cost: {
+            fur: d("1eee10")
+        },
+        applyEffect: () => {},
+        unlocked: () => player.mk.mphorde_reward_unlocked
     }
 }

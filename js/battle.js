@@ -43,6 +43,11 @@ addLayer("b", {
                 buffs: {},
                 traits: {},
             },
+            max_prog: {
+                mpcave: 0,
+                mphorde: 0,
+                mpannazone: 0
+            },
             battle_logs: [],
             queued_encounters: [],
             in_zone: false,
@@ -339,7 +344,7 @@ addLayer("b", {
         player.b.zone_total = zone.len
         player.b.zone_countdown = zone.len
 
-        player[area].max_prog[name] = player[area].max_prog[name] > 0 ? player[area].max_prog[name] : 1;
+        player.b.max_prog[name] = player.b.max_prog[name] > 0 ? player.b.max_prog[name] : 1;
 
         for (let e in zone.encounters) {
             encounter = zone.encounters[e]
@@ -431,11 +436,24 @@ addLayer("b", {
             dmg = dmg.max(0)
     
             atked.hp = atked.hp.sub(dmg)
-            layers["b"].pushBattleLog(`${is_crit? "暴击！ " : ""}${atker.dispn} 对 ${atked.dispn} 造成了 ${format(dmg)}点伤害！`)
+            layers["b"].pushBattleLog(`${is_crit? "<span style='color:red'>暴击！</span> " : ""}${atker.dispn} 对 ${atked.dispn} 造成了 ${format(dmg)}点伤害！`)
 
             if ("induce_bleeding" in atker.traits) {
                 let bleeding = {moves:3, dmgrate: 0.05}
                 atked.buffs["bleeding"] = bleeding
+            }
+            
+            if ("worms" in atker.traits) {
+                if ("engulfed" in atked.buffs) {
+                    if (atked.buffs["engulfed"].rate > 0.0001) {
+                        atked.buffs["engulfed"].rate = atked.buffs["engulfed"].rate * 0.5
+                        atked.speed = atked.speed.mul(0.5)
+                    }
+                } else {
+                    atked.buffs["engulfed"] = {rate:0.5}
+                    atked.speed = atked.speed.mul(0.5)
+                }
+                atked.hp = atked.hp.sub(atked.maxhp.mul(0.01))
             }
 
             if ("bleeding" in atker.buffs) {
@@ -448,6 +466,13 @@ addLayer("b", {
 
             if ("warcry" in atker.traits) {
                 atker.atk = atker.atk.mul(1.2)
+            }
+
+            if ("peeled" in atker.traits) {
+                atker.atk = atker.atk.mul(0.8)
+            }
+            if ("peeled" in atked.traits) {
+                atked.atk = atked.atk.mul(0.8)
             }
         }
 
@@ -462,7 +487,12 @@ addLayer("b", {
 
         e.name = enemy
         e.dispn = full_enemies[enemy].dispn
-        e.number = ene_stat.rel_number.mul(base_number).mul(0.9 + 0.15*Math.random())
+
+        e.number = ene_stat.rel_number.mul(base_number)
+        
+        // TODO: should be reconsidered, zone difficulty are randomized
+        e.number = e.number.mul(0.9 + 0.15*Math.random())
+
         let fac = e.number.cube()
 
         e.maxhp = ene_stat.hp.mul(fac)
@@ -494,7 +524,7 @@ addLayer("b", {
 
         e.traits = {} 
         for (let t in full_enemies[enemy].traits) {
-            let trait = full_enemies[enemy].traits
+            let trait = full_enemies[enemy].traits[t]
             e.traits[trait] = undefined // maybe traits could have params
         }
 
@@ -560,7 +590,6 @@ addLayer("b", {
     },
 
     update(diff) {
-        // TODO: implement battle details!
         let actionBar = tmp.b.fullActionBar
 
         let b = player.b
@@ -605,18 +634,22 @@ addLayer("b", {
                     // roll drop items
                     let drop = full_enemies[enemy.name].drop
                     let exp = drop.exp.mul(layers.i.possibleEffect("ring", "goldenring", d(1)))
-                    let drop_exp = layers["e"].addBattleExp(exp.mul(enemy.number.pow(3)))
+
+                    if (hasUpgrade("mp", 12)) {
+                        exp = exp.mul(upgradeEffect("mp", 12))
+                    }
+                    let drop_exp = layers["e"].addBattleExp(exp.mul(enemy.number.pow(2.5)))
                     layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} 经验！`)
 
 
                     for (let loot in drop.loots) {
                         loot = drop.loots[loot]
-                        if (Math.random() < loot.droprate) {
+                        if (Math.random() <= loot.droprate) {
                             if (loot.is_equip) {
                                 // TODO: drop equipment, need further interface design
                                 // there is no equip drop so far, later
                             } else {
-                                let loot_num = loot.base.mul(enemy.number.pow(3))
+                                let loot_num = loot.base.mul(enemy.number.pow(2.5))
                                 
                                 loot_num = loot_num.mul(layers.i.possibleEffect("ring", "goldenring", d(1)))
                                 layers["b"].pushBattleLog(`获得了 ${format(loot_num)} ${res_name[loot.res]}！`)
@@ -638,8 +671,8 @@ addLayer("b", {
                         let prog = 1 + b.zone_total - b.zone_countdown
 
                         // update max progress in zone
-                        if (prog > player[b.zone_area].max_prog[b.zone_name]) {
-                            player[b.zone_area].max_prog[b.zone_name] = prog
+                        if (prog > player.b.max_prog[b.zone_name]) {
+                            player.b.max_prog[b.zone_name] = prog
                         }
                     }
 
@@ -659,6 +692,7 @@ addLayer("b", {
                 b.in_battle = false
                 b.in_zone = false
                 b.zone_countdown = 0
+                b.queued_encounters = []
                 layers["b"].pushBattleLog(`你死了。`)
 
                 showTab("b")

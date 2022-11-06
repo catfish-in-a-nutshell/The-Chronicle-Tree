@@ -23,7 +23,7 @@ addLayer("p", {
     canReset() {
         return (!player.r.is_dead && tmp.g.isInited)
     },
-    color: "#2d3436",
+    color: "#636e72",
     requires: d(1), // Can be a function that takes requirement increases into account
     resource: "投入时间", // Name of prestige currency
     baseResource: "空余时间", // Name of resource prestige is based on
@@ -39,6 +39,9 @@ addLayer("p", {
         if (hasUpgrade("p", 13))
             mult = mult.mul(upgradeEffect("p", 13))
 
+        if (hasAchievement("m", 21)) {
+            mult = mult.mul(2)
+        }
         mult = mult.mul(buyableEffect("p", 11))
         return mult
     },
@@ -58,7 +61,7 @@ addLayer("p", {
     },
 
     nodeStyle: {
-        "--bg-sub-color": "#636e72",
+        "--bg-sub-color": "#2d3436",
     },
 
 
@@ -105,7 +108,7 @@ addLayer("p", {
             title: "拜访农家",
             description: "帮忙做点农活，也许可以当做第一桶金。",
             unlocked: () => hasUpgrade("p", 11),
-            cost: d(40),
+            cost: d(30),
         },
         25: {
             title: "拜访铁匠铺",
@@ -197,7 +200,7 @@ addLayer("p", {
             title: "从皮亚诺村启程",
             description: "需要拥有斧头、铁镐、铁剑中至少一件。解锁: 幂次原野",
             unlocked: () => hasAchievement("m", 13),
-            cost: d(40),
+            cost: d(20),
             canAfford: () => hasUpgrade("p", 32) || hasUpgrade("p", 33) || hasUpgrade("p", 34),
             currencyDisplayName: () => res_name["food"],
             currencyInternalName: "food",
@@ -206,28 +209,28 @@ addLayer("p", {
 
         41: {
             title: "向铁匠请教 I",
-            description: () => `使用 ${format(d(50).div(tmp.e.tradingEffect))} ${res_name["fur"]} 与 ${format(d(300).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，
+            description: () => `使用 ${format(d(40).div(tmp.e.tradingEffect))} ${res_name["fur"]} 与 ${format(d(200).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，
                 永久解锁功能: 物品-制造，可以使用材料制造新的装备。`,
             unlocked: () => hasUpgrade("p", 35),
             cost: () => d(300).div(tmp.e.communicationEffect),
-            canAfford: () => player.i.fur.gte(d(50).div(tmp.e.tradingEffect)) && player.i.gold.gte(d(300).div(tmp.e.tradingEffect)),
+            canAfford: () => player.i.fur.gte(d(40).div(tmp.e.tradingEffect)) && player.i.gold.gte(d(200).div(tmp.e.tradingEffect)),
             onPurchase() {
-                player.i.fur = player.i.fur.sub(d(50).div(tmp.e.tradingEffect))
-                player.i.gold = player.i.gold.sub(d(300).div(tmp.e.tradingEffect))
+                player.i.fur = player.i.fur.sub(d(40).div(tmp.e.tradingEffect))
+                player.i.gold = player.i.gold.sub(d(200).div(tmp.e.tradingEffect))
                 player.i.making_unlocked = true
             }
         },
         
         42: {
             title: "向铁匠请教 II",
-            description: () => `使用 ${format(d(50).div(tmp.e.tradingEffect))} ${res_name["fur"]} 与 ${format(d(300).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，
+            description: () => `使用 ${format(d(40).div(tmp.e.tradingEffect))} ${res_name["fur"]} 与 ${format(d(200).div(tmp.e.tradingEffect))} ${res_name["gold"]} 作为赠礼，
                 永久解锁功能: 物品-回炉，可以使用材料提升装备的数字。`,
             unlocked: () => hasUpgrade("p", 35),
             cost: () => d(300).div(tmp.e.communicationEffect),
-            canAfford: () => player.i.fur.gte(d(50).div(tmp.e.tradingEffect)) && player.i.gold.gte(d(300).div(tmp.e.tradingEffect)),
+            canAfford: () => player.i.fur.gte(d(40).div(tmp.e.tradingEffect)) && player.i.gold.gte(d(200).div(tmp.e.tradingEffect)),
             onPurchase() {
-                player.i.fur = player.i.fur.sub(d(50).div(tmp.e.tradingEffect))
-                player.i.gold = player.i.gold.sub(d(300).div(tmp.e.tradingEffect))
+                player.i.fur = player.i.fur.sub(d(40).div(tmp.e.tradingEffect))
+                player.i.gold = player.i.gold.sub(d(200).div(tmp.e.tradingEffect))
                 player.i.forge_unlocked = true
             }
         }
@@ -333,7 +336,7 @@ addLayer("p", {
         14: {
             title: "给路边的流浪汉一点吃的",
             cost(x) { 
-                return d(2).add(d(1).mul(x)) // TODO
+                return d(2).add(d(1).mul(x)).mul(buyableEffect("p", 13))
             },
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
@@ -571,12 +574,23 @@ addLayer("p", {
     },
 
     update(diff) {
-        if (hasUpgrade("r", 11)) {
+        if (hasUpgrade("r", 11) && tmp.g.isInited) {
             let auto_gain = tmp.pointGen.mul(0.5).mul(diff)
             if (hasAchievement("m", 21)) {
-                auto_gain = auto_gain.mul(2)
+                auto_gain = auto_gain.mul(3)
             }
             player.p.points = player.p.points.add(auto_gain)
+
+            if (hasUpgrade("r", 13)) {
+                let t = auto_gain.mul(tmp.p.gainMult).mul(0.5)
+    
+                player.i.gold = player.i.gold.add(t.mul(tmp.p.tavernIncome))
+                player.e.communication.cur_exp = player.e.communication.cur_exp.add(t.mul(tmp.p.tavernExp))
+
+                player.i.gold = player.i.gold.add(t.mul(tmp.p.farmGoldIncome))
+                player.i.food = player.i.food.add(t.mul(tmp.p.farmFoodIncome))
+                player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.p.farmExp))
+            }
         }
     },
 

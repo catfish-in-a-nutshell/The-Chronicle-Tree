@@ -1,8 +1,15 @@
+// Contains all enemy data, combined with 
+
 var areas = {
     "mphunting": {
         weights: [0.5,    0.2,       0.3],
         targets: ["hare", "cheetah", "deer"]
-    }
+    },
+    "mphunting2": {
+        weights: [0.05,    0.1,      0.3,        0.15,    0.2,      0.2],
+        targets: ["hare", "cheetah", "elephant", "eagle", "monkey", "lizard"] // TODO: implement these enemies
+    },
+    
 }
 // var areas = {
 //     "mphunting": {
@@ -13,7 +20,7 @@ var areas = {
 
 var zones = {
     "mpcave": {
-        dispn: "幂次原野-洞穴",
+        dispn: "洞穴",
         len: 3,
 
         encounters: [{
@@ -37,7 +44,33 @@ var zones = {
         },
     },
 
-    "mphorde": {},
+    "mphorde": {
+        dispn: "“农场”",
+        len: 4,
+
+        // TODO: balance these enemies
+        encounters: [{
+            number: 32,
+            weights: [1],
+            targets: ["peeledcheetah"]
+        }, {
+            number: 38,
+            weights: [1],
+            targets: ["peeledhound"]
+        }, {
+            number: 44,
+            weights: [1],
+            targets: ["thefarmer"]
+        }, {
+            number: 50,
+            weights: [1],
+            targets: ["omegaworms"]
+        }],
+
+        onComplete: () => {
+            player.mk.mphorde_reward_unlocked = true
+        }
+    },
     "mpannazone": {},
 }
 
@@ -189,15 +222,15 @@ var full_enemies = {
         drop: {
             exp: d(300),
             loots: [{
-                droprate: 0.5,
+                droprate: 1,
                 is_equip: false,
                 res: "fiber",
                 base: d(20)
             }, {
-                droprate: 0.5,
+                droprate: 1,
                 is_equip: false,
                 res: "wood",
-                base: d(20)
+                base: d(50)
             }]
         },
         stat: {
@@ -265,5 +298,100 @@ var full_enemies = {
             init_buffs: [{ name:"boss", moves:1, rate:1.2}]
         },
 
+    },
+    
+    "peeledcheetah": { // TODO: balance me
+        dispn: "无皮猎豹",
+        drop: {
+            exp: d(400),
+            loots: [{
+                droprate: 1,
+                is_equip: false,
+                res: "food",
+                base: d(40)
+            }]
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(250),
+            mp: d(0),
+            speed: d(1.8),
+            crit: d(0.2),
+            critdmg: d(1.5),
+            atk: d(30),
+            def: d(0),
+            init_buffs: []
+        },
+        traits: ["peeled"]
+    },
+    
+    "peeledhound": { // TODO: balance me
+        dispn: "无皮猎犬",
+        drop: {
+            exp: d(400),
+            loots: [{
+                droprate: 0.8,
+                is_equip: false,
+                res: "food",
+                base: d(40)
+            }]
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(300),
+            mp: d(0),
+            speed: d(1.6),
+            crit: d(0.2),
+            critdmg: d(1.5),
+            atk: d(40),
+            def: d(0),
+            init_buffs: []
+        },
+        traits: ["peeled", "induce_bleeding"]
+    },
+    
+    "thefarmer": { // TODO: balance me
+        dispn: "“农场主”",
+        drop: {
+            exp: d(400),
+            loots: [{
+                droprate: 1,
+                is_equip: false,
+                res: "fur",
+                base: d(50)
+            }]
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(90),
+            mp: d(0),
+            speed: d(1.8),
+            crit: d(0.2),
+            critdmg: d(1.5),
+            atk: d(18),
+            def: d(5),
+            init_buffs: [{ name:"boss", moves:2, rate:1.1}]
+        },
+        traits: []
+    },
+    
+    "omegaworms": { // TODO: balance me
+        dispn: "蠕动虫群",
+        drop: {
+            exp: d(400),
+            loots: []
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(3000),
+            mp: d(0),
+            speed: d(0.1),
+            crit: d(0),
+            critdmg: d(1),
+            atk: d(1),
+            def: d(0),
+            init_buffs: []
+        },
+        traits: ["worms"]
     },
 }

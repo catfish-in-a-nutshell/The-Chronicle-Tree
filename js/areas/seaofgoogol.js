@@ -14,6 +14,7 @@ addLayer("g", {
         diving_down: false,
         tot_time: d(0),
         last_fish: d(-1),
+        last_fish_exp: d(0),
         fishing_unlocked: false
     }},
     nodeBgStyle: {
@@ -116,13 +117,20 @@ addLayer("g", {
                 let fishing_exp = harv.mul(20).mul(layers.e.survivalSkillExpMult("fishing"))
 
                 harv = harv.mul(tmp.e.fishingEffect)
+                if (hasUpgrade("g", 12)) {
+                    harv = harv.mul(upgradeEffect("g", 12))
+                }
+                if (hasUpgrade("g", 13)) {
+                    harv = harv.mul(upgradeEffect("g", 13))
+                }
+
                 let harv_exp = harv.log10()
-                harv = d(10).pow(harv_exp.add(Math.random() - 0.8))
+                harv = d(10).pow(harv_exp.add(Math.random() - 0.6))
                 
                 player.i.fish = player.i.fish.add(harv)
                 data.last_fish = harv
                 data.points = d(0)
-
+                data.last_fish_exp = fishing_exp
                 player.e.fishing.cur_exp = player.e.fishing.cur_exp.add(fishing_exp)
             },
             canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.g.points.gt(0) && player.i.equips.fishingrod.equipped,
@@ -141,6 +149,28 @@ addLayer("g", {
             currencyLocation: () => player.i,
             unlocked: () => player.i.bestfish.gt(0)
         },
+        12: {
+            title: "钓鱼技术",
+            description: `鱼 x 2.5<br>
+                对，就是鱼x2.5`,
+            effect: () => d(2.5),
+            cost: d(50),
+            currencyDisplayName: () => res_name["fish"],
+            currencyInternalName: "fish",
+            currencyLocation: () => player.i,
+            unlocked: () => player.i.bestfish.gt(0)
+        },
+        13: {
+            title: "钓鱼技术",
+            description: `鱼 再x 2.5<br>
+                对，就是 鱼 再x2.5`,
+            effect: () => d(2.5),
+            cost: d(1000),
+            currencyDisplayName: () => res_name["fish"],
+            currencyInternalName: "fish",
+            currencyLocation: () => player.i,
+            unlocked: () => player.i.bestfish.gt(0)
+        },
     },
 
     infoboxes: {
@@ -151,6 +181,10 @@ addLayer("g", {
 
                 if (hasAchievement("m", 12)) {
                     s += "<p style='margin-top: 5px'>幸好你离水面不算远。你开始思考接下来该去什么地方。</p>"
+                }
+
+                if (tmp.r.number.gte(10)) {
+                    s += "<p style='margin-top: 5px'> 在数字成长之后，原本重生在水下的你，尺寸已经高出了水面。你已不再需要多游这一段路。 </p>"
                 }
                 return s
             }
@@ -173,10 +207,11 @@ addLayer("g", {
         ["display-text", function() {
             let disp = ""
             if (player.g.last_fish.gt(0)) {
-                disp += `<p>你上一次钓鱼获得了 ${format(player.g.last_fish)} ${res_name["fish"]}</p>`
+                disp += `<p>你上一次钓鱼获得了 ${format(player.g.last_fish)} ${res_name["fish"]}, ${format(player.g.last_fish_exp)} 经验</p>`
             }
             return disp
-        }]
+        }],
+        "blank"
     ],
 
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -206,6 +241,11 @@ addLayer("g", {
         if (player.r.is_dead) return;
 
         let data = player.g
+
+        if (tmp.r.number.gte(10) && !data.inited) {
+            data.inited = true
+            data.depth_cur = d(0)
+        }
 
         // console.log(format(data.tot_time))
 

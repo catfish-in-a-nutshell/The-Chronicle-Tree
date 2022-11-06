@@ -88,7 +88,7 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	function() {
-		return `目前Endgame: 通过第一个副本`
+		return `目前Endgame: 通过第二个副本`
 	},
 
 	function() {
@@ -107,7 +107,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasAchievement("m", 22)
+	return player.mk.mphorde_reward_unlocked
 }
 
 
