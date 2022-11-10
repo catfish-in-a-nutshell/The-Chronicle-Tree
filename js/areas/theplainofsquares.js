@@ -8,7 +8,7 @@ addLayer("mp", {
         mphorde_unlocked: false
     }},
     canReset() {
-        return (!player.r.is_dead && tmp.g.isInited) && (hasUpgrade("r", 11) || hasUpgrade("p", 35))
+        return (!player.r.is_dead && tmp.g.isInited) && (hasUpgrade("r", 12) || hasUpgrade("p", 35))
     },
     color: "#44bd32",
     requires: d(1), // Can be a function that takes requirement increases into account
@@ -33,7 +33,7 @@ addLayer("mp", {
         return d(1)
     },
     tooltip: function() {
-        if (hasUpgrade("p", 35) || hasUpgrade("r", 11)) {
+        if (hasUpgrade("p", 35) || hasUpgrade("r", 12)) {
             return `投入时间 <br>
             &nbsp; ${formatWhole(player.mp.points)}`
         } else {

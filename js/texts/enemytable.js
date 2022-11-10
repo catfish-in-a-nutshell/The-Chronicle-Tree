@@ -2,7 +2,7 @@
 
 var areas = {
     "mphunting": {
-        weights: [0.5,    0.2,       0.3],
+        weights: [0.6,    0.15,       0.25],
         targets: ["hare", "cheetah", "deer"]
     },
     "mphunting2": {
@@ -199,7 +199,7 @@ var full_enemies = {
                 droprate: 1,
                 is_equip: false,
                 res: "mineral",
-                base: d(10)
+                base: d(15)
             }]
         },
         stat: {
@@ -225,12 +225,12 @@ var full_enemies = {
                 droprate: 1,
                 is_equip: false,
                 res: "fiber",
-                base: d(20)
+                base: d(30)
             }, {
                 droprate: 1,
                 is_equip: false,
                 res: "wood",
-                base: d(50)
+                base: d(75)
             }]
         },
         stat: {
