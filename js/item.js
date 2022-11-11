@@ -8,10 +8,12 @@ var res_name = {
     "fiber": "纤维",
     "mineral": "矿物",
     "fur": "皮毛",
+    "bones": "骨骼",
+    "scale": "鳞片"
 }
 
 var res_list = [
-    "gold", "food", "fish", "wood", "fiber", "mineral", "fur"
+    "gold", "food", "fish", "wood", "fiber", "mineral", "fur", "bones", "scale"
 ]
 
 let inventory_buyable_style = {
@@ -22,6 +24,8 @@ let inventory_buyable_style = {
     "border": "1px",
     "border-color": "rgba(0, 0, 0, 0.125)"
 }
+
+var equip_type_list = ["fishingrod", "axe", "pickaxe", "weapon", "shield", "armor", "ring"]
 
 addLayer("i", {
     name: "物品", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -39,62 +43,9 @@ addLayer("i", {
             })
         }
 
-        return {
+        let start_data = {
             unlocked: true,
             points: d(0),
-            food: d(0),
-            bestfood: d(0),
-            gold: d(0),
-            bestgold: d(0),
-            fish: d(0),
-            bestfish: d(0),
-            wood: d(0),
-            bestwood: d(0),
-            fiber: d(0),
-            bestfiber: d(0),
-            mineral: d(0),
-            bestmineral: d(0),
-            fur: d(0),
-            bestfur: d(0),
-
-            equips: {
-                fishingrod: {
-                    number: d(1),
-                    equipped: false,
-                    name: "",
-                },
-                axe: {
-                    number: d(1),
-                    equipped: false,
-                    name: "",
-                },
-                pickaxe: {
-                    number: d(1),
-                    equipped: false,
-                    name: "",
-                },
-                weapon: {
-                    number: d(1),
-                    equipped: false,
-                    name: "",
-                },
-                shield: {
-                    number: d(1),
-                    equipped: false,
-                    name: "",
-                },
-                armor: {
-                    number: d(1),
-                    equipped: false,
-                    name: "",
-                },
-                ring: {
-                    number: d(1),
-                    equipped: false,
-                    name: "",
-                }
-            },
-
             inv_slots: 10, // current unlocked inventory slots
             inventory: inv,
             cur_invs: 0, // curently occupied inventory slots
@@ -104,6 +55,25 @@ addLayer("i", {
             forge_unlocked: false,
             making_unlocked: false
         }
+
+        for (let i in res_list) {
+            let res_n = res_list[i]
+            start_data[res_n] = d(0)
+            start_data["best"+res_n] = d(0)
+        }
+
+        let equips = {}
+        for (let i in equip_type_list) {
+            let etype = equip_type_list[i]
+            equips[etype] = {
+                number: d(1),
+                equipped: false,
+                name: "",
+            }
+        }
+
+        start_data["equips"] = equips
+        return start_data
     },
     color: "#2c3e50",
     subcolor: "#b2bec3",
@@ -204,6 +174,10 @@ addLayer("i", {
                 min_div = res_div
             }
         }
+        min_div = min_div
+
+        let forge_limit = tmp.r.number.mul(20).cube().sub(equip.number.cube()).max(0)
+        min_div = min_div.min(forge_limit)
 
         let ret_costs = {div: min_div}
         
@@ -234,6 +208,7 @@ addLayer("i", {
 
         let new_num = cur_num.cube().add(costs.div).cbrt()
         
+
         return `${format(new_num)}`
     },
 
@@ -444,7 +419,8 @@ addLayer("i", {
                     }
                 } else {
                     return `选择背包中一件装备回炉强化，
-                        提升装备数字`
+                        提升装备数字<br>
+                        上限: 你的数字x20`
                 }
             },
             style() {
@@ -533,11 +509,11 @@ addLayer("i", {
     buyables: {
         11: {
             title: "背包扩容 I",
-            unlocked: () => player.mk.mphorde_reward_unlocked,
+            unlocked: () => false,
 
             display() { return "TODO"},
             style: inventory_buyable_style
-            // TODO
+            // TODO, not quite necessary rn
         }
     },
 
@@ -557,7 +533,7 @@ addLayer("i", {
                 for (let res_n in res_list) {
                     res_n = res_list[res_n]
                     if (d["best"+res_n].gt(0)) {
-                        disp += `<p><b>${format(d[res_n])}</b> ${res_name[res_n]}</p>`
+                        disp += `<p><b>${format(d[res_n].max(0))}</b> ${res_name[res_n]}</p>`
                     }
                 }
                 return disp

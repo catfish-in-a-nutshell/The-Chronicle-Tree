@@ -396,6 +396,14 @@ addLayer("b", {
             return
         }
 
+        if ("innocent" in atker.traits) {
+            atk = d(10).pow(atk.log(10).sub(Math.random()*2))
+        }
+
+        if ("losingtail" in atker.traits) {
+            atker.buffs["losttail"] = {rate:0.25}
+        }
+
         let repeat = 1
         if ("comboatk" in atker.buffs) {
             repeat = atker.buffs["comboatk"].times
@@ -432,8 +440,12 @@ addLayer("b", {
                 }
             }
     
-            dmg = dmg.sub(atked.def) // TODO: better damage calc formula
+            dmg = dmg.sub(atked.def)
             dmg = dmg.max(0)
+
+            if ("tough" in atked.buffs) {
+                dmg = dmg.mul(atked.buffs["tough"].rate)
+            }
     
             atked.hp = atked.hp.sub(dmg)
             layers["b"].pushBattleLog(`${is_crit? "<span style='color:red'>暴击！</span> " : ""}${atker.dispn} 对 ${atked.dispn} 造成了 ${format(dmg)}点伤害！`)
@@ -602,13 +614,20 @@ addLayer("b", {
             let pl = b.pl
             let enemy = b.enemy
             let rel_speed = enemy.speed.div(b.pl.speed)
-            let pl_action_time = actionBar.sub(b.pl_action).div(1)
-            let ene_action_time = actionBar.sub(b.ene_action).div(rel_speed)
+            let pl_action_time = actionBar.mul(1.01).sub(b.pl_action).div(1)
+            let ene_action_time = actionBar.mul(1.01).sub(b.ene_action).div(rel_speed)
 
             let real_diff = pl_action_time.min(ene_action_time).min(diff)
 
-            b.pl_action = b.pl_action.add(real_diff.mul(1))
-            b.ene_action = b.ene_action.add(real_diff.mul(rel_speed))
+            // Action bar grows by the speed of the faster one in pl/enemy,
+            // This avoid a sudden death.
+            if (rel_speed.gt(1)) {
+                b.pl_action = b.pl_action.add(real_diff.mul(d(1).div(rel_speed)))
+                b.ene_action = b.ene_action.add(real_diff.mul(1))
+            } else {
+                b.pl_action = b.pl_action.add(real_diff.mul(1))
+                b.ene_action = b.ene_action.add(real_diff.mul(rel_speed))
+            }
 
             // console.log(format(b.pl_action), format(b.ene_action))
 
@@ -639,6 +658,10 @@ addLayer("b", {
                         exp = exp.mul(upgradeEffect("mp", 12))
                     }
                     let drop_exp = layers["e"].addBattleExp(exp.mul(enemy.number.pow(2.5)))
+                    
+                    if ("losttail" in enemy.buffs) {
+                        drop_exp = drop_exp.mul(enemy.buffs["losttail"].rate)
+                    }
                     layers["b"].pushBattleLog(`获得了 ${format(drop_exp)} 经验！`)
 
 
@@ -650,6 +673,9 @@ addLayer("b", {
                                 // there is no equip drop so far, later
                             } else {
                                 let loot_num = loot.base.mul(enemy.number.pow(2.5))
+                                if ("losttail" in enemy.buffs) {
+                                    loot_num = loot_num.mul(enemy.buffs["losttail"].rate)
+                                }
                                 
                                 loot_num = loot_num.mul(layers.i.possibleEffect("ring", "goldenring", d(1)))
                                 layers["b"].pushBattleLog(`获得了 ${format(loot_num)} ${res_name[loot.res]}！`)

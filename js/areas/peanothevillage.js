@@ -376,7 +376,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
+                return clickable_style(!tmp.p.clickables[this.id].canClick ? "#bf8f8f" : "#f39c12")
             },
             onClick() {
                 let data = player.p
@@ -386,7 +386,7 @@ addLayer("p", {
                 player.e.communication.cur_exp = player.e.communication.cur_exp.add(t.mul(tmp.p.tavernExp))
             },
             canClick() {
-                return !player.r.is_dead && player.p.points.gt(0)
+                return !player.r.is_dead && player.p.points.gt(0) && !hasMilestone("l", 0)
             },
             unlocked() {
                 return hasUpgrade(this.layer, 22)
@@ -404,7 +404,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
+                return clickable_style(!tmp.p.clickables[this.id].canClick ? "#bf8f8f" : "#f39c12")
             },
             onClick() {
                 let data = player.p
@@ -414,7 +414,7 @@ addLayer("p", {
                 player.i.food = player.i.food.add(t.mul(tmp.p.farmFoodIncome))
                 player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.p.farmExp))
             },
-            canClick: () => !player.r.is_dead && player.p.points.gt(0),
+            canClick: () => !player.r.is_dead && player.p.points.gt(0) && !hasMilestone("l", 0),
             unlocked: () => hasUpgrade("p", 24),
         },
 
@@ -429,7 +429,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
+                return clickable_style(!tmp.p.clickables[this.id].canClick ? "#bf8f8f" : "#f39c12")
             },
             onClick() {
                 let data = player.i
@@ -438,7 +438,7 @@ addLayer("p", {
                 data.gold = data.gold.add(f.mul(tmp.p.sellFishIncome))
                 player.e.trading.cur_exp = player.e.trading.cur_exp.add(f.mul(tmp.p.sellFishExp))
             },
-            canClick: () => !player.r.is_dead && player.i.fish.gt(0),
+            canClick: () => !player.r.is_dead && player.i.fish.gt(0) && !hasMilestone("l", 0),
             unlocked: () => hasUpgrade("p", 23),
         },
 
@@ -453,7 +453,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
+                return clickable_style(!tmp.p.clickables[this.id].canClick ? "#bf8f8f" : "#f39c12")
             },
             onClick() {
                 let data = player.i
@@ -477,7 +477,7 @@ addLayer("p", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#f39c12")
+                return clickable_style(!tmp.p.clickables[this.id].canClick ? "#bf8f8f" : "#f39c12")
             },
             onClick() {
                 let data = player.i
@@ -485,7 +485,7 @@ addLayer("p", {
                 data.gold = data.gold.sub(tmp.p.buyFoodCost)
                 player.e.trading.cur_exp = player.e.trading.cur_exp.add(tmp.p.buyFoodExp)
             },
-            canClick: () => !player.r.is_dead && player.i.gold.gt(tmp.p.buyFoodCost),
+            canClick: () => !player.r.is_dead && player.i.gold.gt(tmp.p.buyFoodCost)  && !hasMilestone("l", 0),
             unlocked: () => hasUpgrade("p", 26),
         }
     },
@@ -562,7 +562,11 @@ addLayer("p", {
     },
     
     dealFishExp() {
-        return d(10).mul(layers.e.survivalSkillExpMult("cooking"))
+        let exp = d(10).mul(layers.e.survivalSkillExpMult("cooking"))
+        if (hasMilestone("l", 0)) {
+            exp = exp.div(tmp.l.expDivider)
+        }
+        return exp
     },
 
     buyFoodCost() {
@@ -590,6 +594,20 @@ addLayer("p", {
                 player.i.gold = player.i.gold.add(t.mul(tmp.p.farmGoldIncome))
                 player.i.food = player.i.food.add(t.mul(tmp.p.farmFoodIncome))
                 player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(t.mul(tmp.p.farmExp))
+            }
+        }
+    },
+
+    autoUpgrade: () => hasMilestone("l", 0),
+
+    automate() {
+        if (hasMilestone("l", 0)) {
+            let auto_buyables = [11, 12, 13, 14]
+            for (let i in auto_buyables) {
+                let id = auto_buyables[i]
+                if (canBuyBuyable("p", id)) {
+                    buyBuyable("p", id)
+                }
             }
         }
     },

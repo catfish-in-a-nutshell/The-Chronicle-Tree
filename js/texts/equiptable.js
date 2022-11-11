@@ -3,7 +3,7 @@
 var full_equip_list = [
     "sword0", "bow0", "dagger0", "shield0", "armor0", "cloth", "grassring",
     "fishingrod0", "axe0", "pickaxe0", "goldenring", "foodring", "compositebow",
-    "skinshield", "bonering"
+    "scaleshield", "bonering"
 ]
 
 
@@ -191,13 +191,24 @@ var full_equips = {
         unlocked: () => player.mk.compositebow_unlocked,
     },
 
-    "skinshield": {
-        dispn: "兽皮盾",
+    "scaleshield": {
+        dispn: "兽鳞盾",
         etype: "shield",
         cost: {
-            fur: d("1eee10")
+            scale: d(10),
         },
-        applyEffect: () => {},
+        def: d(2.5),
+        desc: (number, inv_number) => {
+            let eff = inv_number.add(100).log(100).sub(1)
+            eff = eff.mul(0.2).add(1).div((eff.add(1)))
+            return `DEF ${format(number.mul(2.5))}
+                对自身施加坚韧，受到伤害 x${format(eff)}`
+        },
+        applyEffect: (number) => {
+            let eff = number.add(100).log(100).sub(1)
+            eff = eff.mul(0.2).add(1).div((eff.add(1)))
+            player.b.pl.buffs["tough"] = { rate: eff }
+        },
         unlocked: () => player.mk.mphorde_reward_unlocked
     },
 
@@ -205,9 +216,10 @@ var full_equips = {
         dispn: "骨戒",
         etype: "ring",
         cost: {
-            fur: d("1eee10")
+            bones: d(30)
         },
-        applyEffect: () => {},
+        desc: (number, inv_number) => `狩猎期望时间 x${format(d(2).div(inv_number.div(100).add(5).log(5).add(2)))}`,
+        effect: (number) => d(2).div(number.div(100).add(5).log(5).add(2)),
         unlocked: () => player.mk.mphorde_reward_unlocked
     }
 }

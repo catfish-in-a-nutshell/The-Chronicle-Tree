@@ -17,6 +17,23 @@ let sigil_template = (symbol) => {
     return `<p class='sigilSymbol'>${symbol}</p>`
 }
 
+let sigil_offer_grid_style = {
+    "width": "120px",
+    "margin": "5px",
+    "border-radius": "0px",
+    "border": "1px",
+    "border-color": "rgba(0, 0, 0, 0.125)",
+    "--stripe-sub-color": "var(--bg-sub-color, #74b9ff)",
+    "--stripe-main-color": "var(--bg-sub-color, #3498db)",
+    "background": "repeating-linear-gradient(120deg, var(--stripe-main-color) 0 15px, var(--stripe-sub-color) 0, var(--stripe-sub-color) 30px)"
+}
+
+let sigils = ["sigil0"]
+
+let sigil_offering_res = {
+    sigil0: ["gold", "wood", "fur", "bones", "scale"]
+}
+
 addLayer("r", {
     name: "重生", // This is optional, only used in a few places, If absent it just uses the layer id.
     disp_symbol: "重生",
@@ -103,6 +120,13 @@ addLayer("r", {
             unlocked: () => hasUpgrade("r", 12),
             cost: d(2000),
         },
+
+        14: {
+            title: "我无法起步",
+            description: "在古戈尔之海解锁潜水，一种获得资源的途径",
+            unlocked: () => hasUpgrade("r", 13),
+            cost: d(300000)
+        }
     },
 
     buyables: {
@@ -225,6 +249,51 @@ addLayer("r", {
         },
     },
 
+    clickables: {},
+
+    grid: {
+        // This is for sigil offering
+        rows: 1,
+        cols: 5,
+        getStartData(id) {
+            if (!id) return
+            let sigil = sigils[Math.floor(id / 100) - 1] 
+            return {
+                offered: d(0), 
+                sigil: sigil,
+                res: sigil_offering_res[sigil][id % 100 - 1]
+            }
+        },
+        getUnlocked(id) {
+            let sigil = sigils[Math.floor(id / 100) - 1] 
+            let sigil_unlocked_attr = `${sigil}_unlocked`
+            return hasAchievement("m", 23) && player.m[sigil_unlocked_attr] 
+        },
+        getCanClick(data, id) {
+            return player.i[data.res].gt(0)
+        },
+        getEffect(data, id) {
+            if (id) return data.offered.add(1000).log(10).div(3)
+        },
+        getTitle(data, id) {
+            return res_name[data.res]
+        },
+        getDisplay(data, id) {
+            if (!id) return
+            switch (data.sigil) {
+                case 'sigil0':
+                    return `投入 ${format(data.offered)}
+                        符号0 x${format(gridEffect("r", id))}`
+            }
+        },
+        onClick(data, id) {
+            let offer = player.i[data.res]
+            data.offered = data.offered.add(offer)
+            player.i[data.res] = d(0)
+        },
+        getStyle: sigil_offer_grid_style
+    },
+
 
     infoboxes: {
         lore: {
@@ -308,17 +377,23 @@ addLayer("r", {
     speedUp() {
         return tmp.r.number.cbrt()
     },
+
+    sigil0OfferEffect() {
+        let mult = gridEffect("r", 101).mul(gridEffect("r", 102)).mul(gridEffect("r", 103))
+        mult = mult.mul(gridEffect("r", 104)).mul(gridEffect("r", 105))
+        return mult
+    },
     
 
     sigil0Effect() {
         if (!player.m.sigil0_unlocked) return d(1)
-        return player.r.sigil0_pool.div(400).add(3).log(3).max(1)
+        return player.r.sigil0_pool.div(400).add(3).log(3).mul(tmp.r.sigil0OfferEffect).max(1)
     },
 
     sigil0EffectNext() {
         if (!player.m.sigil0_unlocked) return d(1)
         let next_sigil0_pool = player.r.sigil0_pool.add(player.r.sigil0_score)
-        return next_sigil0_pool.div(400).add(3).log(3)
+        return next_sigil0_pool.div(400).add(3).log(3).mul(tmp.r.sigil0OfferEffect).max(1)
     },
 
     tabFormat: {
@@ -355,6 +430,9 @@ addLayer("r", {
                     目前效果: x${format(tmp.r.sigil0Effect)} 重生后: x${format(tmp.r.sigil0EffectNext)}`
                 return ret
             }]]],
+            "blank",
+
+            "grid",
             "blank",
             ["infobox", "systemintro"]],
             unlocked() {

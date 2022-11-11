@@ -11,6 +11,7 @@ let modInfo = {
 		"areas/peanothevillage.js", 
 		"areas/theplainofsquares.js",
 		"areas/everfortoftheeternity.js",
+		"areas/mounttrillion.js",
 		// System layers
 		"item.js", 
 		"making.js",
@@ -19,6 +20,7 @@ let modInfo = {
 		"experience.js", 
 		"sloth.js", 
 		"battle.js",
+		"limitation.js",
 		// Resource files
 		"texts/dialogue.js",
 		"texts/bufftable.js",
@@ -38,6 +40,9 @@ let VERSION = {
 }
 
 let changelog = `<h1>更新日志</h1><br>
+	<h3>v0.02+ 新手村的终点 </h3><br>
+		- 加入更多机制，一些素材和一个副本，结束了第二个大地区层。
+
 	<h3>v0.02 第一点五步</h3><br>
 		- 增加了小半个地区层，修改了明显不合理的部分数值。<br>
 		- 现在初期可能反而过于缓慢。<br>
@@ -92,7 +97,7 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	function() {
-		return `目前Endgame: 通过第二个副本`
+		return `目前Endgame: 解锁某个地区`
 	},
 
 	function() {
@@ -111,7 +116,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.mk.mphorde_reward_unlocked
+	return player.m.mp_layer_clear
 }
 
 

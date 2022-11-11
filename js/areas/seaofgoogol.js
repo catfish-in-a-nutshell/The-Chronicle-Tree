@@ -15,6 +15,7 @@ addLayer("g", {
         tot_time: d(0),
         last_fish: d(-1),
         last_fish_exp: d(0),
+        current_max_depth: d(0),
         fishing_unlocked: false
     }},
     nodeBgStyle: {
@@ -68,7 +69,7 @@ addLayer("g", {
 
     clickables: {
         11: {
-            "title": "向上游",
+            "title": () => player.g.depth_cur.gt(0) ? "向上游" : "已上岸",
             display() {
                 return `你距离水面还有 ${format(player.g.depth_cur)} 米`
             },
@@ -83,8 +84,11 @@ addLayer("g", {
         },
 
         12: {
-            "title": "开始潜水",
+            title: () => player.g.depth_cur.gt(0) ? "潜水中" : "开始潜水",
             display() {
+                if (player.g.diving_down) {
+                    return `你距离水面还有 ${format(player.g.depth_cur)} 米`
+                }
                 return ""
             },
             style() {
@@ -96,7 +100,7 @@ addLayer("g", {
                 player.g.diving_up = false
             },
             canClick: () => !player.r.is_dead && player.g.depth_cur.lte(0) && player.g.points.gt(0),
-            unlocked: () => hasUpgrade("p", 23) && false // not yet!
+            unlocked: () => hasUpgrade("r", "14")
         },
 
         13: { 
@@ -115,6 +119,10 @@ addLayer("g", {
                 
                 harv = harv.mul(player.i.equips.fishingrod.number.cube().mul(tmp.r.physicalEffect.cube()).sqrt())
                 let fishing_exp = harv.mul(20).mul(layers.e.survivalSkillExpMult("fishing"))
+
+                if (hasMilestone("l", 0)) {
+                    fishing_exp = fishing_exp.div(tmp.l.expDivider)
+                }
 
                 harv = harv.mul(tmp.e.fishingEffect)
                 if (hasUpgrade("g", 12)) {
@@ -206,6 +214,18 @@ addLayer("g", {
         "blank",
         ["display-text", function() {
             let disp = ""
+            if (tmp.g.divingReward) {
+                disp += "潜水收获: "
+                for (let res in tmp.g.divingReward) {
+                    if (tmp.g.divingReward[res].gt(0))
+                        disp += `${format(tmp.g.divingReward[res])} ${res_name[res]} `
+                }
+            }
+            return disp
+        }],
+        "blank",
+        ["display-text", function() {
+            let disp = ""
             if (player.g.last_fish.gt(0)) {
                 disp += `<p>你上一次钓鱼获得了 ${format(player.g.last_fish)} ${res_name["fish"]}, ${format(player.g.last_fish_exp)} 经验</p>`
             }
@@ -236,6 +256,19 @@ addLayer("g", {
         return player.g.inited
     },
 
+    divingReward() {
+        if (player.g.depth_cur.lt(1000)) return
+        let rewards = {gold:d(0), wood:d(0), fiber:d(0), mineral:d(0)}
+
+        if (player.g.current_max_depth.gte(1000)) {
+            rewards.gold = player.g.current_max_depth.div(1000).pow(2.2).mul(10)
+            rewards.wood = player.g.current_max_depth.div(1000).pow(2).mul(40)
+            rewards.fiber = player.g.current_max_depth.div(1000).pow(2).mul(20)
+            rewards.mineral = player.g.current_max_depth.div(1000).pow(2).mul(20)
+        }
+        return rewards
+    },
+
     update(diff) {
 
         if (player.r.is_dead) return;
@@ -252,11 +285,11 @@ addLayer("g", {
         let time_consume_rate = d(1)
         let air_consume_rate = d(10)
 
-        let swim_speed = d(0.8)
+        let swim_speed = d(0.8).mul(tmp.r.physicalEffect)
         swim_speed = swim_speed.mul(tmp.e.swimmingEffect)
         let air_max = tmp.g.maxAir
         
-        let exp_gain = d(10).mul(layers.e.survivalSkillExpMult("swimming"))
+        let exp_gain = d(10).mul(layers.e.survivalSkillExpMult("swimming")).div(tmp.r.physicalEffect)
         if (data.diving_up) {
             let tick_swim_time = d(diff)
             tick_swim_time = tick_swim_time.min(data.air_cur.div(air_consume_rate))
@@ -274,10 +307,16 @@ addLayer("g", {
                 // Back to surface
                 data.inited = true
                 data.diving_up = false
-                data.depth_cur = d(0)
                 // data.air_cur_progress = d(1)
 
-                // TODO: should add loots to item!
+                
+                let reward = tmp.g.divingReward
+                for (res in reward) {
+                    player.i[res] = player.i[res].add(reward[res])
+                }
+
+                data.depth_cur = d(0)
+                data.current_max_depth = d(0)
                 return
             }
 
@@ -292,6 +331,7 @@ addLayer("g", {
                 layers["r"].youDied("你溺死了。")
                 return
             }
+
 
         } else if (data.diving_down) {
             let tick_swim_time = d(diff)
@@ -312,7 +352,7 @@ addLayer("g", {
                 return
             }
 
-            // TODO: should discover loots!
+            data.current_max_depth = data.current_max_depth.max(data.depth_cur)
         }
     },
 

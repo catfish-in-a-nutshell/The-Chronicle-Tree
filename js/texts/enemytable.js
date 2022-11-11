@@ -6,8 +6,8 @@ var areas = {
         targets: ["hare", "cheetah", "deer"]
     },
     "mphunting2": {
-        weights: [0.05,    0.1,      0.3,        0.15,    0.2,      0.2],
-        targets: ["hare", "cheetah", "elephant", "eagle", "monkey", "lizard"] // TODO: implement these enemies
+        weights: [0.05,    0.1,      0.3,        0.15,     0.2,        0.2],
+        targets: ["hare", "cheetah", "elephant", "monkey", "crocodile", "lizard"]
     },
     
 }
@@ -48,7 +48,6 @@ var zones = {
         dispn: "“农场”",
         len: 4,
 
-        // TODO: balance these enemies
         encounters: [{
             number: 32,
             weights: [1],
@@ -71,7 +70,19 @@ var zones = {
             player.mk.mphorde_reward_unlocked = true
         }
     },
-    "mpannazone": {},
+    "mpannazone": {
+        dispn: "后院",
+        len: 1,
+        encounters: [{
+            number: d(1200000),
+            weights: [1],
+            targets: ["annasindexfinger"]
+        }],
+
+        onComplete: () => {
+            player.m.mp_layer_clear = true
+        }
+    },
 }
 
 var full_enemies = {
@@ -300,7 +311,7 @@ var full_enemies = {
 
     },
     
-    "peeledcheetah": { // TODO: balance me
+    "peeledcheetah": {
         dispn: "无皮猎豹",
         drop: {
             exp: d(400),
@@ -325,7 +336,7 @@ var full_enemies = {
         traits: ["peeled"]
     },
     
-    "peeledhound": { // TODO: balance me
+    "peeledhound": {
         dispn: "无皮猎犬",
         drop: {
             exp: d(400),
@@ -350,7 +361,7 @@ var full_enemies = {
         traits: ["peeled", "induce_bleeding"]
     },
     
-    "thefarmer": { // TODO: balance me
+    "thefarmer": {
         dispn: "“农场主”",
         drop: {
             exp: d(400),
@@ -375,7 +386,7 @@ var full_enemies = {
         traits: []
     },
     
-    "omegaworms": { // TODO: balance me
+    "omegaworms": {
         dispn: "蠕动虫群",
         drop: {
             exp: d(400),
@@ -394,4 +405,131 @@ var full_enemies = {
         },
         traits: ["worms"]
     },
+    
+
+    "elephant": {
+        dispn: "巨象",
+        drop: {
+            exp: d(100),
+            loots: [{
+                droprate: 1,
+                is_equip: false,
+                res: "bones",
+                base: d(20)
+            }]
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(500000),
+            mp: d(0),
+            speed: d(3),
+            crit: d(0),
+            critdmg: d(1.5),
+            atk: d(50000),
+            def: d(10000),
+            init_buffs: [],
+        },
+        traits: []
+    },
+
+    "monkey": {
+        dispn: "野猴",
+        drop: {
+            exp: d(100),
+            loots: [{
+                droprate: 1,
+                is_equip: false,
+                res: "bones",
+                base: d(10)
+            }]
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(500000),
+            mp: d(0),
+            speed: d(7),
+            crit: d(0.2),
+            critdmg: d(1.5),
+            atk: d(20000),
+            def: d(4000),
+            init_buffs: [{ name:"comboatk", moves:2, times:2, discnt:0.9}],
+        },
+        traits: ["furious"]
+    },
+    
+    "crocodile": {
+        dispn: "鳄鱼",
+        drop: {
+            exp: d(300),
+            loots: [{
+                droprate: 1,
+                is_equip: false,
+                res: "scale",
+                base: d(20)
+            },{
+                droprate: 0.8,
+                is_equip: false,
+                res: "bones",
+                base: d(10)
+            }
+        ]
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(300000),
+            mp: d(0),
+            speed: d(10),
+            crit: d(1),
+            critdmg: d(1.5),
+            atk: d(20000),
+            def: d(5000),
+            init_buffs: []
+        },
+        traits: ["induce_bleeding"]
+    },
+
+    "lizard": {
+        dispn: "蜥蜴",
+        drop: {
+            exp: d(200),
+            loots: [{
+                droprate: 1,
+                is_equip: false,
+                res: "scale",
+                base: d(5)
+            }]
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(200000),
+            mp: d(0),
+            speed: d(12),
+            crit: d(0),
+            critdmg: d(1.5),
+            atk: d(10000),
+            def: d(10000),
+            init_buffs: []
+        },
+        traits: ["losingtail"]
+    },
+
+    "annasindexfinger": {
+        dispn: "安娜的右手食指",
+        drop: {
+            exp: d(0),
+            loots: []
+        },
+        stat: {
+            rel_number: d(1),
+            hp: d(160000),
+            mp: d(0),
+            speed: d(5),
+            crit: d(0.2),
+            critdmg: d(1.5),
+            atk: d(10000),
+            def: d(0),
+            init_buffs: [{ name:"boss", moves:1, rate:1.2 }]
+        },
+        traits: ["innocent"]
+    }
 }

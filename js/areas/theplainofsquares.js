@@ -75,11 +75,11 @@ addLayer("mp", {
             currencyDisplayName: () => res_name["fur"],
             currencyInternalName: "fur",
             currencyLocation: () => player.i,
-            effect: () => player.e.hunting.lvl.add(1).log(5) // TODO: unbalanced
+            effect: () => player.e.hunting.lvl.add(1).log(5)
         },
         13: {
             title: "弓的改良",
-            description: () => `永久解锁复合弓`, // TODO: implement effect
+            description: () => `永久解锁复合弓`,
             unlocked: () => getBuyableAmount("mp", 21).gte(3),
             cost: d(1500),
             currencyDisplayName: () => res_name["fur"], 
@@ -95,13 +95,13 @@ addLayer("mp", {
             currencyDisplayName: () => res_name["fur"],
             currencyInternalName: "fur",
             currencyLocation: () => player.i,
-            effect: () => tmp.e.lvlpEffect.add(1).log(2) // TODO: unbalanced
+            effect: () => tmp.e.lvlpEffect.add(1).log(2)
         },
         15: {
             title: "简化劳作",
             description: () => `你在幂次原野的投入时间获取量-20%, 但损失时间投入挖矿和伐木中，不消耗食物获得自动收益`,
-            unlocked: () => getBuyableAmount("mp", 21).gte(7),
-            cost: d(5000), // TODO: unbalanced
+            unlocked: () => getBuyableAmount("mp", 21).gte(7) || hasAchievement("m", 24),
+            cost: () => hasAchievement("m", 24) ? d(0) : d(5000),
             currencyDisplayName: () => res_name["fur"],
             currencyInternalName: "fur",
             currencyLocation: () => player.i,
@@ -110,7 +110,7 @@ addLayer("mp", {
             title: "动物农场的传闻",
             description: () => `永久解锁新副本：“农场”`,
             unlocked: () => getBuyableAmount("mp", 21).gte(9),
-            cost: d(10000), // TODO: unbalanced
+            cost: d(10000),
             currencyDisplayName: () => res_name["fur"],
             currencyInternalName: "fur",
             currencyLocation: () => player.i,
@@ -185,7 +185,7 @@ addLayer("mp", {
         },
         22: {
             title: "与陌生人交谈",
-            cost: (x) => d(2000).mul(x).add(2000).div(tmp.e.communicationEffect),
+            cost: (x) => d(1000).mul(x).add(500).div(tmp.e.communicationEffect),
             
             display() {
                 let cur_amount = getBuyableAmount(this.layer, this.id)
@@ -210,6 +210,33 @@ addLayer("mp", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             }
         },
+        23: {
+            title: "独行",
+            cost: (x) => d(400000).mul(x).add(200000).div(tmp.e.communicationEffect),
+            
+            display() {
+                let cur_amount = getBuyableAmount(this.layer, this.id)
+                let ret = `进度 ${format(cur_amount, 0)}/6\n\n`
+                if (cur_amount.gte(1) && cur_amount.lte(6)) {
+                    ret += full_dialogue["mp23"][format(cur_amount, 0)-1] + "\n\n"
+                }
+
+                if (cur_amount.lt(6)) {                
+                    ret += `完成时: 解锁本层最后的副本\n`
+                    ret += `下一级价格: ${format(this.cost(cur_amount))} 投入时间`
+                }
+                return ret
+            },
+
+            unlocked: () => getBuyableAmount("mp", 11).gte(10),
+            purchaseLimit: d(6),
+            effect() {},
+            canAfford() { return player[this.layer].points.gte(this.cost(getBuyableAmount(this.layer, this.id))) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            }
+        },
 
 
     },
@@ -226,7 +253,7 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#27ae60")
+                return clickable_style(!tmp.mp.clickables[this.id].canClick ? "#bf8f8f" : "#27ae60")
             },
             onClick() {
                 let data = player.mp
@@ -255,7 +282,7 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#27ae60")
+                return clickable_style(!tmp.mp.clickables[this.id].canClick ? "#bf8f8f" : "#27ae60")
             },
             onClick() {
                 let data = player.mp
@@ -284,7 +311,7 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#27ae60")
+                return clickable_style(!tmp.mp.clickables[this.id].canClick ? "#bf8f8f" : "#27ae60")
             },
             onClick() {
                 let data = player.mp
@@ -324,7 +351,7 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                return clickable_style(player.r.is_dead ? "#ffffff" : "#27ae60")
+                return clickable_style(!tmp.mp.clickables[this.id].canClick ? "#bf8f8f" : "#27ae60")
             },
             onClick() {
                 let data = player.mp
@@ -346,12 +373,10 @@ addLayer("mp", {
                 player.e.hunting.cur_exp = player.e.hunting.cur_exp.add(exp)
             },
             canClick() {
-                return false
-                // TODO
                 return !player.r.is_dead && player.mp.points.gt(0) && player.i.food.gt(tmp.mp.foodConsumption2) && tmp.i.canFight
             },
             unlocked() {
-                return player.mk.mphorde_reward_unlocked
+                return player.mk.mphorde_reward_unlocked && getBuyableAmount(this.layer, 11).gt(5)
             }
         },
 
@@ -369,13 +394,13 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
+                if (tmp.mp.clickables[this.id].canClick) {
                     return {
                         "background-color": "#44bd32"
                     }
                 } else {
                     return {
-                        "background-color": "#ffffff"
+                        "background-color": "#bf8f8f"
                     }
                 }
             },
@@ -406,13 +431,13 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
+                if (tmp.mp.clickables[this.id].canClick) {
                     return {
                         "background-color": "#44bd32"
                     }
                 } else {
                     return {
-                        "background-color": "#ffffff"
+                        "background-color": "#bf8f8f"
                     }
                 }
             },
@@ -436,20 +461,19 @@ addLayer("mp", {
                     return `一个可以探索的区域，但充满了危险。
                         你或许应该先通过狩猎，熟悉一下基本的战斗。`
                 }
-                let disp = `副本长度: 5
-                    关卡数字: TODO
-                    首通奖励: 解锁升级: 向着原野的彼方
-                    奖励: 装备、经验`
+                let disp = `副本长度: 1
+                    关卡数字: 1200000
+                    首通奖励: 解锁地图: 千兆雪山`
                 return disp
             },
             style() {
-                if (!player.r.is_dead) {
+                if (tmp.mp.clickables[this.id].canClick) {
                     return {
                         "background-color": "#44bd32"
                     }
                 } else {
                     return {
-                        "background-color": "#ffffff"
+                        "background-color": "#bf8f8f"
                     }
                 }
             },
@@ -462,7 +486,7 @@ addLayer("mp", {
                     && !player.b.in_battle && !player.b.in_zone
             },
             unlocked() {
-                return getBuyableAmount(this.layer, 11).gt(5)
+                return getBuyableAmount(this.layer, 23).gte(6)
             }
         },
     },
@@ -485,9 +509,9 @@ addLayer("mp", {
                     }
                 }
 
-                let keys = [21, 22]
-                let dkeys = ["mp21", "mp22"]
-                let titles = ["与猎人们聊天", "与陌生人交谈"]
+                let keys = [21, 22, 23]
+                let dkeys = ["mp21", "mp22", "mp23"]
+                let titles = ["与猎人们聊天", "与陌生人交谈", "独行"]
 
                 for (let i = 0; i < keys.length; i++) {       
                     if (tmp.mp.buyables[keys[i]].unlocked) {
@@ -533,6 +557,8 @@ addLayer("mp", {
     huntProbability() {
         let t = player.mp.points.mul(0.5)
         let theta = d(20).div(tmp.e.huntingEffect)
+        theta = theta.mul(layers.i.possibleEffect("ring", "bonering", d(1)))
+        
         return d(1).sub(t.div(theta).neg().exp())
     },
 
@@ -540,19 +566,20 @@ addLayer("mp", {
         return d(10).mul(layers.e.survivalSkillExpMult("hunting"))
     },
 
-    huntProbability2() { // TODO
+    huntProbability2() {
         let t = player.mp.points.mul(0.5)
-        let theta = d(30).div(tmp.e.huntingEffect)
+
+        let theta = d(3000).div(tmp.e.huntingEffect)
+        theta = theta.mul(layers.i.possibleEffect("ring", "bonering", d(1)))
         return d(1).sub(t.div(theta).neg().exp())
-        
     },
 
-    huntExp2() { // TODO
-        return d(10).mul(layers.e.survivalSkillExpMult("hunting"))
+    huntExp2() {
+        return d(50).mul(layers.e.survivalSkillExpMult("hunting"))
     },
 
-    foodConsumption2() { // TODO
-        return d(Infinity)
+    foodConsumption2() {
+        return d(100000).mul(tmp.r.consumptionEffect)
     },
 
     foodConsumption() {
@@ -569,6 +596,10 @@ addLayer("mp", {
             
             player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(auto_time.mul(tmp.mp.lumberExp))
             player.e.laboring.cur_exp = player.e.laboring.cur_exp.add(auto_time.mul(tmp.mp.mineExp))
+        }
+
+        if (hasAchievement("m", 24) && !hasUpgrade("mp", 15)) {
+            buyUpgrade("mp", 15)
         }
     },
 

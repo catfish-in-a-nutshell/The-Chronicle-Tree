@@ -105,11 +105,12 @@ addLayer("s", {
         return player.s.sloth.gte(player.s.limit)
     },
 
-    tabFormat: [["display-text", function() {
+    tabFormat: ["blank",
+        ["display-text", function() {
         return `你拥有 <span style='color:#f1c40f; font-size:25px'>${format(player.s.sloth, 0)}</span> / ${format(player.s.limit)} 怠惰 (${format(player.s.speed)}/s)`
      }, {"font-size": "20px"}],
-                "blank",
-                "buyables"],
+        "blank",
+        "buyables"],
 
     update(diff) {
         let s = player.s

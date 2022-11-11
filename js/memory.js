@@ -11,6 +11,7 @@ addLayer("m", {
         points: d(0),
         milestone_cnt: d(0),
         sigil0_unlocked: false,
+        mp_layer_clear: false
     }},
     color: "#8e44ad",
     subcolor: "#a29bfe",
@@ -149,12 +150,27 @@ addLayer("m", {
             done: () => getBuyableAmount("mp", 22).gte(8),
             tooltip() {
                 if (hasAchievement("m", this.id)) {
-                    return "农场的陌生人解放了你手中符号的力量——现在，你可以通过献上材料，增强它的力量。解锁：重生-数字-喂食(TODO)"
+                    return "农场的陌生人解放了你手中符号的力量——现在，你可以通过献上材料，增强它的力量。解锁：重生-数字-喂食"
                 } else {
                     return "未解锁"
                 }
             }
-        }
+        },
+
+        24: {
+            name: "幂次原野的记忆",
+            unlocked: () => getBuyableAmount("mp", 11).gte(10) || hasAchievement("m", 24),
+            onComplete() {player.m.milestone_cnt = player.m.milestone_cnt.add(1)},
+            done: () => player.m.mp_layer_clear,
+            tooltip() {
+                if (hasAchievement("m", this.id)) {
+                    return "走出这片原野，你向着新世界迈进。永久保留升级：简化劳作"
+                } else {
+                    return "未解锁"
+                }
+            }
+        },
+
     },
 
 
