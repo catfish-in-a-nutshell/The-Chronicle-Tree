@@ -74,7 +74,7 @@ var zones = {
         dispn: "后院",
         len: 1,
         encounters: [{
-            number: d(1200000),
+            number: d(1400000),
             weights: [1],
             targets: ["annasindexfinger"]
         }],
@@ -524,7 +524,7 @@ var full_enemies = {
             hp: d(160000),
             mp: d(0),
             speed: d(5),
-            crit: d(0.2),
+            crit: d(0.1),
             critdmg: d(1.5),
             atk: d(10000),
             def: d(0),

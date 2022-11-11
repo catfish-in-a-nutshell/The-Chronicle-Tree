@@ -397,7 +397,7 @@ addLayer("b", {
         }
 
         if ("innocent" in atker.traits) {
-            atk = d(10).pow(atk.log(10).sub(Math.random()*2))
+            atk = d(10).pow(atk.log(10).sub(Math.random()))
         }
 
         if ("losingtail" in atker.traits) {
