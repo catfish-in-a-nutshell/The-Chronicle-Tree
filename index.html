@@ -91,6 +91,7 @@
 							v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a></li>
 				</ul>
 			</div>
+			<item-list class="overlayThing" v-if="player.tab == 'none' || player.tab in layer_res"></item-list>
 			<overlay-head v-if="!(tmp.gameEnded && !player.keepGoing)"></overlay-head>
 			<div class="sideLayers">
 				<div v-for="(node, index) in OTHER_LAYERS['side']">

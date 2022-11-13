@@ -1,7 +1,7 @@
 
 #optionWheel {
 	position: absolute;
-	top: 0;
+	bottom: 0;
 	left: 0;
 	height: 50px;
 	width: 50px;
@@ -16,8 +16,8 @@
 	font-size: 20px;
 	color: white;
 	position: absolute;
-	top: 50px;
-	left: 4px;
+	bottom: 17px;
+	left: 60px;
 	cursor: pointer;
 	width: 40px;
 	height: 40px;
@@ -33,8 +33,8 @@
 
 #discord {
 	position: absolute;
-	top: 120px;
-	left: 4px;
+	bottom: 4px;
+	left: 110px;
 	width: 40px;
 	height: 40px;
 }
@@ -46,15 +46,15 @@
 
 #discord-links {
 	position: absolute;
-	top: 0;
+	top: 20px;
 	padding-top: 44px;
-	left: -244px;
+	left: 20px;
 	width: 200px;
-	transition: left .3s ease;
+	transition: top .3s ease;
 }
 
 #discord:hover #discord-links {
-	left: -4px;
+	top: -104px;
 }
 
 #version {
@@ -83,7 +83,7 @@ a {
 	font-size: 20px;
 	color: #41f5f5;
 	cursor: pointer;
-	font-family: "Lucida Console", "Courier New", monospace;
+	font-family: "consolas", "Courier New", monospace;
 	-webkit-text-stroke-width: 1px;
 	-webkit-text-stroke-color: #02f2f2;
 	text-decoration: none;

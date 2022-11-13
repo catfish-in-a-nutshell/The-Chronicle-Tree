@@ -12,6 +12,24 @@ var res_name = {
     "scale": "鳞片"
 }
 
+var res_color = {
+    "gold":    ["#636e72", "#2d3436"],
+    "food":    ["#636e72", "#2d3436"],
+    "fish":    ["#3498db", "#74b9ff"],
+    "wood":    ["#44bd32", "#00cec9"],
+    "fiber":   ["#44bd32", "#00cec9"],
+    "mineral": ["#44bd32", "#00cec9"],
+    "fur":     ["#44bd32", "#00cec9"],
+    "bones":   ["#44bd32", "#00cec9"],
+    "scale":   ["#44bd32", "#00cec9"],
+}
+
+var layer_res = {
+    "g": ["fish"],
+    "p": ["gold", "food"],
+    "mp": ["wood", "fiber", "mineral", "fur", "bones", "scale"]
+}
+
 var res_list = [
     "gold", "food", "fish", "wood", "fiber", "mineral", "fur", "bones", "scale"
 ]
@@ -90,6 +108,19 @@ addLayer("i", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return d(1)
     },
+    resList: () => {
+        let l = []
+        let cur_res_list = player.tab == 'none' ? res_list : layer_res[player.tab]
+        
+        for (let res_n in cur_res_list) {
+            let n = cur_res_list[res_n]
+            if (player.i["best"+n].gt(0)) {
+                l.push({ name:n, color:res_color[n] })
+            }
+        }
+        return l
+    },
+
     tooltip:() => {
         if (player.i.cur_invs >= player.i.inv_slots) {
             return "物品栏: 背包已满！"

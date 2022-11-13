@@ -597,6 +597,18 @@ function loadVue() {
 	`
 	})
 
+	Vue.component('item-list', {
+		props: [],
+		template: `
+			<div class="itemList">
+				<div v-for="res in tmp['i'].resList" class="itemRow" v-bind:style="{'--item-color':res.color[0], '--item-sub-color':res.color[1]}">
+				<div class="itemName">{{res_name[res.name]}}</div>
+				<div class="itemNum">{{format(player.i[res.name])}}</div>
+				</div>
+			</div>
+		`
+	})
+
 	// SYSTEM COMPONENTS
 	Vue.component('node-mark', systemComponents['node-mark'])
 	Vue.component('tab-buttons', systemComponents['tab-buttons'])

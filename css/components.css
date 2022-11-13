@@ -246,3 +246,57 @@
 .menuNotify {
 	filter: drop-shadow(3px 3px 10px red) ;
 }
+
+
+.itemList {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	color: #dfe6e9;
+}
+
+.itemRow {
+	position: relative;
+	left: 0px;
+	text-align: left;
+}
+
+.itemName {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    height: 29px;
+    margin: 0;
+    width: auto;
+    text-align: left;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.itemName::after {
+	transition-duration: 0s;
+    content: "";
+    position: relative;
+    left: -8px;
+    top: -22px;
+    height: 10px;
+    width: 40px;
+    border-radius: 0px;
+    border: 26px solid transparent;
+    border-top-color: var(--item-color);
+    background-color: transparent;
+    display: flex;
+    border-left-width: 0;
+    border-bottom-width: 0;
+    z-index: -1;
+	filter: drop-shadow(5px 0px var(--item-sub-color)) ;
+}
+
+.itemNum {
+	position: absolute;
+	left: 80px;
+	top: 0px;
+	margin: 0;
+	width: 200px;
+	text-align: left;
+}
+
