@@ -164,6 +164,7 @@ var systemComponents = {
             </tr>
             <tr>
                 <td><button class="opt" onclick="adjustMSDisp()">里程碑显示: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(options.msDisplay)]}}</button></td>
+                <td><button class="opt" onclick="toggleOpt('showAllRes')">资源显示: {{ options.showAllRes? "全部" : "仅相关"}}</button></td>
 			</tr>
             <tr>
                 <td><button class="opt" onclick="toggleOpt('hideChallenges')">已完成挑战: {{ options.hideChallenges?"隐藏":"显示" }}</button></td>

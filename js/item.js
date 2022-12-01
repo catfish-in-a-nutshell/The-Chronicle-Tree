@@ -26,8 +26,8 @@ var res_color = {
 
 var layer_res = {
     "g": ["fish"],
-    "p": ["gold", "food"],
-    "mp": ["wood", "fiber", "mineral", "fur", "bones", "scale"]
+    "p": ["gold", "food", "fish"],
+    "mp": ["food", "wood", "fiber", "mineral", "fur", "bones", "scale"]
 }
 
 var res_list = [
@@ -41,6 +41,11 @@ let inventory_buyable_style = {
     "border-radius": "0px",
     "border": "1px",
     "border-color": "rgba(0, 0, 0, 0.125)"
+}
+
+let equip_item_style = {
+    "background-color": "#3498db",
+    "border-radius": "0px"
 }
 
 var equip_type_list = ["fishingrod", "axe", "pickaxe", "weapon", "shield", "armor", "ring"]
@@ -110,7 +115,7 @@ addLayer("i", {
     },
     resList: () => {
         let l = []
-        let cur_res_list = player.tab == 'none' ? res_list : layer_res[player.tab]
+        let cur_res_list = (player.tab == 'none' || options.showAllRes) ? res_list : layer_res[player.tab]
         
         for (let res_n in cur_res_list) {
             let n = cur_res_list[res_n]
@@ -301,84 +306,49 @@ addLayer("i", {
         11: {
             title: "武器",
             display: () => layers.i.equipDisplay("weapon"),
-            style() {
-                return {
-                    "background-color": "#3498db",
-                    "border-radius": "0px"
-                }
-            },
+            style: equip_item_style,
             onClick() {layers["i"].removeEquip("weapon")},
             canClick: () => player.i.equips.weapon.equipped && tmp.i.canAddInventory
         },
         12: {
             title: "盾牌",
             display: () => layers.i.equipDisplay("shield"),
-            style() {
-                return {
-                    "background-color": "#3498db",
-                    "border-radius": "0px"
-                }
-            },
+            style: equip_item_style,
             onClick() {layers["i"].removeEquip("shield")},
             canClick: () => player.i.equips.shield.equipped && tmp.i.canAddInventory
         },
         13: {
             title: "护甲",
             display: () => layers.i.equipDisplay("armor"),
-            style() {
-                return {
-                    "background-color": "#3498db",
-                    "border-radius": "0px"
-                }
-            },
+            style: equip_item_style,
             onClick() {layers["i"].removeEquip("armor")},
             canClick: () => player.i.equips.armor.equipped && tmp.i.canAddInventory
         },
         14: {
             title: "戒指",
             display: () => layers.i.equipDisplay("ring"),
-            style() {
-                return {
-                    "background-color": "#3498db",
-                    "border-radius": "0px"
-                }
-            },
+            style: equip_item_style,
             onClick() {layers["i"].removeEquip("ring")},
             canClick: () => player.i.equips.ring.equipped && tmp.i.canAddInventory
         },
         21: {
             title: "渔具",
             display: () => layers.i.equipDisplay("fishingrod"),
-            style() {
-                return {
-                    "background-color": "#3498db",
-                    "border-radius": "0px"
-                }
-            },
+            style: equip_item_style,
             onClick() {layers["i"].removeEquip("fishingrod")},
             canClick: () => player.i.equips.fishingrod.equipped && tmp.i.canAddInventory
         },
         22: {
             title: "伐木",
             display: () => layers.i.equipDisplay("axe"),
-            style() {
-                return {
-                    "background-color": "#3498db",
-                    "border-radius": "0px"
-                }
-            },
+            style: equip_item_style,
             onClick() {layers["i"].removeEquip("axe")},
             canClick: () => player.i.equips.axe.equipped && tmp.i.canAddInventory
         },
         23: {
             title: "挖矿",
             display: () => layers.i.equipDisplay("pickaxe"),
-            style() {
-                return {
-                    "background-color": "#3498db",
-                    "border-radius": "0px"
-                }
-            },
+            style: equip_item_style,
             onClick() {layers["i"].removeEquip("pickaxe")},
             canClick: () => player.i.equips.pickaxe.equipped && tmp.i.canAddInventory
         },

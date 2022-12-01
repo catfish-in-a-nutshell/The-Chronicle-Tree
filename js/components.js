@@ -434,7 +434,7 @@ function loadVue() {
 			currentTab() {return player.subtabs[layer][data]}
 		},
 		template: `
-		<div v-if="tmp[layer].microtabs" :style="{'border-style': 'solid'}">
+		<div v-if="tmp[layer].microtabs">
 			<div class="upgTable instant">
 				<tab-buttons :layer="layer" :data="tmp[layer].microtabs[data]" :name="data" v-bind:style="tmp[layer].componentStyles['tab-buttons']"></tab-buttons>
 			</div>

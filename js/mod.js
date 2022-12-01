@@ -41,8 +41,8 @@ let VERSION = {
 
 let changelog = `<h1>更新日志</h1><br>
 	<h3>v0.02+ 新手村的终点 </h3><br>
-		- 加入更多机制，一些素材和一个副本，结束了第二个大地区层。
-
+		- 加入更多机制，一些素材和一个副本，结束了第二个大地区层。<br>
+		<br>
 	<h3>v0.02 第一点五步</h3><br>
 		- 增加了小半个地区层，修改了明显不合理的部分数值。<br>
 		- 现在初期可能反而过于缓慢。<br>
@@ -67,7 +67,8 @@ let winText = `你已玩通了目前所有游戏内容！感谢您的游玩，�
 // (The ones here are examples, all official functions are already taken care of)
 var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "youDied", "addRawScore", "addInventory", "discardInventory", "forgeEquipment", "removeEquip",
 	"startEncounter", "startZone", "pushBattleLog", "addBattleExp", "prevBattleBuff", "OTBuffs", "attack", "subBuffMoves", "applyEquipmentBuffs", "possibleEffect",
-	"buffText", "traitsText", "equipDisplay", "extraExpEffect", "getExtraExpEffect", "survivalSkillExpMult", "addRawExpSurvival", "extraExpDisplay", "addSigil0Score"]
+	"buffText", "traitsText", "equipDisplay", "extraExpEffect", "getExtraExpEffect", "survivalSkillExpMult", "addRawExpSurvival", "extraExpDisplay", "addSigil0Score",
+	"startEvent", "eventLog"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)

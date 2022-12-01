@@ -306,7 +306,7 @@ addLayer("mp", {
             display() {
                 let disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption)}${res_name["food"]}，有概率发现野兽(掉落皮毛)，并增长索敌能力。\n
                 收益:
-                ${format(tmp.mp.huntProbability)} 几率发现猎物
+                ${format(tmp.mp.huntProbability.mul(100))}% 几率发现猎物
                 ${format(player.mp.points.mul(0.5).mul(tmp.mp.huntExp))} 经验(成功时x1.5)`
                 return disp
             },
@@ -346,7 +346,7 @@ addLayer("mp", {
             display() {
                 let disp = `使用当前投入时间的50%以及${format(tmp.mp.foodConsumption2)}${res_name["food"]}，有概率发现野兽(掉落骨骼、鳞片)，并增长索敌能力。\n
                 收益:
-                ${format(tmp.mp.huntProbability2)} 几率发现猎物
+                ${format(tmp.mp.huntProbability2.mul(100))}% 几率发现猎物
                 ${format(player.mp.points.mul(0.5).mul(tmp.mp.huntExp2))} 经验(成功时x1.5)`
                 return disp
             },
@@ -394,15 +394,8 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                if (tmp.mp.clickables[this.id].canClick) {
-                    return {
-                        "background-color": "#44bd32"
-                    }
-                } else {
-                    return {
-                        "background-color": "#bf8f8f"
-                    }
-                }
+                let color = tmp.mp.clickables[this.id].canClick ? "#44bd32" : "#bf8f8f"
+                return {"background-color": color}
             },
             onClick() {
                 layers["b"].startZone("mpcave", "mp")
@@ -431,15 +424,8 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                if (tmp.mp.clickables[this.id].canClick) {
-                    return {
-                        "background-color": "#44bd32"
-                    }
-                } else {
-                    return {
-                        "background-color": "#bf8f8f"
-                    }
-                }
+                let color = tmp.mp.clickables[this.id].canClick ? "#44bd32" : "#bf8f8f"
+                return {"background-color": color}
             },
             onClick() {
                 layers["b"].startZone("mphorde", "mp")
@@ -467,15 +453,8 @@ addLayer("mp", {
                 return disp
             },
             style() {
-                if (tmp.mp.clickables[this.id].canClick) {
-                    return {
-                        "background-color": "#44bd32"
-                    }
-                } else {
-                    return {
-                        "background-color": "#bf8f8f"
-                    }
-                }
+                let color = tmp.mp.clickables[this.id].canClick ? "#44bd32" : "#bf8f8f"
+                return {"background-color": color}
             },
             onClick() {
                 layers["b"].startZone("mpannazone", "mp")
