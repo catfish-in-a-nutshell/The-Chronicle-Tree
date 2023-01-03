@@ -257,7 +257,7 @@ addLayer("g", {
     },
 
     divingReward() {
-        if (player.g.depth_cur.lt(1000)) return
+        if (player.g.current_max_depth.lt(1000)) return
         let rewards = {gold:d(0), wood:d(0), fiber:d(0), mineral:d(0)}
 
         if (player.g.current_max_depth.gte(1000)) {
@@ -311,7 +311,7 @@ addLayer("g", {
 
                 
                 let reward = tmp.g.divingReward
-                for (res in reward) {
+                for (let res in reward) {
                     player.i[res] = player.i[res].add(reward[res])
                 }
 
